@@ -1,0 +1,6 @@
+framework module Pods_Gandalf {
+  umbrella header "Pods-Gandalf-umbrella.h"
+
+  export *
+  module * { export * }
+}
