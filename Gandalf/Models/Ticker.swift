@@ -1,14 +1,14 @@
 //
-//  Notion.swift
+//  Ticker.swift
 //  Gandalf
 //
-//  Created by Sean Hart on 1/26/21.
+//  Created by Sean Hart on 1/28/21.
 //
 
 import Foundation
 import FirebaseFirestoreSwift
 
-struct Notion: Identifiable, Codable {
+struct Ticker: Identifiable, Codable {
     @DocumentID var id: String?
     var host: String
     var hostId: String

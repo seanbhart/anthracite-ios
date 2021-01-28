@@ -42,7 +42,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        navController.navigationBar.barTintColor = Settings.Theme.navBarBackground
 //        navController.navigationBar.tintColor = Settings.Theme.navBarText
         navController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.navBarText]
-        navController.navigationBar.topItem?.title = "Alatar"
+        navController.navigationBar.topItem?.title = "Gandalf"
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {

@@ -1,6 +1,6 @@
 //
 //  ViewExtensions.swift
-//  Alatar
+//  Gandalf
 //
 //  Created by Sean Hart on 1/27/21.
 //
@@ -10,7 +10,7 @@ import UIKit
 class ProgressViewRoundedLeft: UIProgressView {
     override func layoutSubviews() {
         super.layoutSubviews()
-        roundCorners(corners: [.bottomLeft, .topLeft], radius: 10.0)
+        roundCorners(corners: [.bottomLeft, .topLeft], radius: 0.0)
     }
     
     func roundCorners(corners: UIRectCorner, radius: CGFloat) {
@@ -24,7 +24,7 @@ class ProgressViewRoundedLeft: UIProgressView {
 class ProgressViewRoundedRight: UIProgressView {
     override func layoutSubviews() {
         super.layoutSubviews()
-        roundCorners(corners: [.bottomRight, .topRight], radius: 10.0)
+        roundCorners(corners: [.bottomRight, .topRight], radius: 0.0)
     }
     
     func roundCorners(corners: UIRectCorner, radius: CGFloat) {

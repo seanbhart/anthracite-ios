@@ -30,6 +30,16 @@
 		B873509E25C258E50007A8FE /* WHITE-HAT-SMALL.png in Resources */ = {isa = PBXBuildFile; fileRef = B873509A25C258E40007A8FE /* WHITE-HAT-SMALL.png */; };
 		B873509F25C258E50007A8FE /* BLUE-HAT-SMALL.png in Resources */ = {isa = PBXBuildFile; fileRef = B873509B25C258E40007A8FE /* BLUE-HAT-SMALL.png */; };
 		B87350A025C258E50007A8FE /* BLUE-HAT-LARGE.png in Resources */ = {isa = PBXBuildFile; fileRef = B873509C25C258E50007A8FE /* BLUE-HAT-LARGE.png */; };
+		B87350A525C2812C0007A8FE /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350A425C2812C0007A8FE /* Assets.swift */; };
+		B87350AF25C284C30007A8FE /* Rubik-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350A825C284C20007A8FE /* Rubik-Light.ttf */; };
+		B87350B025C284C30007A8FE /* Rubik-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350A925C284C20007A8FE /* Rubik-ExtraBold.ttf */; };
+		B87350B125C284C30007A8FE /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350AA25C284C20007A8FE /* Rubik-Regular.ttf */; };
+		B87350B225C284C30007A8FE /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350AB25C284C20007A8FE /* Rubik-Medium.ttf */; };
+		B87350B325C284C30007A8FE /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350AC25C284C30007A8FE /* Rubik-SemiBold.ttf */; };
+		B87350B425C284C30007A8FE /* Rubik-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350AD25C284C30007A8FE /* Rubik-Black.ttf */; };
+		B87350B525C284C30007A8FE /* Rubik-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350AE25C284C30007A8FE /* Rubik-Bold.ttf */; };
+		B87350B825C2A2D00007A8FE /* Ticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350B725C2A2D00007A8FE /* Ticker.swift */; };
+		B87350BB25C2A2F00007A8FE /* TickerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350BA25C2A2F00007A8FE /* TickerRepository.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +70,16 @@
 		B873509A25C258E40007A8FE /* WHITE-HAT-SMALL.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "WHITE-HAT-SMALL.png"; sourceTree = "<group>"; };
 		B873509B25C258E40007A8FE /* BLUE-HAT-SMALL.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BLUE-HAT-SMALL.png"; sourceTree = "<group>"; };
 		B873509C25C258E50007A8FE /* BLUE-HAT-LARGE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BLUE-HAT-LARGE.png"; sourceTree = "<group>"; };
+		B87350A425C2812C0007A8FE /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
+		B87350A825C284C20007A8FE /* Rubik-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Light.ttf"; sourceTree = "<group>"; };
+		B87350A925C284C20007A8FE /* Rubik-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-ExtraBold.ttf"; sourceTree = "<group>"; };
+		B87350AA25C284C20007A8FE /* Rubik-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Regular.ttf"; sourceTree = "<group>"; };
+		B87350AB25C284C20007A8FE /* Rubik-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Medium.ttf"; sourceTree = "<group>"; };
+		B87350AC25C284C30007A8FE /* Rubik-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-SemiBold.ttf"; sourceTree = "<group>"; };
+		B87350AD25C284C30007A8FE /* Rubik-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Black.ttf"; sourceTree = "<group>"; };
+		B87350AE25C284C30007A8FE /* Rubik-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Bold.ttf"; sourceTree = "<group>"; };
+		B87350B725C2A2D00007A8FE /* Ticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticker.swift; sourceTree = "<group>"; };
+		B87350BA25C2A2F00007A8FE /* TickerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TickerRepository.swift; sourceTree = "<group>"; };
 		C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Gandalf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -141,11 +161,13 @@
 		B873507625C257920007A8FE /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				B87350A725C2848A0007A8FE /* Fonts */,
 				B873504025C256330007A8FE /* Assets.xcassets */,
 				B873509C25C258E50007A8FE /* BLUE-HAT-LARGE.png */,
 				B873509B25C258E40007A8FE /* BLUE-HAT-SMALL.png */,
 				B873509925C258E40007A8FE /* WHITE-HAT-LARGE.png */,
 				B873509A25C258E40007A8FE /* WHITE-HAT-SMALL.png */,
+				B87350A425C2812C0007A8FE /* Assets.swift */,
 			);
 			path = Assets;
 			sourceTree = "<group>";
@@ -155,6 +177,8 @@
 			children = (
 				B873508A25C258C50007A8FE /* Notion.swift */,
 				B873508925C258C50007A8FE /* NotionRepository.swift */,
+				B87350B725C2A2D00007A8FE /* Ticker.swift */,
+				B87350BA25C2A2F00007A8FE /* TickerRepository.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -195,6 +219,20 @@
 				B873509125C258D60007A8FE /* Theme.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		B87350A725C2848A0007A8FE /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				B87350AD25C284C30007A8FE /* Rubik-Black.ttf */,
+				B87350AE25C284C30007A8FE /* Rubik-Bold.ttf */,
+				B87350A925C284C20007A8FE /* Rubik-ExtraBold.ttf */,
+				B87350A825C284C20007A8FE /* Rubik-Light.ttf */,
+				B87350AB25C284C20007A8FE /* Rubik-Medium.ttf */,
+				B87350AA25C284C20007A8FE /* Rubik-Regular.ttf */,
+				B87350AC25C284C30007A8FE /* Rubik-SemiBold.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,10 +295,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				B873504725C256330007A8FE /* LaunchScreen.storyboard in Resources */,
+				B87350B325C284C30007A8FE /* Rubik-SemiBold.ttf in Resources */,
 				B873509E25C258E50007A8FE /* WHITE-HAT-SMALL.png in Resources */,
 				B873506825C257140007A8FE /* GoogleService-Info.plist in Resources */,
+				B87350B525C284C30007A8FE /* Rubik-Bold.ttf in Resources */,
+				B87350B225C284C30007A8FE /* Rubik-Medium.ttf in Resources */,
 				B873504425C256330007A8FE /* Preview Assets.xcassets in Resources */,
+				B87350AF25C284C30007A8FE /* Rubik-Light.ttf in Resources */,
 				B873509D25C258E50007A8FE /* WHITE-HAT-LARGE.png in Resources */,
+				B87350B125C284C30007A8FE /* Rubik-Regular.ttf in Resources */,
+				B87350B025C284C30007A8FE /* Rubik-ExtraBold.ttf in Resources */,
+				B87350B425C284C30007A8FE /* Rubik-Black.ttf in Resources */,
 				B873509F25C258E50007A8FE /* BLUE-HAT-SMALL.png in Resources */,
 				B873504125C256330007A8FE /* Assets.xcassets in Resources */,
 				B87350A025C258E50007A8FE /* BLUE-HAT-LARGE.png in Resources */,
@@ -319,11 +364,14 @@
 				B873508525C258BE0007A8FE /* NotionCell.swift in Sources */,
 				B873508B25C258C50007A8FE /* NotionRepository.swift in Sources */,
 				B873509425C258D60007A8FE /* Settings.swift in Sources */,
+				B87350BB25C2A2F00007A8FE /* TickerRepository.swift in Sources */,
 				B873508C25C258C50007A8FE /* Notion.swift in Sources */,
 				B873503B25C256320007A8FE /* AppDelegate.swift in Sources */,
 				B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */,
 				B873508425C258BE0007A8FE /* NotionView.swift in Sources */,
 				B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */,
+				B87350A525C2812C0007A8FE /* Assets.swift in Sources */,
+				B87350B825C2A2D00007A8FE /* Ticker.swift in Sources */,
 				B873508625C258BE0007A8FE /* TickerCell.swift in Sources */,
 				B873508F25C258CF0007A8FE /* LocalCollection.swift in Sources */,
 				B873509325C258D60007A8FE /* Theme.swift in Sources */,
@@ -480,7 +528,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.gandalf;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.Gandalf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -504,7 +552,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.gandalf;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.Gandalf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

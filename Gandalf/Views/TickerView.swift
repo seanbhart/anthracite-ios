@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Alatar
+//  Gandalf
 //
 //  Created by Sean Hart on 1/26/21.
 //
@@ -13,7 +13,7 @@ import FirebaseAuth
 class TickerView: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
     let viewName = "TickerView"
     
-    var pageTitle = "Alatar"
+    var pageTitle = "Gandalf"
 //    var notionReference: DocumentReference?
     var notionCollection: LocalCollection<Notion>!
     

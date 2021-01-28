@@ -1,21 +1,16 @@
 //
-//  NotionRepository.swift
+//  TickerRepository.swift
 //  Gandalf
 //
-//  Created by Sean Hart on 1/27/21.
+//  Created by Sean Hart on 1/28/21.
 //
 
 import FirebaseFirestore
 
-protocol RepositoryDelegate {
-    func dataUpdate()
-}
-
-class NotionRepository {
+class TickerRepository {
     var repoDelegate: RepositoryDelegate?
-    var ticker: String!
     var recency: Double! //seconds
-    var notions = [Notion]()
+    var tickers = [Ticker]()
     
     fileprivate var query: Query? {
         didSet {
@@ -26,10 +21,9 @@ class NotionRepository {
         }
     }
     
-    init(ticker: String, recency: Double) {
-        self.ticker = ticker
+    init(recency: Double) {
         self.recency = recency
-        query = Settings.Firebase.db().collection("notion")
+        query = Settings.Firebase.db().collection("ticker")
     }
 
     private var listener: ListenerRegistration?
@@ -42,16 +36,17 @@ class NotionRepository {
         print(timestamp)
 
         listener = query
-            .whereField("created", isGreaterThan: timestamp)
-//            .whereField("tickers", arrayContains: ticker!)
+            .whereField("latest_notion", isGreaterThan: timestamp)
             .addSnapshotListener { [unowned self] (snapshot, error) in
                 guard let snapshot = snapshot else { print("snapshot error: \(error!)"); return }
                 
-                self.notions = snapshot.documents.compactMap { queryDocumentSnapshot -> Notion? in
-                    return try? queryDocumentSnapshot.data(as: Notion.self)
+                self.tickers = snapshot.documents.compactMap { queryDocumentSnapshot -> Ticker? in
+                    return try? queryDocumentSnapshot.data(as: Ticker.self)
                 }
-                print(self.notions.count)
-                self.notions.sort(by: { $0.created > $1.created })
+                print(self.tickers.count)
+                
+                
+                self.tickers.sort(by: { $0.created > $1.created })
                 if let parent = self.repoDelegate {
                     parent.dataUpdate()
                 }
@@ -59,7 +54,6 @@ class NotionRepository {
     }
 
     func stopObserving() {
-        print("NotionRepository: stopObserving")
         listener?.remove()
     }
 }

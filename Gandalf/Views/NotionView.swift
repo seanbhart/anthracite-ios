@@ -1,6 +1,6 @@
 //
 //  NotionView.swift
-//  Alatar
+//  Gandalf
 //
 //  Created by Sean Hart on 1/27/21.
 //
@@ -13,12 +13,21 @@ import FirebaseAuth
 class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, RepositoryDelegate {
     let viewName = "NotionView"
     
-    var pageTitle = "Alatar"
+    var pageTitle = "Gandalf"
 //    var notionReference: DocumentReference?
 //    var notionCollection: LocalCollection<Notion>!
     var notionRepository: NotionRepository!
     
     var viewContainer: UIView!
+    var headerContainer: UIView!
+    var titleLabel: UILabel!
+    var titleLabel2: UILabel!
+    var labelsContainer: UIView!
+    var notionCountLabel: UILabel!
+    var notionIcon: UIImageView!
+    var progressViewContainer: UIView!
+    var progressViewLeft: ProgressViewRoundedLeft!
+    var progressViewRight: ProgressViewRoundedRight!
     var refreshControl: UIRefreshControl!
     let tableCellIdentifier: String = "NotionCell"
     var tableView: UITableView!
@@ -36,16 +45,20 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         let barItemLogo = UIButton(type: .custom)
 //        barItemAdd.setImage(UIImage(systemName: "plus.app.fill"), for: .normal)
         barItemLogo.setTitle(pageTitle, for: .normal)
+        barItemLogo.titleLabel?.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
+        barItemLogo.titleLabel?.textAlignment = .left
+        barItemLogo.setTitleColor(Settings.Theme.colorPrimaryLight, for: .normal)
         let barItemProfile = UIButton(type: .custom)
-        barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.colorPrimary, renderingMode: .alwaysOriginal), for: .normal)
+        barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.colorPrimaryLight, renderingMode: .alwaysOriginal), for: .normal)
         barItemProfile.addTarget(self, action: #selector(loadProfileView), for: .touchUpInside)
         NSLayoutConstraint.activate([
-            barItemLogo.widthAnchor.constraint(equalToConstant:50),
-            barItemProfile.widthAnchor.constraint(equalToConstant:40),
+            barItemLogo.widthAnchor.constraint(equalToConstant:120),
+            barItemProfile.widthAnchor.constraint(equalToConstant:50),
         ])
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: barItemProfile)]
         self.navigationItem.hidesBackButton = true
+//        self.navigationItem.title = pageTitle
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -65,7 +78,61 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             viewContainer.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
         ])
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo:viewContainer.topAnchor),
+            headerContainer.topAnchor.constraint(equalTo:viewContainer.topAnchor),
+            headerContainer.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
+            headerContainer.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
+            headerContainer.heightAnchor.constraint(equalToConstant: 100),
+        ])
+        NSLayoutConstraint.activate([
+            labelsContainer.bottomAnchor.constraint(equalTo:headerContainer.bottomAnchor, constant: -10),
+            labelsContainer.rightAnchor.constraint(equalTo:headerContainer.rightAnchor, constant: -10),
+            labelsContainer.widthAnchor.constraint(equalToConstant: 200),
+            labelsContainer.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        NSLayoutConstraint.activate([
+            notionIcon.topAnchor.constraint(equalTo:labelsContainer.topAnchor, constant: 10),
+            notionIcon.bottomAnchor.constraint(equalTo:labelsContainer.bottomAnchor, constant: -5),
+            notionIcon.rightAnchor.constraint(equalTo:labelsContainer.rightAnchor, constant: -5),
+            notionIcon.widthAnchor.constraint(equalToConstant: 30),
+        ])
+        NSLayoutConstraint.activate([
+            notionCountLabel.topAnchor.constraint(equalTo:labelsContainer.topAnchor, constant: 10),
+            notionCountLabel.bottomAnchor.constraint(equalTo:labelsContainer.bottomAnchor, constant: 0),
+            notionCountLabel.rightAnchor.constraint(equalTo:notionIcon.leftAnchor, constant: -10),
+            notionCountLabel.leftAnchor.constraint(equalTo:labelsContainer.leftAnchor, constant: 10),
+        ])
+        NSLayoutConstraint.activate([
+            titleLabel2.bottomAnchor.constraint(equalTo:headerContainer.bottomAnchor, constant: -10),
+            titleLabel2.leftAnchor.constraint(equalTo:headerContainer.leftAnchor, constant: 10),
+            titleLabel2.rightAnchor.constraint(equalTo:labelsContainer.leftAnchor, constant: -10),
+            titleLabel2.heightAnchor.constraint(equalToConstant: 40),
+        ])
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo:headerContainer.topAnchor, constant: 5),
+            titleLabel.leftAnchor.constraint(equalTo:headerContainer.leftAnchor, constant: 10),
+            titleLabel.rightAnchor.constraint(equalTo:headerContainer.rightAnchor, constant: -10),
+            titleLabel.bottomAnchor.constraint(equalTo:titleLabel2.topAnchor, constant: -10),
+        ])
+        NSLayoutConstraint.activate([
+            progressViewContainer.bottomAnchor.constraint(equalTo:headerContainer.bottomAnchor, constant: 0),
+            progressViewContainer.leftAnchor.constraint(equalTo:headerContainer.leftAnchor, constant: 0),
+            progressViewContainer.rightAnchor.constraint(equalTo:headerContainer.rightAnchor, constant: 0),
+            progressViewContainer.heightAnchor.constraint(equalToConstant: 10),
+        ])
+        NSLayoutConstraint.activate([
+            progressViewLeft.topAnchor.constraint(equalTo:progressViewContainer.topAnchor, constant: 0),
+            progressViewLeft.bottomAnchor.constraint(equalTo:progressViewContainer.bottomAnchor, constant: 0),
+            progressViewLeft.leftAnchor.constraint(equalTo:progressViewContainer.leftAnchor, constant: 0),
+            progressViewLeft.rightAnchor.constraint(equalTo:progressViewContainer.centerXAnchor, constant: 0),
+        ])
+        NSLayoutConstraint.activate([
+            progressViewRight.topAnchor.constraint(equalTo:progressViewContainer.topAnchor, constant: 0),
+            progressViewRight.bottomAnchor.constraint(equalTo:progressViewContainer.bottomAnchor, constant: 0),
+            progressViewRight.leftAnchor.constraint(equalTo:progressViewContainer.centerXAnchor, constant: 0),
+            progressViewRight.rightAnchor.constraint(equalTo:progressViewContainer.rightAnchor, constant: 0),
+        ])
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo:headerContainer.bottomAnchor),
             tableView.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
             tableView.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
             tableView.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
@@ -93,6 +160,73 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         viewContainer = UIView()
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(viewContainer)
+        
+        headerContainer = UIView()
+        headerContainer.backgroundColor = Settings.Theme.colorPrimaryLight
+        headerContainer.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(headerContainer)
+        
+        titleLabel = UILabel()
+        titleLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 20)
+        titleLabel.textColor = Settings.Theme.text
+        titleLabel.textAlignment = NSTextAlignment.left
+        titleLabel.numberOfLines = 1
+        titleLabel.text = "Apple, Inc."
+        titleLabel.isUserInteractionEnabled = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        headerContainer.addSubview(titleLabel)
+        
+        titleLabel2 = UILabel()
+        titleLabel2.font = UIFont(name: Assets.Fonts.Default.bold, size: 30)
+        titleLabel2.textColor = Settings.Theme.text
+        titleLabel2.textAlignment = NSTextAlignment.left
+        titleLabel2.numberOfLines = 1
+        titleLabel2.text = "$AAPL"
+        titleLabel2.isUserInteractionEnabled = false
+        titleLabel2.translatesAutoresizingMaskIntoConstraints = false
+        headerContainer.addSubview(titleLabel2)
+        
+        labelsContainer = UIView()
+        labelsContainer.translatesAutoresizingMaskIntoConstraints = false
+        headerContainer.addSubview(labelsContainer)
+        
+        notionIcon = UIImageView()
+        notionIcon.image = UIImage(named: Assets.Images.notionIconWhiteSmall)
+        notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        notionIcon.clipsToBounds = true
+        notionIcon.translatesAutoresizingMaskIntoConstraints = false
+        labelsContainer.addSubview(notionIcon)
+        
+        notionCountLabel = UILabel()
+        notionCountLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 30)
+        notionCountLabel.textColor = Settings.Theme.text
+        notionCountLabel.textAlignment = NSTextAlignment.right
+        notionCountLabel.numberOfLines = 1
+        notionCountLabel.text = ""
+        notionCountLabel.isUserInteractionEnabled = false
+        notionCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        labelsContainer.addSubview(notionCountLabel)
+        
+        progressViewContainer = UIView()
+//        progressViewContainer.backgroundColor = .red //Settings.Theme.colorPrimary //.withAlphaComponent(0.5)
+        progressViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        headerContainer.addSubview(progressViewContainer)
+        
+        progressViewLeft = ProgressViewRoundedLeft()
+        progressViewLeft.progressViewStyle = .bar
+        progressViewLeft.trackTintColor = Settings.Theme.colorGrayLight.withAlphaComponent(0.2)
+        progressViewLeft.progressTintColor = Settings.Theme.colorPrimary
+        progressViewLeft.progress = 0.5
+        progressViewLeft.translatesAutoresizingMaskIntoConstraints = false
+        progressViewContainer.addSubview(progressViewLeft)
+        
+        progressViewRight = ProgressViewRoundedRight()
+        progressViewRight.progressViewStyle = .bar
+        progressViewRight.trackTintColor = Settings.Theme.colorPrimary
+        progressViewRight.progressTintColor = Settings.Theme.colorGrayLight.withAlphaComponent(0.2)
+        progressViewRight.progress = 0.5
+        progressViewRight.translatesAutoresizingMaskIntoConstraints = false
+        progressViewContainer.addSubview(progressViewRight)
         
         refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshTableData), for: .valueChanged)
@@ -143,6 +277,17 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
     func dataUpdate() {
         tableView.reloadData()
+        
+        // Refresh the header values
+        let sum = self.notionRepository.notions
+            .compactMap { $0.responseCount }
+//            .filter { $0.name == "Day" }
+//            .map { $0.value }
+            .reduce(0, +)
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        let formattedSum = numberFormatter.string(from: NSNumber(value:sum))
+        notionCountLabel.text = formattedSum
     }
     
     
@@ -166,7 +311,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150
+        return 175
 //        return UITableView.automaticDimension
     }
 
@@ -175,6 +320,22 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         let notion = notionRepository.notions[indexPath.row]
         cell.textView.text = notion.text //String(notion.sentiment) + ", " + String(notion.magnitude)
         cell.notionCountLabel.text = String(notion.responseCount)
+        if notion.tickers.count > 0 {
+            var titleText = "$" + notion.tickers[0]
+            for i in 1..<notion.tickers.count {
+                titleText += ", $" + notion.tickers[i]
+            }
+            cell.titleLabel.text = titleText
+        }
+        if notion.categories.count > 0 {
+            var textTitle = notion.categories[0]
+            for i in 1..<notion.categories.count {
+                textTitle += ", " + notion.categories[i]
+            }
+            cell.textTitle.text = textTitle
+        } else {
+            cell.textTitle.text = notion.host
+        }
         if notion.sentiment > 0 {
             cell.progressViewLeft.progress = 1
             cell.progressViewRight.progress = notion.sentiment

@@ -1,6 +1,6 @@
 //
 //  TickerCell.swift
-//  Alatar
+//  Gandalf
 //
 //  Created by Sean Hart on 1/26/21.
 //

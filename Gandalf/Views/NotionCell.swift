@@ -1,6 +1,6 @@
 //
 //  NotionCell.swift
-//  Alatar
+//  Gandalf
 //
 //  Created by Sean Hart on 1/27/21.
 //
@@ -10,13 +10,16 @@ import UIKit
 
 class NotionCell: UITableViewCell {
     var containerView: UIView!
-    var containerBorder: UIView!
-    var textView: UITextView!
+//    var containerBorder: UIView!
+    var labelsContainer: UIView!
+    var titleLabel: UILabel!
+    var notionCountLabel: UILabel!
+    var notionIcon: UIImageView!
     var progressViewContainer: UIView!
     var progressViewLeft: ProgressViewRoundedLeft!
     var progressViewRight: ProgressViewRoundedRight!
-    var notionCountLabelContainer: UIView!
-    var notionCountLabel: UILabel!
+    var textTitle: UILabel!
+    var textView: UITextView!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -35,33 +38,72 @@ class NotionCell: UITableViewCell {
             containerView.rightAnchor.constraint(equalTo:contentView.rightAnchor),
         ])
         
-        containerBorder = UIView()
-        containerBorder.backgroundColor = Settings.Theme.background
-        containerBorder.layer.borderColor = Settings.Theme.colorGrayLight.cgColor
-        containerBorder.layer.borderWidth = 1
-        containerBorder.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(containerBorder)
+//        containerBorder = UIView()
+//        containerBorder.backgroundColor = Settings.Theme.background
+//        containerBorder.layer.borderColor = Settings.Theme.colorGrayLight.cgColor
+//        containerBorder.layer.borderWidth = 1
+//        containerBorder.translatesAutoresizingMaskIntoConstraints = false
+//        containerView.addSubview(containerBorder)
+//        NSLayoutConstraint.activate([
+//            containerBorder.topAnchor.constraint(equalTo:containerView.topAnchor),
+//            containerBorder.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
+//            containerBorder.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
+//            containerBorder.heightAnchor.constraint(equalToConstant: 1)
+//        ])
+        
+        labelsContainer = UIView()
+        labelsContainer.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(labelsContainer)
         NSLayoutConstraint.activate([
-            containerBorder.topAnchor.constraint(equalTo:containerView.topAnchor),
-            containerBorder.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
-            containerBorder.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
-            containerBorder.heightAnchor.constraint(equalToConstant: 1)
+            labelsContainer.topAnchor.constraint(equalTo:containerView.topAnchor, constant: 0),
+            labelsContainer.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
+            labelsContainer.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
+            labelsContainer.heightAnchor.constraint(equalToConstant: 50),
         ])
         
-        textView = UITextView()
-        textView.backgroundColor = Settings.Theme.background
-//        textView.font = UIFont(name: Settings.Fonts.Regular.Bold, size: 16)
-        textView.textColor = Settings.Theme.text
-        textView.textAlignment = NSTextAlignment.left
-        textView.text = ""
-        textView.isUserInteractionEnabled = false
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(textView)
+        notionIcon = UIImageView()
+        notionIcon.image = UIImage(named: Assets.Images.notionIconWhiteSmall)
+        notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        notionIcon.clipsToBounds = true
+        notionIcon.translatesAutoresizingMaskIntoConstraints = false
+        labelsContainer.addSubview(notionIcon)
         NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo:containerView.topAnchor, constant: 10),
-            textView.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
-            textView.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
-            textView.heightAnchor.constraint(equalToConstant: 90),
+            notionIcon.topAnchor.constraint(equalTo:labelsContainer.topAnchor, constant: 10),
+            notionIcon.bottomAnchor.constraint(equalTo:labelsContainer.bottomAnchor, constant: 0),
+            notionIcon.rightAnchor.constraint(equalTo:labelsContainer.rightAnchor, constant: -15),
+            notionIcon.widthAnchor.constraint(equalToConstant: 30),
+        ])
+        
+        notionCountLabel = UILabel()
+        notionCountLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 26)
+        notionCountLabel.textColor = Settings.Theme.text
+        notionCountLabel.textAlignment = NSTextAlignment.right
+        notionCountLabel.numberOfLines = 1
+        notionCountLabel.text = ""
+        notionCountLabel.isUserInteractionEnabled = false
+        notionCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        labelsContainer.addSubview(notionCountLabel)
+        NSLayoutConstraint.activate([
+            notionCountLabel.topAnchor.constraint(equalTo:labelsContainer.topAnchor, constant: 10),
+            notionCountLabel.bottomAnchor.constraint(equalTo:labelsContainer.bottomAnchor, constant: 0),
+            notionCountLabel.rightAnchor.constraint(equalTo:notionIcon.leftAnchor, constant: -10),
+            notionCountLabel.widthAnchor.constraint(equalToConstant: 100),
+        ])
+        
+        titleLabel = UILabel()
+        titleLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 22)
+        titleLabel.textColor = Settings.Theme.text
+        titleLabel.textAlignment = NSTextAlignment.left
+        titleLabel.numberOfLines = 1
+        titleLabel.text = ""
+        titleLabel.isUserInteractionEnabled = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        labelsContainer.addSubview(titleLabel)
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo:labelsContainer.topAnchor, constant: 10),
+            titleLabel.bottomAnchor.constraint(equalTo:labelsContainer.bottomAnchor, constant: 0),
+            titleLabel.leftAnchor.constraint(equalTo:labelsContainer.leftAnchor, constant: 15),
+            titleLabel.rightAnchor.constraint(equalTo:labelsContainer.rightAnchor, constant: -10),
         ])
         
         progressViewContainer = UIView()
@@ -69,16 +111,16 @@ class NotionCell: UITableViewCell {
         progressViewContainer.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(progressViewContainer)
         NSLayoutConstraint.activate([
-            progressViewContainer.topAnchor.constraint(equalTo:textView.bottomAnchor, constant: 10),
-            progressViewContainer.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
-            progressViewContainer.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -50),
-            progressViewContainer.heightAnchor.constraint(equalToConstant: 40),
+            progressViewContainer.topAnchor.constraint(equalTo:labelsContainer.bottomAnchor, constant: 0),
+            progressViewContainer.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
+            progressViewContainer.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
+            progressViewContainer.heightAnchor.constraint(equalToConstant: 5),
         ])
         
         progressViewLeft = ProgressViewRoundedLeft()
         progressViewLeft.progressViewStyle = .bar
         progressViewLeft.trackTintColor = .clear
-        progressViewLeft.progressTintColor = Settings.Theme.background
+        progressViewLeft.progressTintColor = Settings.Theme.colorGrayDark
         progressViewLeft.progress = 0
 //        progressViewLeft.clipsToBounds = true
 //        progressViewLeft.layer.cornerRadius = 10
@@ -88,14 +130,14 @@ class NotionCell: UITableViewCell {
         progressViewLeft.translatesAutoresizingMaskIntoConstraints = false
         progressViewContainer.addSubview(progressViewLeft)
         NSLayoutConstraint.activate([
-            progressViewLeft.topAnchor.constraint(equalTo:progressViewContainer.topAnchor, constant: 10),
+            progressViewLeft.topAnchor.constraint(equalTo:progressViewContainer.topAnchor, constant: 0),
+            progressViewLeft.bottomAnchor.constraint(equalTo:progressViewContainer.bottomAnchor, constant: 0),
             progressViewLeft.leftAnchor.constraint(equalTo:progressViewContainer.leftAnchor, constant: 0),
             progressViewLeft.rightAnchor.constraint(equalTo:progressViewContainer.centerXAnchor, constant: 0),
-            progressViewLeft.heightAnchor.constraint(equalToConstant: 20),
         ])
         progressViewRight = ProgressViewRoundedRight()
         progressViewRight.progressViewStyle = .bar
-        progressViewRight.trackTintColor = Settings.Theme.background
+        progressViewRight.trackTintColor = Settings.Theme.colorGrayDark
         progressViewRight.progressTintColor = .clear
         progressViewRight.progress = 0
 //        progressViewRight.clipsToBounds = true
@@ -106,36 +148,42 @@ class NotionCell: UITableViewCell {
         progressViewRight.translatesAutoresizingMaskIntoConstraints = false
         progressViewContainer.addSubview(progressViewRight)
         NSLayoutConstraint.activate([
-            progressViewRight.topAnchor.constraint(equalTo:progressViewContainer.topAnchor, constant: 10),
+            progressViewRight.topAnchor.constraint(equalTo:progressViewContainer.topAnchor, constant: 0),
+            progressViewRight.bottomAnchor.constraint(equalTo:progressViewContainer.bottomAnchor, constant: 0),
             progressViewRight.leftAnchor.constraint(equalTo:progressViewContainer.centerXAnchor, constant: 0),
             progressViewRight.rightAnchor.constraint(equalTo:progressViewContainer.rightAnchor, constant: 0),
-            progressViewRight.heightAnchor.constraint(equalToConstant: 20),
         ])
         
-        notionCountLabelContainer = UIView()
-        notionCountLabelContainer.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(notionCountLabelContainer)
+        textTitle = UILabel()
+        textTitle.font = UIFont(name: Assets.Fonts.Default.bold, size: 12)
+        textTitle.textColor = Settings.Theme.text
+        textTitle.textAlignment = NSTextAlignment.left
+        textTitle.numberOfLines = 1
+        textTitle.text = ""
+        textTitle.isUserInteractionEnabled = false
+        textTitle.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(textTitle)
         NSLayoutConstraint.activate([
-            notionCountLabelContainer.topAnchor.constraint(equalTo:textView.bottomAnchor, constant: 0),
-            notionCountLabelContainer.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
-            notionCountLabelContainer.widthAnchor.constraint(equalToConstant: 50),
-            notionCountLabelContainer.heightAnchor.constraint(equalToConstant: 40),
+            textTitle.topAnchor.constraint(equalTo:progressViewContainer.bottomAnchor, constant: 10),
+            textTitle.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 15),
+            textTitle.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
+            textTitle.heightAnchor.constraint(equalToConstant: 20),
         ])
         
-        notionCountLabel = UILabel()
-//        notionCountLabel.font = UIFont(name: Settings.Fonts.Regular.Bold, size: 16)
-        notionCountLabel.textColor = Settings.Theme.text
-        notionCountLabel.textAlignment = NSTextAlignment.center
-        notionCountLabel.numberOfLines = 1
-        notionCountLabel.text = ""
-        notionCountLabel.isUserInteractionEnabled = false
-        notionCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        notionCountLabelContainer.addSubview(notionCountLabel)
+        textView = UITextView()
+        textView.backgroundColor = Settings.Theme.background
+        textView.font = UIFont(name: Assets.Fonts.Default.regular, size: 14)
+        textView.textColor = Settings.Theme.text
+        textView.textAlignment = NSTextAlignment.left
+        textView.text = ""
+        textView.isUserInteractionEnabled = false
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(textView)
         NSLayoutConstraint.activate([
-            notionCountLabel.topAnchor.constraint(equalTo:notionCountLabelContainer.topAnchor, constant: 20),
-            notionCountLabel.bottomAnchor.constraint(equalTo:notionCountLabelContainer.bottomAnchor, constant: 0),
-            notionCountLabel.leftAnchor.constraint(equalTo:notionCountLabelContainer.leftAnchor, constant: 10),
-            notionCountLabel.rightAnchor.constraint(equalTo:notionCountLabelContainer.rightAnchor, constant: -10),
+            textView.topAnchor.constraint(equalTo:textTitle.bottomAnchor, constant: 0),
+            textView.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
+            textView.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
+            textView.heightAnchor.constraint(equalToConstant: 90),
         ])
     }
     

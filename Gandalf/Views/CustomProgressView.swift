@@ -1,6 +1,6 @@
 //
 //  CustomProgressView.swift
-//  Alatar
+//  Gandalf
 //
 //  Created by Sean Hart on 1/27/21.
 //
