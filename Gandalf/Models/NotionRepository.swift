@@ -13,7 +13,6 @@ protocol RepositoryDelegate {
 
 class NotionRepository {
     var repoDelegate: RepositoryDelegate?
-    var ticker: String!
     var recency: Double! //seconds
     var notions = [Notion]()
     
@@ -26,8 +25,7 @@ class NotionRepository {
         }
     }
     
-    init(ticker: String, recency: Double) {
-        self.ticker = ticker
+    init(recency: Double) {
         self.recency = recency
         query = Settings.Firebase.db().collection("notion")
     }
@@ -41,6 +39,7 @@ class NotionRepository {
         let timestamp = Date().timeIntervalSince1970 - recency
         print(timestamp)
 
+        // TODO: UPDATE QUERY FREQUENTLY (REFRESH TIMESTAMP CRITERIA)
         listener = query
             .whereField("created", isGreaterThan: timestamp)
 //            .whereField("tickers", arrayContains: ticker!)
@@ -51,7 +50,6 @@ class NotionRepository {
                     return try? queryDocumentSnapshot.data(as: Notion.self)
                 }
                 print(self.notions.count)
-                self.notions.sort(by: { $0.created > $1.created })
                 if let parent = self.repoDelegate {
                     parent.dataUpdate()
                 }

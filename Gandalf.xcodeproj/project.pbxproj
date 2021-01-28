@@ -40,6 +40,8 @@
 		B87350B525C284C30007A8FE /* Rubik-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350AE25C284C30007A8FE /* Rubik-Bold.ttf */; };
 		B87350B825C2A2D00007A8FE /* Ticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350B725C2A2D00007A8FE /* Ticker.swift */; };
 		B87350BB25C2A2F00007A8FE /* TickerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350BA25C2A2F00007A8FE /* TickerRepository.swift */; };
+		B87350C025C322FE0007A8FE /* WHITE-TWINKLE.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BE25C322FE0007A8FE /* WHITE-TWINKLE.png */; };
+		B87350C125C322FE0007A8FE /* BLUE-TWINKLE.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BF25C322FE0007A8FE /* BLUE-TWINKLE.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +82,8 @@
 		B87350AE25C284C30007A8FE /* Rubik-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Bold.ttf"; sourceTree = "<group>"; };
 		B87350B725C2A2D00007A8FE /* Ticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticker.swift; sourceTree = "<group>"; };
 		B87350BA25C2A2F00007A8FE /* TickerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TickerRepository.swift; sourceTree = "<group>"; };
+		B87350BE25C322FE0007A8FE /* WHITE-TWINKLE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "WHITE-TWINKLE.png"; sourceTree = "<group>"; };
+		B87350BF25C322FE0007A8FE /* BLUE-TWINKLE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BLUE-TWINKLE.png"; sourceTree = "<group>"; };
 		C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Gandalf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -163,6 +167,8 @@
 			children = (
 				B87350A725C2848A0007A8FE /* Fonts */,
 				B873504025C256330007A8FE /* Assets.xcassets */,
+				B87350BF25C322FE0007A8FE /* BLUE-TWINKLE.png */,
+				B87350BE25C322FE0007A8FE /* WHITE-TWINKLE.png */,
 				B873509C25C258E50007A8FE /* BLUE-HAT-LARGE.png */,
 				B873509B25C258E40007A8FE /* BLUE-HAT-SMALL.png */,
 				B873509925C258E40007A8FE /* WHITE-HAT-LARGE.png */,
@@ -294,11 +300,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B87350C025C322FE0007A8FE /* WHITE-TWINKLE.png in Resources */,
 				B873504725C256330007A8FE /* LaunchScreen.storyboard in Resources */,
 				B87350B325C284C30007A8FE /* Rubik-SemiBold.ttf in Resources */,
 				B873509E25C258E50007A8FE /* WHITE-HAT-SMALL.png in Resources */,
 				B873506825C257140007A8FE /* GoogleService-Info.plist in Resources */,
 				B87350B525C284C30007A8FE /* Rubik-Bold.ttf in Resources */,
+				B87350C125C322FE0007A8FE /* BLUE-TWINKLE.png in Resources */,
 				B87350B225C284C30007A8FE /* Rubik-Medium.ttf in Resources */,
 				B873504425C256330007A8FE /* Preview Assets.xcassets in Resources */,
 				B87350AF25C284C30007A8FE /* Rubik-Light.ttf in Resources */,
@@ -528,7 +536,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.Gandalf;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.gandalf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -552,7 +560,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.Gandalf;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.gandalf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
