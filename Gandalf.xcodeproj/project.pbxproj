@@ -10,6 +10,8 @@
 		017E03993A6DF74AD31C6F3C /* Pods_Gandalf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */; };
 		B80E04C325C32A96009DBE34 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E04C225C32A96009DBE34 /* ProfileView.swift */; };
 		B80E04D125C33341009DBE34 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B80E04D025C33341009DBE34 /* GoogleService-Info.plist */; };
+		B80E04F225C616BE009DBE34 /* RED-HAT-LARGE.png in Resources */ = {isa = PBXBuildFile; fileRef = B80E04F025C616BE009DBE34 /* RED-HAT-LARGE.png */; };
+		B80E04F325C616BE009DBE34 /* RED-HAT-SMALL.png in Resources */ = {isa = PBXBuildFile; fileRef = B80E04F125C616BE009DBE34 /* RED-HAT-SMALL.png */; };
 		B873503B25C256320007A8FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503A25C256320007A8FE /* AppDelegate.swift */; };
 		B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503C25C256320007A8FE /* SceneDelegate.swift */; };
 		B873504125C256330007A8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504025C256330007A8FE /* Assets.xcassets */; };
@@ -49,6 +51,8 @@
 		307645F881FE0E958AF461D8 /* Pods-Gandalf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gandalf.debug.xcconfig"; path = "Target Support Files/Pods-Gandalf/Pods-Gandalf.debug.xcconfig"; sourceTree = "<group>"; };
 		B80E04C225C32A96009DBE34 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		B80E04D025C33341009DBE34 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B80E04F025C616BE009DBE34 /* RED-HAT-LARGE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RED-HAT-LARGE.png"; sourceTree = "<group>"; };
+		B80E04F125C616BE009DBE34 /* RED-HAT-SMALL.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RED-HAT-SMALL.png"; sourceTree = "<group>"; };
 		B873503725C256320007A8FE /* Gandalf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gandalf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B873503A25C256320007A8FE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B873503C25C256320007A8FE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -167,6 +171,8 @@
 			children = (
 				B87350A725C2848A0007A8FE /* Fonts */,
 				B873504025C256330007A8FE /* Assets.xcassets */,
+				B80E04F125C616BE009DBE34 /* RED-HAT-SMALL.png */,
+				B80E04F025C616BE009DBE34 /* RED-HAT-LARGE.png */,
 				B87350BF25C322FE0007A8FE /* BLUE-TWINKLE.png */,
 				B87350BE25C322FE0007A8FE /* WHITE-TWINKLE.png */,
 				B873509C25C258E50007A8FE /* BLUE-HAT-LARGE.png */,
@@ -301,6 +307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B87350C025C322FE0007A8FE /* WHITE-TWINKLE.png in Resources */,
+				B80E04F325C616BE009DBE34 /* RED-HAT-SMALL.png in Resources */,
 				B873504725C256330007A8FE /* LaunchScreen.storyboard in Resources */,
 				B87350B325C284C30007A8FE /* Rubik-SemiBold.ttf in Resources */,
 				B873509E25C258E50007A8FE /* WHITE-HAT-SMALL.png in Resources */,
@@ -312,6 +319,7 @@
 				B873509D25C258E50007A8FE /* WHITE-HAT-LARGE.png in Resources */,
 				B87350B125C284C30007A8FE /* Rubik-Regular.ttf in Resources */,
 				B87350B025C284C30007A8FE /* Rubik-ExtraBold.ttf in Resources */,
+				B80E04F225C616BE009DBE34 /* RED-HAT-LARGE.png in Resources */,
 				B80E04D125C33341009DBE34 /* GoogleService-Info.plist in Resources */,
 				B87350B425C284C30007A8FE /* Rubik-Black.ttf in Resources */,
 				B873509F25C258E50007A8FE /* BLUE-HAT-SMALL.png in Resources */,

@@ -203,7 +203,7 @@ class NotionCell: UITableViewCell {
             textView.topAnchor.constraint(equalTo:textTitle.bottomAnchor, constant: 0),
             textView.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
             textView.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
-            textView.heightAnchor.constraint(equalToConstant: 90),
+            textView.heightAnchor.constraint(equalToConstant: 160),
         ])
     }
     

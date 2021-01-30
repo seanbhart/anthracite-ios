@@ -14,6 +14,8 @@ struct Assets {
         static let notionIconWhiteLarge: String = "WHITE-HAT-LARGE.png"
         static let notionIconBlueSmall: String = "BLUE-HAT-SMALL.png"
         static let notionIconBlueLarge: String = "BLUE-HAT-LARGE.png"
+        static let notionIconRedSmall: String = "RED-HAT-SMALL.png"
+        static let notionIconRedLarge: String = "RED-HAT-LARGE.png"
         
         static let twinkleIconBlue: String = "BLUE-TWINKLE.png"
         static let twinkleIconWhite: String = "WHITE-TWINKLE.png"

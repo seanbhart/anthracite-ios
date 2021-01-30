@@ -10,6 +10,7 @@ import FirebaseFirestore
 protocol RepositoryDelegate {
     func dataUpdate()
     func showLogin()
+    func getLocalTickers() -> [Ticker]
 }
 
 class NotionRepository {
@@ -61,19 +62,47 @@ class NotionRepository {
                 
                 // Create a list of all tickers in the data
                 let tickerList = Set<String>(self.notions.flatMap({ $0.tickers.map({ $0 }) }))
+                
                 // Clear the ticker list and add new ticker summary data from the notions data
                 self.tickers.removeAll()
                 for t in tickerList {
-                    let sum = self.notions.filter({ $0.tickers.compactMap({ $0 }).contains(t) }).map({ $0.responseCount }).reduce(0, +)
+                    let responseCount = self.notions
+                        .filter({ $0.tickers.compactMap({ $0 }).contains(t) })
+                        .map({ $0.responseCount })
+                        .reduce(0, +)
+                    let wAvgSentiment = self.notions
+                        .filter({ $0.tickers.compactMap({ $0 }).contains(t) })
+                        .map({ $0.sentiment })
+                        .reduce(0, +) / Float(responseCount)
+                    let wAvgMagnitude = self.notions
+                        .filter({ $0.tickers.compactMap({ $0 }).contains(t) })
+                        .map({ $0.magnitude })
+                        .reduce(0, +) / Float(responseCount)
                     
                     // Filter the data so no long tickers appear in the list
                     // and any remove any ticker with less than 5 appearances
-                    if t.count < 5 && sum > 4 {
-                        self.tickers.append(Ticker(ticker: t, responseCount: sum))
-                    } else if sum < 5 {
+                    if t.count < 5 && responseCount > 4 {
+                        self.tickers.append(Ticker(ticker: t, responseCount: responseCount, wAvgSentiment: wAvgSentiment, wAvgMagnitude: wAvgMagnitude))
+                    } else if responseCount < 5 {
                         self.notions = self.notions.filter({ !$0.tickers.compactMap({ $0 }).contains(t) })
                     }
                 }
+                
+                var selectedTickers = [Ticker]()
+                // but save the currently selected Tickers to update the new list
+                if let parent = self.repoDelegate {
+                    selectedTickers = parent.getLocalTickers().filter({ $0.selected })
+                }
+                // Set tickers in the new list to selected if they were previously selected (if they exist in the new list)
+                self.tickers = self.tickers.map({
+                    let t = $0.ticker
+                    let existingTickers = selectedTickers.filter({ $0.ticker == t })
+                    if existingTickers.count > 0 {
+                        return existingTickers[0]
+                    } else {
+                        return $0
+                    }
+                })
                 
 //                print(self.notions.count)
                 if let parent = self.repoDelegate {
