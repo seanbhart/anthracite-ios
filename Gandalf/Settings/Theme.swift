@@ -19,8 +19,10 @@ extension Settings {
     struct Theme {
         // Light
         static let barStyle: UIBarStyle = .black
-        static let colorPrimary = UIColor(red: 15/255, green: 67/255, blue: 246/255, alpha: 1.0) //#0f43f6
-        static let colorPrimaryLight = UIColor(red: 22/255, green: 122/255, blue: 251/255, alpha: 1.0) //#167afb
+//        static let colorPrimary = UIColor(red: 15/255, green: 67/255, blue: 246/255, alpha: 1.0) //#0f43f6
+//        static let colorPrimaryLight = UIColor(red: 22/255, green: 122/255, blue: 251/255, alpha: 1.0) //#167afb
+        static let colorPrimary = UIColor(red: 43/255, green: 0/255, blue: 255/255, alpha: 1.0) //#2B00FF
+        static let colorPrimaryLight = UIColor(red: 0/255, green: 146/255, blue: 255/255, alpha: 1.0) //#0092FF
         static let colorSecondary = UIColor(red: 191/255, green: 2/255, blue: 106/255, alpha: 1.0) //#bf026a
         static let colorSecondaryLight = UIColor(red: 252/255, green: 0/255, blue: 126/255, alpha: 1.0) //#fc0080
         static let navBarBackground = UIColor.black
@@ -31,6 +33,9 @@ extension Settings {
         static let colorGrayLight = UIColor(red: 204/255, green: 204/255, blue: 204/255, alpha: 1.0) //#CCC
         static let colorGrayMedium = UIColor(red: 81/255, green: 81/255, blue: 81/255, alpha: 1.0) //#515151
         static let colorGrayDark = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0) //#262626
+        
+        static let colorGandalfDark = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
+        static let colorGandalfLight = UIColor(red: 73/255, green: 80/255, blue: 87/255, alpha: 1.0) //#495057
         
         // Dark
 //        static let barStyle: UIBarStyle = .black

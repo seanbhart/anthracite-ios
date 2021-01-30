@@ -9,6 +9,8 @@ import UIKit
 //import FirebaseAnalytics
 
 class NotionCell: UITableViewCell {
+    var id: String?
+    
     var containerView: UIView!
 //    var containerBorder: UIView!
     var labelsContainer: UIView!
@@ -19,6 +21,7 @@ class NotionCell: UITableViewCell {
     var progressViewLeft: ProgressViewRoundedLeft!
     var progressViewRight: ProgressViewRoundedRight!
     var textTitle: UILabel!
+    var ageLabel: UILabel!
     var textView: UITextView!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -75,6 +78,7 @@ class NotionCell: UITableViewCell {
         ])
         
         notionCountLabel = UILabel()
+        notionCountLabel.backgroundColor = Settings.Theme.background
         notionCountLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 26)
         notionCountLabel.textColor = Settings.Theme.text
         notionCountLabel.textAlignment = NSTextAlignment.right
@@ -87,7 +91,7 @@ class NotionCell: UITableViewCell {
             notionCountLabel.topAnchor.constraint(equalTo:labelsContainer.topAnchor, constant: 10),
             notionCountLabel.bottomAnchor.constraint(equalTo:labelsContainer.bottomAnchor, constant: 0),
             notionCountLabel.rightAnchor.constraint(equalTo:notionIcon.leftAnchor, constant: -10),
-            notionCountLabel.widthAnchor.constraint(equalToConstant: 100),
+            notionCountLabel.widthAnchor.constraint(equalToConstant: 70),
         ])
         
         titleLabel = UILabel()
@@ -103,7 +107,7 @@ class NotionCell: UITableViewCell {
             titleLabel.topAnchor.constraint(equalTo:labelsContainer.topAnchor, constant: 10),
             titleLabel.bottomAnchor.constraint(equalTo:labelsContainer.bottomAnchor, constant: 0),
             titleLabel.leftAnchor.constraint(equalTo:labelsContainer.leftAnchor, constant: 15),
-            titleLabel.rightAnchor.constraint(equalTo:labelsContainer.rightAnchor, constant: -10),
+            titleLabel.rightAnchor.constraint(equalTo:notionCountLabel.leftAnchor, constant: -5),
         ])
         
         progressViewContainer = UIView()
@@ -154,6 +158,22 @@ class NotionCell: UITableViewCell {
             progressViewRight.rightAnchor.constraint(equalTo:progressViewContainer.rightAnchor, constant: 0),
         ])
         
+        ageLabel = UILabel()
+        ageLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 12)
+        ageLabel.textColor = Settings.Theme.text
+        ageLabel.textAlignment = NSTextAlignment.right
+        ageLabel.numberOfLines = 1
+        ageLabel.text = ""
+        ageLabel.isUserInteractionEnabled = false
+        ageLabel.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(ageLabel)
+        NSLayoutConstraint.activate([
+            ageLabel.topAnchor.constraint(equalTo:progressViewContainer.bottomAnchor, constant: 10),
+            ageLabel.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
+            ageLabel.widthAnchor.constraint(equalToConstant: 70),
+            ageLabel.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        
         textTitle = UILabel()
         textTitle.font = UIFont(name: Assets.Fonts.Default.bold, size: 12)
         textTitle.textColor = Settings.Theme.text
@@ -166,7 +186,7 @@ class NotionCell: UITableViewCell {
         NSLayoutConstraint.activate([
             textTitle.topAnchor.constraint(equalTo:progressViewContainer.bottomAnchor, constant: 10),
             textTitle.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 15),
-            textTitle.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
+            textTitle.rightAnchor.constraint(equalTo:ageLabel.rightAnchor, constant: -5),
             textTitle.heightAnchor.constraint(equalToConstant: 20),
         ])
         

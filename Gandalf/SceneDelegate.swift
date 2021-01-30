@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         if #available(iOS 13.0, *) {
             let appearance = UINavigationBarAppearance()
-            appearance.backgroundColor = .black
+            appearance.backgroundColor = Settings.Theme.colorPrimary
             appearance.titleTextAttributes = [.foregroundColor: Settings.Theme.navBarText]
             appearance.largeTitleTextAttributes = [.foregroundColor: Settings.Theme.navBarText]
 
@@ -33,7 +33,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         } else {
 //            UINavigationBar.appearance().barStyle = .default
             UINavigationBar.appearance().tintColor = Settings.Theme.navBarText
-            UINavigationBar.appearance().barTintColor = .black
+            UINavigationBar.appearance().barTintColor = Settings.Theme.colorPrimary
             UINavigationBar.appearance().isTranslucent = false
         }
         

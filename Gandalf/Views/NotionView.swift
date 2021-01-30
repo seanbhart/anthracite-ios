@@ -14,30 +14,36 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     let viewName = "NotionView"
     
     var pageTitle = "Gandalf"
+    var filterOn = false
+    var localTickers = [Ticker]()
     var localNotions = [Notion]()
     var notionRepository: NotionRepository!
     
     var viewContainer: UIView!
     var headerContainer: UIView!
-//    var tickerContainer: UIView!
+    var tickerContainer: UIView!
+    var tickerTableView: UITableView!
+    let tickerTableCellIdentifier: String = "TickerCell"
     var notionContainer: UIView!
     var notionTitle: UILabel!
     var notionCountLabel: UILabel!
     var notionIcon: UIImageView!
     var filterButton: UIView!
-    var filterButtonGestureRecognizer: UITapGestureRecognizer!
     var filterIcon: UIImageView!
     var progressViewContainer: UIView!
     var progressViewLeft: ProgressViewRoundedLeft!
     var progressViewRight: ProgressViewRoundedRight!
     var refreshControl: UIRefreshControl!
-    let tableCellIdentifier: String = "NotionCell"
-    var tableView: UITableView!
+    let notionTableCellIdentifier: String = "NotionCell"
+    var notionTableView: UITableView!
+    var notionTableViewEmptyNote: UILabel!
     
 //    override var preferredStatusBarStyle: UIStatusBarStyle {
 //        print("\(viewName) - preferredStatusBarStyle")
 //        return .lightContent
 //    }
+    
+    private var observer: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,9 +55,9 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         barItemLogo.setTitle(pageTitle, for: .normal)
         barItemLogo.titleLabel?.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
         barItemLogo.titleLabel?.textAlignment = .left
-        barItemLogo.setTitleColor(Settings.Theme.colorPrimaryLight, for: .normal)
+        barItemLogo.setTitleColor(Settings.Theme.navBarText, for: .normal)
         let barItemProfile = UIButton(type: .custom)
-        barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.colorPrimaryLight, renderingMode: .alwaysOriginal), for: .normal)
+        barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.navBarText, renderingMode: .alwaysOriginal), for: .normal)
         barItemProfile.addTarget(self, action: #selector(loadProfileView), for: .touchUpInside)
         NSLayoutConstraint.activate([
             barItemLogo.widthAnchor.constraint(equalToConstant:120),
@@ -60,7 +66,23 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: barItemProfile)]
         self.navigationItem.hidesBackButton = true
-//        self.navigationItem.title = pageTitle
+        
+        observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
+            print("\(viewName) - willEnterForegroundNotification")
+            notionRepository.observeQuery()
+        }
+        observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
+            print("\(viewName) - didEnterBackgroundNotification")
+            notionRepository.stopObserving()
+        }
+//        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: Notification.Name.NSExtensionHostWillEnterForeground, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.NSExtensionHostDidEnterBackground, object: nil)
+    }
+    
+    deinit {
+        if let observer = observer {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -140,12 +162,29 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             notionCountLabel.leftAnchor.constraint(equalTo:notionIcon.rightAnchor, constant: 10),
             notionCountLabel.rightAnchor.constraint(equalTo:filterButton.leftAnchor, constant: -10),
         ])
-        
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo:headerContainer.bottomAnchor),
-            tableView.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
-            tableView.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
+            tickerContainer.topAnchor.constraint(equalTo:headerContainer.bottomAnchor),
+            tickerContainer.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
+            tickerContainer.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
+            tickerContainer.widthAnchor.constraint(equalToConstant: 120),
+        ])
+        NSLayoutConstraint.activate([
+            tickerTableView.topAnchor.constraint(equalTo:tickerContainer.topAnchor),
+            tickerTableView.leftAnchor.constraint(equalTo:tickerContainer.leftAnchor),
+            tickerTableView.rightAnchor.constraint(equalTo:tickerContainer.rightAnchor),
+            tickerTableView.bottomAnchor.constraint(equalTo:tickerContainer.bottomAnchor),
+        ])
+        NSLayoutConstraint.activate([
+            notionTableView.topAnchor.constraint(equalTo:headerContainer.bottomAnchor),
+            notionTableView.leftAnchor.constraint(equalTo:tickerContainer.rightAnchor),
+            notionTableView.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
+            notionTableView.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
+        ])
+        NSLayoutConstraint.activate([
+            notionTableViewEmptyNote.topAnchor.constraint(equalTo:notionTableView.topAnchor, constant: 40),
+            notionTableViewEmptyNote.leftAnchor.constraint(equalTo:viewContainer.leftAnchor, constant: 20),
+            notionTableViewEmptyNote.rightAnchor.constraint(equalTo:viewContainer.rightAnchor, constant: -20),
+            notionTableViewEmptyNote.heightAnchor.constraint(equalToConstant: 200),
         ])
         
         notionRepository.observeQuery()
@@ -168,6 +207,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         view.backgroundColor = Settings.Theme.background
         
         viewContainer = UIView()
+        viewContainer.backgroundColor = Settings.Theme.background
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(viewContainer)
         
@@ -175,6 +215,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         headerContainer.backgroundColor = Settings.Theme.colorPrimaryLight
         headerContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(headerContainer)
+        
+        let headerContainerGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(scrollTop))
+        headerContainerGestureRecognizer.numberOfTapsRequired = 1
+        headerContainer.addGestureRecognizer(headerContainerGestureRecognizer)
         
         notionContainer = UIView()
         notionContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -212,7 +256,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         headerContainer.addSubview(filterButton)
         
-        filterButtonGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(filterToggle))
+        let filterButtonGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(filterToggle))
         filterButtonGestureRecognizer.numberOfTapsRequired = 1
         filterButton.addGestureRecognizer(filterButtonGestureRecognizer)
         
@@ -232,7 +276,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         progressViewLeft.progressViewStyle = .bar
         progressViewLeft.trackTintColor = .clear //Settings.Theme.colorGrayLight.withAlphaComponent(0.2)
         progressViewLeft.progressTintColor = Settings.Theme.colorGrayDark
-        progressViewLeft.progress = 0.5
+        progressViewLeft.progress = 1
         progressViewLeft.translatesAutoresizingMaskIntoConstraints = false
         progressViewContainer.addSubview(progressViewLeft)
         
@@ -240,47 +284,83 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         progressViewRight.progressViewStyle = .bar
         progressViewRight.trackTintColor = Settings.Theme.colorGrayDark
         progressViewRight.progressTintColor = .clear //Settings.Theme.colorGrayLight.withAlphaComponent(0.2)
-        progressViewRight.progress = 0.5
+        progressViewRight.progress = 0
         progressViewRight.translatesAutoresizingMaskIntoConstraints = false
         progressViewContainer.addSubview(progressViewRight)
+        
+        tickerContainer = UIView()
+        tickerContainer.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(tickerContainer)
+        
+        tickerTableView = UITableView()
+        tickerTableView.dataSource = self
+        tickerTableView.delegate = self
+        tickerTableView.dragInteractionEnabled = true
+        tickerTableView.register(TickerCell.self, forCellReuseIdentifier: tickerTableCellIdentifier)
+        tickerTableView.separatorStyle = .none
+        tickerTableView.backgroundColor = .clear
+//        tickerTableView.rowHeight = UITableView.automaticDimension
+//        tickerTableView.estimatedRowHeight = UITableView.automaticDimension
+        tickerTableView.estimatedRowHeight = 0
+        tickerTableView.estimatedSectionHeaderHeight = 0
+        tickerTableView.estimatedSectionFooterHeight = 0
+        tickerTableView.isScrollEnabled = true
+        tickerTableView.bounces = true
+        tickerTableView.alwaysBounceVertical = true
+        tickerTableView.showsVerticalScrollIndicator = false
+        tickerTableView.isUserInteractionEnabled = true
+        tickerTableView.allowsSelection = true
+//        tickerTableView.delaysContentTouches = false
+        tickerTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+//        tickerTableView.insetsContentViewsToSafeArea = true
+        tickerTableView.translatesAutoresizingMaskIntoConstraints = false
+        tickerContainer.addSubview(tickerTableView)
         
         refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshTableData), for: .valueChanged)
         
-        tableView = UITableView()
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.refreshControl = refreshControl
-        tableView.dragInteractionEnabled = true
-        tableView.register(NotionCell.self, forCellReuseIdentifier: tableCellIdentifier)
-        tableView.separatorStyle = .none
-        tableView.backgroundColor = Settings.Theme.background
-//        tableView.rowHeight = UITableView.automaticDimension
-//        tableView.estimatedRowHeight = UITableView.automaticDimension
-        tableView.isScrollEnabled = true
-        tableView.bounces = true
-        tableView.alwaysBounceVertical = true
-        tableView.showsVerticalScrollIndicator = false
-        tableView.isUserInteractionEnabled = true
-        tableView.allowsSelection = true
-//        tableView.delaysContentTouches = false
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-//        tableView.insetsContentViewsToSafeArea = true
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(tableView)
+        notionTableView = UITableView()
+        notionTableView.dataSource = self
+        notionTableView.delegate = self
+        notionTableView.refreshControl = refreshControl
+        notionTableView.dragInteractionEnabled = true
+        notionTableView.register(NotionCell.self, forCellReuseIdentifier: notionTableCellIdentifier)
+        notionTableView.separatorStyle = .none
+        notionTableView.backgroundColor = .clear
+//        notionTableView.rowHeight = UITableView.automaticDimension
+//        notionTableView.estimatedRowHeight = UITableView.automaticDimension
+        notionTableView.estimatedRowHeight = 0
+        notionTableView.estimatedSectionHeaderHeight = 0
+        notionTableView.estimatedSectionFooterHeight = 0
+        notionTableView.isScrollEnabled = true
+        notionTableView.bounces = true
+        notionTableView.alwaysBounceVertical = true
+        notionTableView.showsVerticalScrollIndicator = false
+        notionTableView.isUserInteractionEnabled = true
+        notionTableView.allowsSelection = true
+//        notionTableView.delaysContentTouches = false
+        notionTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+//        notionTableView.insetsContentViewsToSafeArea = true
+        notionTableView.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(notionTableView)
         
-//        // If a user is not logged in, display the Login screen
-//        if let firUser = Auth.auth().currentUser {
-//            print("\(viewName) - currentUser: \(firUser.uid)")
-//            loadLists()
-//        } else {
-//            self.presentSheet(with: ProfileView())
-//            loadLists()
-//        }
+        notionTableViewEmptyNote = UILabel()
+        notionTableViewEmptyNote.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
+        notionTableViewEmptyNote.textColor = Settings.Theme.text
+        notionTableViewEmptyNote.textAlignment = NSTextAlignment.center
+        notionTableViewEmptyNote.numberOfLines = 2
+        notionTableViewEmptyNote.text = "Please sign in\nto load data."
+        notionTableViewEmptyNote.isUserInteractionEnabled = false
+        notionTableViewEmptyNote.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(notionTableViewEmptyNote)
+        notionTableViewEmptyNote.isHidden = true
         
-//        notionCollection = LocalCollection(query: Settings.Firebase.db().collection("notion")) { [unowned self] (changes) in
-//            print("NOTION CHANGES: \(changes)")
-//        }
+        // If a user is not logged in, display the Login screen
+        if let firUser = Auth.auth().currentUser {
+            print("\(viewName) - currentUser: \(firUser.uid)")
+        } else {
+            self.presentSheet(with: ProfileView())
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -288,13 +368,285 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         // Dispose of any resources that can be recreated.
     }
     
+//    // TODO: Detect LoginView dismissal to refresh data
+//    public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+//        print("DISMISS")
+//    }
+    
     
     // MARK: -CUSTOM DELEGATE METHODS
     
+    func showLogin() {
+        self.presentSheet(with: ProfileView())
+    }
     func dataUpdate() {
+        handleData()
+    }
+    
+    // Returned Set is ProgressBar values: Left, Right
+    func progressValues(sentiment: Float, magnitude: Float) -> Set<Float> {
+        if sentiment > 0 {
+            return Set(arrayLiteral: 0, sentiment)
+        } else if sentiment < 0 {
+            return Set(arrayLiteral: 0 - abs(sentiment), 0)
+        } else {
+            return Set(arrayLiteral: 0, 1)
+        }
+    }
+    
+    
+    // MARK: -GESTURE RECOGNIZERS
+    
+    @objc func loadProfileView(_ sender: UITapGestureRecognizer) {
+        print("\(viewName) - loadProfileView")
+        self.presentSheet(with: ProfileView())
+    }
+    @objc func filterToggle(_ sender: UITapGestureRecognizer) {
+        print("\(viewName) - filterToggle")
+        if !filterOn {
+            // Turn on the filter
+            filterOn = true
+            filterIcon.image = UIImage(named: Assets.Images.twinkleIconWhite)
+            localNotions = notionRepository.notions.sorted(by: { $0.responseCount > $1.responseCount })
+        } else {
+            filterOn = false
+            filterIcon.image = UIImage(named: Assets.Images.twinkleIconBlue)
+            localNotions = notionRepository.notions.sorted(by: { $0.created > $1.created })
+        }
+        notionTableView.reloadData()
+    }
+    @objc func scrollTop(_ sender: UITapGestureRecognizer) {
+        print("\(viewName) - scrollTop")
+        notionTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+    }
+    
+    
+    // MARK: -TABLE VIEW DATA SOURCE
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if tableView == notionTableView {
+            if localNotions.count > 0 {
+                notionTableViewEmptyNote.isHidden = true
+            } else if Auth.auth().currentUser == nil {
+                notionTableViewEmptyNote.isHidden = false
+            }
+//            print("row count: \(localNotions.count)")
+            return localNotions.count
+            
+        } else if tableView == tickerTableView {
+            return localTickers.count
+        }
+        return 0
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return UITableView.automaticDimension
+        if tableView == notionTableView {
+            return 250
+            
+        } else if tableView == tickerTableView {
+            return 130
+        }
+        return 50
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if tableView == notionTableView {
+            let cell = tableView.dequeueReusableCell(withIdentifier: notionTableCellIdentifier, for: indexPath) as! NotionCell
+            cell.selectionStyle = .none
+            
+            let notion = localNotions[indexPath.row]
+            cell.id = notion.id
+            cell.textView.text = notion.text //String(notion.sentiment) + ", " + String(notion.magnitude)
+            
+            let numberFormatter = NumberFormatter()
+            numberFormatter.numberStyle = .decimal
+            let formattedSum = numberFormatter.string(from: NSNumber(value: notion.responseCount))
+            cell.notionCountLabel.text = formattedSum
+            
+            if notion.tickers.count > 0 {
+                let sortedTickers = Array(Set(notion.tickers.sorted(by: { $0 < $1 })))
+                var titleText = "$" + sortedTickers[0]
+                for i in 1..<sortedTickers.count {
+                    titleText += ", $" + sortedTickers[i]
+                }
+                cell.titleLabel.text = titleText
+            }
+            if notion.categories.count > 0 {
+                let sortedCategories = notion.categories.sorted(by: { $0 < $1 })
+                var textTitle = sortedCategories[0]
+                for i in 1..<sortedCategories.count {
+                    textTitle += ", " + sortedCategories[i]
+                }
+                cell.textTitle.text = textTitle
+            } else {
+                cell.textTitle.text = notion.host
+            }
+            
+            let format = DateFormatter()
+            format.timeZone = .current
+            format.dateFormat = "h:mm a"
+            format.amSymbol = "AM"
+            format.pmSymbol = "PM"
+            let dateString = format.string(from: Date(timeIntervalSince1970: Double(notion.created)))
+            cell.ageLabel.text = dateString
+            
+            if notion.sentiment > 0 {
+                cell.progressViewLeft.progress = 1
+                cell.progressViewRight.progress = notion.sentiment
+            } else if notion.sentiment < 0 {
+                cell.progressViewLeft.progress = 1 - abs(notion.sentiment)
+                cell.progressViewRight.progress = 0
+            } else {
+                cell.progressViewLeft.progress = 0
+                cell.progressViewRight.progress = 1
+            }
+            
+            if notion.magnitude > 1 {
+                cell.progressViewLeft.trackTintColor = Settings.Theme.colorSecondary
+                cell.progressViewRight.progressTintColor = Settings.Theme.colorPrimary
+            } else if notion.magnitude > 0.1 {
+                cell.progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.colorSecondaryLight, color2: Settings.Theme.colorSecondary, percent: Double(notion.magnitude))
+                cell.progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.colorPrimaryLight, color2: Settings.Theme.colorPrimary, percent: Double(notion.magnitude))
+            } else {
+                cell.progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.colorSecondaryLight, color2: Settings.Theme.colorSecondary, percent: 0.1)
+                cell.progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.colorPrimaryLight, color2: Settings.Theme.colorPrimary, percent: 0.1)
+            }
+            
+            return cell
+            
+        } else if tableView == tickerTableView {
+            let cell = tableView.dequeueReusableCell(withIdentifier: tickerTableCellIdentifier, for: indexPath) as! TickerCell
+            cell.selectionStyle = .none
+            if indexPath.row == 0 {
+                cell.containerBorder.layer.borderColor = UIColor.clear.cgColor
+            }
+            let cellTicker = localTickers[indexPath.row]
+            if let t = cellTicker.ticker {
+                cell.title.text = "$" + t
+                
+                let numberFormatter = NumberFormatter()
+                numberFormatter.numberStyle = .decimal
+                let formattedSum = numberFormatter.string(from: NSNumber(value: cellTicker.responseCount))
+                cell.countText.text = formattedSum
+            }
+            return cell
+        }
+        return UITableViewCell()
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if tableView == notionTableView {
+            print("NOTION ROW \(indexPath.row)")
+            
+        } else if tableView == tickerTableView {
+            print("TICKER ROW \(indexPath.row)")
+            if localTickers[indexPath.row].selected {
+                localTickers[indexPath.row].selected = false
+            } else {
+                localTickers[indexPath.row].selected = true
+            }
+        }
+    }
+
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    }
+
+    func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+    }
+
+    func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+    }
+    
+//    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        let action = UIContextualAction(style: .normal, title: "Not\nRelevant") { [weak self] (action, view, completionHandler) in
+////            self?.handleMarkAsFavourite()
+//            print("DELETE ROW: \(indexPath.row)")
+//            completionHandler(true)
+//        }
+//        action.backgroundColor = .systemBlue
+//        return UISwipeActionsConfiguration(actions: [action])
+//    }
+//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+//        let hide = UIContextualAction(style: .destructive, title: "Not\nRelevant") { [weak self] (action, view, completionHandler) in
+////            self?.handleMarkAsFavourite()
+//            print("HIDE ROW: \(indexPath.row)")
+//            completionHandler(true)
+//        }
+//        hide.backgroundColor = Settings.Theme.colorSecondary
+//        return UISwipeActionsConfiguration(actions: [hide])
+//    }
+    
+
+    // MARK: -SCROLL VIEW DELEGATE METHODS
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+//        if scrollView == notionTableView {
+//            print("notionTableView OFFSET: \(notionTableView.contentOffset), SIZE: \(notionTableView.contentSize)")
+//        } else if scrollView == tickerTableView {
+//            print("tickerTableView OFFSET: \(notionTableView.contentOffset), SIZE: \(notionTableView.contentSize)")
+//        }
+    }
+    
+    
+    // MARK: -REFRESH CONTROL
+    
+    @objc private func refreshTableData(_ sender: Any) {
+        print("refreshTableData")
+        if let firUser = Auth.auth().currentUser {
+            print("\(viewName) - currentUser: \(firUser.uid)")
+        } else {
+            self.presentSheet(with: ProfileView())
+        }
+        
+        // Data is refreshed automatically - pause before dismissing the spinner to convey this to the user.
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+            self.refreshControl.endRefreshing()
+        }
+    }
+    
+    
+    func handleData() {
+        // Get the ids of the cells currently in view
+        // then scroll to those cells after the update
+//        var topId = ""
+//        if tableView.visibleCells.count > 0 {
+//            if let cell = tableView.dequeueReusableCell(withIdentifier: tableCellIdentifier, for: IndexPath(row: tableView.visibleCells.startIndex, section: 0)) as? NotionCell {
+//                print("TOP CELL ID: \(cell.id)")
+//                if let id = cell.id {
+//                    topId = id
+//                }
+//            }
+//        }
+//        print("topId: \(topId)")
+        
+//        let oldCount = localNotions.count
+//        print(oldCount)
+        
+        // Sort the tickers based on responses
+        localTickers.removeAll()
+        localTickers = notionRepository.tickers.sorted(by: { $0.responseCount > $1.responseCount })
+        
         // Sort the data based on selection
         localNotions.removeAll()
-        localNotions = notionRepository.notions.sorted(by: { $0.created > $1.created })
+        if filterOn {
+            localNotions = notionRepository.notions.sorted(by: { $0.responseCount > $1.responseCount })
+        } else {
+            localNotions = notionRepository.notions.sorted(by: { $0.created > $1.created })
+        }
+        
+        // Update the notion title to the timestamp of the earliest Notion
+        let format = DateFormatter()
+        format.timeZone = .current
+        format.dateFormat = "h:mm a"
+        format.amSymbol = "AM"
+        format.pmSymbol = "PM"
+        let dateString = format.string(from: Date(timeIntervalSince1970: Double(localNotions[localNotions.count-1].created)))
+        notionTitle.text = "SINCE  " + dateString
         
         // Refresh the header values
         let responseCount = localNotions
@@ -336,144 +688,38 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.colorPrimaryLight, color2: Settings.Theme.colorPrimary, percent: 0.1)
         }
         
-        tableView.reloadData()
-    }
-    
-    // Returned Set is ProgressBar values: Left, Right
-    func progressValues(sentiment: Float, magnitude: Float) -> Set<Float> {
-        if sentiment > 0 {
-            return Set(arrayLiteral: 0, sentiment)
-        } else if sentiment < 0 {
-            return Set(arrayLiteral: 0 - abs(sentiment), 0)
-        } else {
-            return Set(arrayLiteral: 0, 1)
-        }
-    }
-    
-    
-    // MARK: -GESTURE RECOGNIZERS
-    
-    @objc func loadProfileView(_ sender: UITapGestureRecognizer) {
-        print("\(viewName) - loadProfileView")
-//        self.presentSheet(with: ProfileView())
-    }
-    @objc func filterToggle(_ sender: UITapGestureRecognizer) {
-        print("\(viewName) - filterToggle")
-//        self.presentSheet(with: ProfileView())
-    }
-    
-    
-    // MARK: -TABLE VIEW DATA SOURCE
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("row count: \(localNotions.count)")
-        return localNotions.count
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 175
-//        return UITableView.automaticDimension
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: tableCellIdentifier, for: indexPath) as! NotionCell
-        let notion = localNotions[indexPath.row]
-        cell.textView.text = notion.text //String(notion.sentiment) + ", " + String(notion.magnitude)
-        cell.notionCountLabel.text = String(notion.responseCount)
-        if notion.tickers.count > 0 {
-            let sortedTickers = Array(Set(notion.tickers.sorted(by: { $0 < $1 })))
-            var titleText = "$" + sortedTickers[0]
-            for i in 1..<sortedTickers.count {
-                titleText += ", $" + sortedTickers[i]
-            }
-            cell.titleLabel.text = titleText
-        }
-        if notion.categories.count > 0 {
-            let sortedCategories = notion.categories.sorted(by: { $0 < $1 })
-            var textTitle = sortedCategories[0]
-            for i in 1..<sortedCategories.count {
-                textTitle += ", " + sortedCategories[i]
-            }
-            cell.textTitle.text = textTitle
-        } else {
-            cell.textTitle.text = notion.host
-        }
-        if notion.sentiment > 0 {
-            cell.progressViewLeft.progress = 1
-            cell.progressViewRight.progress = notion.sentiment
-        } else if notion.sentiment < 0 {
-            cell.progressViewLeft.progress = 1 - abs(notion.sentiment)
-            cell.progressViewRight.progress = 0
-        } else {
-            cell.progressViewLeft.progress = 0
-            cell.progressViewRight.progress = 1
-        }
-        
-        if notion.magnitude > 1 {
-            cell.progressViewLeft.trackTintColor = Settings.Theme.colorSecondary
-            cell.progressViewRight.progressTintColor = Settings.Theme.colorPrimary
-        } else if notion.magnitude > 0.1 {
-            cell.progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.colorSecondaryLight, color2: Settings.Theme.colorSecondary, percent: Double(notion.magnitude))
-            cell.progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.colorPrimaryLight, color2: Settings.Theme.colorPrimary, percent: Double(notion.magnitude))
-        } else {
-            cell.progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.colorSecondaryLight, color2: Settings.Theme.colorSecondary, percent: 0.1)
-            cell.progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.colorPrimaryLight, color2: Settings.Theme.colorPrimary, percent: 0.1)
-        }
-        
-        return cell
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("NOTION ROW \(indexPath.row)")
-    }
-
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-    }
-
-    func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
-    }
-
-    func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
-    }
-    
-//    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        let action = UIContextualAction(style: .normal, title: "Not\nRelevant") { [weak self] (action, view, completionHandler) in
-////            self?.handleMarkAsFavourite()
-//            print("DELETE ROW: \(indexPath.row)")
-//            completionHandler(true)
+//        // Before updating, find the index of the notion last in
+//        // top view and scroll to it after updating
+//        if let lastTopIndex = localNotions.firstIndex(where: { $0.id == topId }) {
+//            print("scroll to last index: \(lastTopIndex)")
+//            let newIndexPath = IndexPath(row: lastTopIndex, section: 0)
+//            tableView.reloadData()
+//            tableView.scrollToRow(at: newIndexPath, at: .top, animated: true)
+//        } else {
+//            print("last index not found")
+//            tableView.reloadData()
 //        }
-//        action.backgroundColor = .systemBlue
-//        return UISwipeActionsConfiguration(actions: [action])
-//    }
-//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        let hide = UIContextualAction(style: .destructive, title: "Not\nRelevant") { [weak self] (action, view, completionHandler) in
-////            self?.handleMarkAsFavourite()
-//            print("HIDE ROW: \(indexPath.row)")
-//            completionHandler(true)
+        
+//        if localNotions.count - oldCount > 0 && oldCount > 0 {
+//            var initialOffset = notionTableView.contentOffset.y
+//            if initialOffset < 0 {
+//                initialOffset = 0
+//            }
+//            print("count diff: \(localNotions.count - oldCount), offset: \(initialOffset)")
+//            notionTableView.reloadData()
+//            notionTableView.scrollToRow(at: IndexPath(row: localNotions.count - oldCount - 1, section: 0), at: .top, animated: false)
+//            notionTableView.contentOffset.y += initialOffset
+//        } else {
+//            notionTableView.reloadData()
 //        }
-//        hide.backgroundColor = Settings.Theme.colorSecondary
-//        return UISwipeActionsConfiguration(actions: [hide])
-//    }
-    
-
-    // MARK: -SCROLL VIEW DELEGATE METHODS
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    }
-    
-    
-    // MARK: -REFRESH CONTROL
-    
-    @objc private func refreshTableData(_ sender: Any) {
-        print("refreshTableData")
-        // Data is refreshed automatically - pause before dismissing the spinner to convey this to the user.
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
-            self.refreshControl.endRefreshing()
-        }
+        notionTableView.reloadData()
+        tickerTableView.reloadData()
+        
+//        let beforeContentSize = tableView.contentSize
+//        let beforeContentOffset = tableView.contentOffset
+//        tableView.reloadData()
+//        tableView.contentOffset = CGPoint(x: tableView.contentOffset.x, y: tableView.contentOffset.y + tableView.contentSize.height - beforeContentSize.height)
+//        print("BEFORE SIZE: \(beforeContentSize), AFTER SIZE: \(tableView.contentSize), BEFORE OFFSET: \(beforeContentOffset), AFTER OFFSET: \(tableView.contentOffset)")
     }
 }
 

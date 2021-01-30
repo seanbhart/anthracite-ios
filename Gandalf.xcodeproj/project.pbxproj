@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		017E03993A6DF74AD31C6F3C /* Pods_Gandalf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */; };
+		B80E04C325C32A96009DBE34 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E04C225C32A96009DBE34 /* ProfileView.swift */; };
+		B80E04D125C33341009DBE34 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B80E04D025C33341009DBE34 /* GoogleService-Info.plist */; };
 		B873503B25C256320007A8FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503A25C256320007A8FE /* AppDelegate.swift */; };
 		B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503C25C256320007A8FE /* SceneDelegate.swift */; };
 		B873504125C256330007A8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504025C256330007A8FE /* Assets.xcassets */; };
 		B873504425C256330007A8FE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504325C256330007A8FE /* Preview Assets.xcassets */; };
 		B873504725C256330007A8FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B873504525C256330007A8FE /* LaunchScreen.storyboard */; };
-		B873506825C257140007A8FE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B873506725C257140007A8FE /* GoogleService-Info.plist */; };
 		B873508225C258BE0007A8FE /* TickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507C25C258BC0007A8FE /* TickerView.swift */; };
 		B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507D25C258BC0007A8FE /* ViewExtensions.swift */; };
 		B873508425C258BE0007A8FE /* NotionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507E25C258BD0007A8FE /* NotionView.swift */; };
@@ -39,7 +40,6 @@
 		B87350B425C284C30007A8FE /* Rubik-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350AD25C284C30007A8FE /* Rubik-Black.ttf */; };
 		B87350B525C284C30007A8FE /* Rubik-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B87350AE25C284C30007A8FE /* Rubik-Bold.ttf */; };
 		B87350B825C2A2D00007A8FE /* Ticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350B725C2A2D00007A8FE /* Ticker.swift */; };
-		B87350BB25C2A2F00007A8FE /* TickerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350BA25C2A2F00007A8FE /* TickerRepository.swift */; };
 		B87350C025C322FE0007A8FE /* WHITE-TWINKLE.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BE25C322FE0007A8FE /* WHITE-TWINKLE.png */; };
 		B87350C125C322FE0007A8FE /* BLUE-TWINKLE.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BF25C322FE0007A8FE /* BLUE-TWINKLE.png */; };
 /* End PBXBuildFile section */
@@ -47,6 +47,8 @@
 /* Begin PBXFileReference section */
 		0F9AFD54160E9D644FB2E94A /* Pods-Gandalf.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gandalf.release.xcconfig"; path = "Target Support Files/Pods-Gandalf/Pods-Gandalf.release.xcconfig"; sourceTree = "<group>"; };
 		307645F881FE0E958AF461D8 /* Pods-Gandalf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gandalf.debug.xcconfig"; path = "Target Support Files/Pods-Gandalf/Pods-Gandalf.debug.xcconfig"; sourceTree = "<group>"; };
+		B80E04C225C32A96009DBE34 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		B80E04D025C33341009DBE34 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B873503725C256320007A8FE /* Gandalf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gandalf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B873503A25C256320007A8FE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B873503C25C256320007A8FE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -55,7 +57,6 @@
 		B873504625C256330007A8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B873504825C256330007A8FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B873505025C2565F0007A8FE /* Gandalf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Gandalf.entitlements; sourceTree = "<group>"; };
-		B873506725C257140007A8FE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B873507C25C258BC0007A8FE /* TickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TickerView.swift; sourceTree = "<group>"; };
 		B873507D25C258BC0007A8FE /* ViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		B873507E25C258BD0007A8FE /* NotionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotionView.swift; sourceTree = "<group>"; };
@@ -81,7 +82,6 @@
 		B87350AD25C284C30007A8FE /* Rubik-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Black.ttf"; sourceTree = "<group>"; };
 		B87350AE25C284C30007A8FE /* Rubik-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Rubik-Bold.ttf"; sourceTree = "<group>"; };
 		B87350B725C2A2D00007A8FE /* Ticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticker.swift; sourceTree = "<group>"; };
-		B87350BA25C2A2F00007A8FE /* TickerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TickerRepository.swift; sourceTree = "<group>"; };
 		B87350BE25C322FE0007A8FE /* WHITE-TWINKLE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "WHITE-TWINKLE.png"; sourceTree = "<group>"; };
 		B87350BF25C322FE0007A8FE /* BLUE-TWINKLE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BLUE-TWINKLE.png"; sourceTree = "<group>"; };
 		C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Gandalf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -147,7 +147,7 @@
 				B873503A25C256320007A8FE /* AppDelegate.swift */,
 				B873503C25C256320007A8FE /* SceneDelegate.swift */,
 				B873504525C256330007A8FE /* LaunchScreen.storyboard */,
-				B873506725C257140007A8FE /* GoogleService-Info.plist */,
+				B80E04D025C33341009DBE34 /* GoogleService-Info.plist */,
 				B873504825C256330007A8FE /* Info.plist */,
 				B873504225C256330007A8FE /* Preview Content */,
 			);
@@ -184,7 +184,6 @@
 				B873508A25C258C50007A8FE /* Notion.swift */,
 				B873508925C258C50007A8FE /* NotionRepository.swift */,
 				B87350B725C2A2D00007A8FE /* Ticker.swift */,
-				B87350BA25C2A2F00007A8FE /* TickerRepository.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -200,12 +199,13 @@
 		B873507925C258840007A8FE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B873507D25C258BC0007A8FE /* ViewExtensions.swift */,
 				B873508125C258BE0007A8FE /* CustomProgressView.swift */,
 				B873507F25C258BD0007A8FE /* NotionCell.swift */,
 				B873507E25C258BD0007A8FE /* NotionView.swift */,
 				B873508025C258BD0007A8FE /* TickerCell.swift */,
 				B873507C25C258BC0007A8FE /* TickerView.swift */,
-				B873507D25C258BC0007A8FE /* ViewExtensions.swift */,
+				B80E04C225C32A96009DBE34 /* ProfileView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -304,7 +304,6 @@
 				B873504725C256330007A8FE /* LaunchScreen.storyboard in Resources */,
 				B87350B325C284C30007A8FE /* Rubik-SemiBold.ttf in Resources */,
 				B873509E25C258E50007A8FE /* WHITE-HAT-SMALL.png in Resources */,
-				B873506825C257140007A8FE /* GoogleService-Info.plist in Resources */,
 				B87350B525C284C30007A8FE /* Rubik-Bold.ttf in Resources */,
 				B87350C125C322FE0007A8FE /* BLUE-TWINKLE.png in Resources */,
 				B87350B225C284C30007A8FE /* Rubik-Medium.ttf in Resources */,
@@ -313,6 +312,7 @@
 				B873509D25C258E50007A8FE /* WHITE-HAT-LARGE.png in Resources */,
 				B87350B125C284C30007A8FE /* Rubik-Regular.ttf in Resources */,
 				B87350B025C284C30007A8FE /* Rubik-ExtraBold.ttf in Resources */,
+				B80E04D125C33341009DBE34 /* GoogleService-Info.plist in Resources */,
 				B87350B425C284C30007A8FE /* Rubik-Black.ttf in Resources */,
 				B873509F25C258E50007A8FE /* BLUE-HAT-SMALL.png in Resources */,
 				B873504125C256330007A8FE /* Assets.xcassets in Resources */,
@@ -372,7 +372,6 @@
 				B873508525C258BE0007A8FE /* NotionCell.swift in Sources */,
 				B873508B25C258C50007A8FE /* NotionRepository.swift in Sources */,
 				B873509425C258D60007A8FE /* Settings.swift in Sources */,
-				B87350BB25C2A2F00007A8FE /* TickerRepository.swift in Sources */,
 				B873508C25C258C50007A8FE /* Notion.swift in Sources */,
 				B873503B25C256320007A8FE /* AppDelegate.swift in Sources */,
 				B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */,
@@ -381,6 +380,7 @@
 				B87350A525C2812C0007A8FE /* Assets.swift in Sources */,
 				B87350B825C2A2D00007A8FE /* Ticker.swift in Sources */,
 				B873508625C258BE0007A8FE /* TickerCell.swift in Sources */,
+				B80E04C325C32A96009DBE34 /* ProfileView.swift in Sources */,
 				B873508F25C258CF0007A8FE /* LocalCollection.swift in Sources */,
 				B873509325C258D60007A8FE /* Theme.swift in Sources */,
 				B873508725C258BE0007A8FE /* CustomProgressView.swift in Sources */,

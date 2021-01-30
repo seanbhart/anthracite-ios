@@ -9,14 +9,11 @@ import UIKit
 //import FirebaseAnalytics
 
 class TickerCell: UITableViewCell {
-    let bgColor = UIColor.white
-    
     var containerView: UIView!
     var containerBorder: UIView!
     var title: UILabel!
-    var itemImage: UIImageView!
-    var progressViewContainer: UIView!
-    var progressView: UIProgressView!
+    var notionIcon: UIImageView!
+    var countText: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -25,6 +22,7 @@ class TickerCell: UITableViewCell {
         
         // Create a container and set the frame (auto layout / constraints don't work in UICollectionViewCell?)
         containerView = UIView()
+        containerView.backgroundColor = Settings.Theme.background
         containerView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(containerView)
         NSLayoutConstraint.activate([
@@ -35,8 +33,7 @@ class TickerCell: UITableViewCell {
         ])
         
         containerBorder = UIView()
-        containerBorder.backgroundColor = bgColor
-        containerBorder.layer.borderColor = Settings.Theme.colorGrayLight.cgColor
+        containerBorder.layer.borderColor = Settings.Theme.colorGrayDark.cgColor
         containerBorder.layer.borderWidth = 1
         containerBorder.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(containerBorder)
@@ -48,9 +45,9 @@ class TickerCell: UITableViewCell {
         ])
         
         title = UILabel()
-//        title.font = UIFont(name: Settings.Fonts.Regular.Bold, size: 16)
+        title.font = UIFont(name: Assets.Fonts.Default.black, size: 20)
         title.textColor = Settings.Theme.text
-        title.textAlignment = NSTextAlignment.left
+        title.textAlignment = NSTextAlignment.center
         title.numberOfLines = 1
         title.text = ""
         title.isUserInteractionEnabled = false
@@ -58,45 +55,38 @@ class TickerCell: UITableViewCell {
         containerView.addSubview(title)
         NSLayoutConstraint.activate([
             title.topAnchor.constraint(equalTo:containerView.topAnchor, constant: 10),
-            title.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
-            title.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
-            title.heightAnchor.constraint(equalToConstant:50),
+            title.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 5),
+            title.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -5),
+            title.heightAnchor.constraint(equalToConstant:30),
         ])
         
-        itemImage = UIImageView()
-        itemImage.contentMode = UIView.ContentMode.scaleAspectFit
-        itemImage.clipsToBounds = true
-        itemImage.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(itemImage)
+        notionIcon = UIImageView()
+        notionIcon.image = UIImage(named: Assets.Images.notionIconBlueLarge)
+        notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        notionIcon.clipsToBounds = true
+        notionIcon.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(notionIcon)
         NSLayoutConstraint.activate([
-            itemImage.topAnchor.constraint(equalTo:title.bottomAnchor, constant: 10),
-            itemImage.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
-            itemImage.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
-            itemImage.bottomAnchor.constraint(equalTo:containerView.bottomAnchor, constant: -50),
+            notionIcon.topAnchor.constraint(equalTo:title.bottomAnchor, constant: 0),
+            notionIcon.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
+            notionIcon.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
+            notionIcon.heightAnchor.constraint(equalToConstant: 50),
         ])
         
-        progressViewContainer = UIView()
-        progressViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(progressViewContainer)
+        countText = UILabel()
+        countText.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 20)
+        countText.textColor = Settings.Theme.text
+        countText.textAlignment = NSTextAlignment.center
+        countText.numberOfLines = 1
+        countText.text = ""
+        countText.isUserInteractionEnabled = false
+        countText.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(countText)
         NSLayoutConstraint.activate([
-            progressViewContainer.topAnchor.constraint(equalTo:itemImage.bottomAnchor, constant: 10),
-            progressViewContainer.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
-            progressViewContainer.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
-            progressViewContainer.bottomAnchor.constraint(equalTo:containerView.bottomAnchor, constant: 10),
-        ])
-        
-        progressView = UIProgressView()
-        progressView.progressViewStyle = .default
-        progressView.trackTintColor = Settings.Theme.colorGrayLight
-        progressView.progressTintColor = Settings.Theme.colorPrimary
-        progressView.progress = 0.5
-        progressView.translatesAutoresizingMaskIntoConstraints = false
-        progressViewContainer.addSubview(progressView)
-        NSLayoutConstraint.activate([
-            progressView.topAnchor.constraint(equalTo:progressViewContainer.topAnchor, constant: 10),
-            progressView.leftAnchor.constraint(equalTo:progressViewContainer.leftAnchor, constant: 30),
-            progressView.rightAnchor.constraint(equalTo:progressViewContainer.rightAnchor, constant: -30),
-            progressView.heightAnchor.constraint(equalToConstant: 2),
+            countText.topAnchor.constraint(equalTo:notionIcon.bottomAnchor, constant: 0),
+            countText.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 5),
+            countText.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -5),
+            countText.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -5)
         ])
     }
     
@@ -120,9 +110,9 @@ class TickerCell: UITableViewCell {
 //        print("SELECTED SETTINGS ADV CELL")
         super.setSelected(selected, animated: animated)
         if selected {
-            contentView.backgroundColor = bgColor
+            contentView.backgroundColor = Settings.Theme.background
         } else {
-            contentView.backgroundColor = bgColor
+            contentView.backgroundColor = Settings.Theme.background
         }
     }
 }
