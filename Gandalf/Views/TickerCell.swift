@@ -18,11 +18,11 @@ class TickerCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        self.backgroundColor = Settings.Theme.background
+        self.backgroundColor = Settings.Theme.Color.background
         
         // Create a container and set the frame (auto layout / constraints don't work in UICollectionViewCell?)
         containerView = UIView()
-        containerView.backgroundColor = Settings.Theme.background
+        containerView.backgroundColor = Settings.Theme.Color.background
         containerView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(containerView)
         NSLayoutConstraint.activate([
@@ -33,20 +33,20 @@ class TickerCell: UITableViewCell {
         ])
         
         containerBorder = UIView()
-        containerBorder.layer.borderColor = Settings.Theme.colorGrayDark.cgColor
+        containerBorder.layer.borderColor = Settings.Theme.Color.header.cgColor
         containerBorder.layer.borderWidth = 1
         containerBorder.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(containerBorder)
         NSLayoutConstraint.activate([
             containerBorder.topAnchor.constraint(equalTo:containerView.topAnchor),
-            containerBorder.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
-            containerBorder.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
+            containerBorder.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
+            containerBorder.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
             containerBorder.heightAnchor.constraint(equalToConstant: 1)
         ])
         
         title = UILabel()
         title.font = UIFont(name: Assets.Fonts.Default.black, size: 20)
-        title.textColor = Settings.Theme.text
+        title.textColor = Settings.Theme.Color.text
         title.textAlignment = NSTextAlignment.center
         title.numberOfLines = 1
         title.text = ""
@@ -75,7 +75,7 @@ class TickerCell: UITableViewCell {
         
         countText = UILabel()
         countText.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 20)
-        countText.textColor = Settings.Theme.text
+        countText.textColor = Settings.Theme.Color.text
         countText.textAlignment = NSTextAlignment.center
         countText.numberOfLines = 1
         countText.text = ""
@@ -91,7 +91,7 @@ class TickerCell: UITableViewCell {
     }
     
     required init?(coder aDecoder: NSCoder) {
-//        Analytics.logEvent("vk_error", parameters: [
+//        Analytics.logEvent("gandalf_error", parameters: [
 //            "class": "ShipmentBeanCell" as NSObject,
 //            "function": "init" as NSObject,
 //            "description": "init(coder:) has not been implemented" as NSObject
@@ -110,9 +110,9 @@ class TickerCell: UITableViewCell {
 //        print("SELECTED SETTINGS ADV CELL")
         super.setSelected(selected, animated: animated)
         if selected {
-            contentView.backgroundColor = Settings.Theme.background
+            contentView.backgroundColor = Settings.Theme.Color.selected
         } else {
-            contentView.backgroundColor = Settings.Theme.background
+            contentView.backgroundColor = Settings.Theme.Color.background
         }
     }
 }

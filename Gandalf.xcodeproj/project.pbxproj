@@ -17,7 +17,6 @@
 		B873504125C256330007A8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504025C256330007A8FE /* Assets.xcassets */; };
 		B873504425C256330007A8FE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504325C256330007A8FE /* Preview Assets.xcassets */; };
 		B873504725C256330007A8FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B873504525C256330007A8FE /* LaunchScreen.storyboard */; };
-		B873508225C258BE0007A8FE /* TickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507C25C258BC0007A8FE /* TickerView.swift */; };
 		B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507D25C258BC0007A8FE /* ViewExtensions.swift */; };
 		B873508425C258BE0007A8FE /* NotionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507E25C258BD0007A8FE /* NotionView.swift */; };
 		B873508525C258BE0007A8FE /* NotionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507F25C258BD0007A8FE /* NotionCell.swift */; };
@@ -61,7 +60,6 @@
 		B873504625C256330007A8FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B873504825C256330007A8FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B873505025C2565F0007A8FE /* Gandalf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Gandalf.entitlements; sourceTree = "<group>"; };
-		B873507C25C258BC0007A8FE /* TickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TickerView.swift; sourceTree = "<group>"; };
 		B873507D25C258BC0007A8FE /* ViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		B873507E25C258BD0007A8FE /* NotionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotionView.swift; sourceTree = "<group>"; };
 		B873507F25C258BD0007A8FE /* NotionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotionCell.swift; sourceTree = "<group>"; };
@@ -210,7 +208,6 @@
 				B873507F25C258BD0007A8FE /* NotionCell.swift */,
 				B873507E25C258BD0007A8FE /* NotionView.swift */,
 				B873508025C258BD0007A8FE /* TickerCell.swift */,
-				B873507C25C258BC0007A8FE /* TickerView.swift */,
 				B80E04C225C32A96009DBE34 /* ProfileView.swift */,
 			);
 			path = Views;
@@ -393,7 +390,6 @@
 				B873509325C258D60007A8FE /* Theme.swift in Sources */,
 				B873508725C258BE0007A8FE /* CustomProgressView.swift in Sources */,
 				B873509725C258DA0007A8FE /* UIKitExtensions.swift in Sources */,
-				B873508225C258BE0007A8FE /* TickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

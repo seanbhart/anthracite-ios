@@ -27,11 +27,11 @@ class NotionCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        self.backgroundColor = Settings.Theme.background
+        self.backgroundColor = Settings.Theme.Color.background
         
         // Create a container and set the frame (auto layout / constraints don't work in UICollectionViewCell?)
         containerView = UIView()
-        containerView.backgroundColor = Settings.Theme.background
+        containerView.backgroundColor = Settings.Theme.Color.background
         containerView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(containerView)
         NSLayoutConstraint.activate([
@@ -42,7 +42,7 @@ class NotionCell: UITableViewCell {
         ])
         
 //        containerBorder = UIView()
-//        containerBorder.backgroundColor = Settings.Theme.background
+//        containerBorder.backgroundColor = Settings.Theme.Color.background
 //        containerBorder.layer.borderColor = Settings.Theme.colorGrayLight.cgColor
 //        containerBorder.layer.borderWidth = 1
 //        containerBorder.translatesAutoresizingMaskIntoConstraints = false
@@ -78,9 +78,9 @@ class NotionCell: UITableViewCell {
         ])
         
         notionCountLabel = UILabel()
-        notionCountLabel.backgroundColor = Settings.Theme.background
+        notionCountLabel.backgroundColor = Settings.Theme.Color.background
         notionCountLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 26)
-        notionCountLabel.textColor = Settings.Theme.text
+        notionCountLabel.textColor = Settings.Theme.Color.text
         notionCountLabel.textAlignment = NSTextAlignment.right
         notionCountLabel.numberOfLines = 1
         notionCountLabel.text = ""
@@ -96,7 +96,7 @@ class NotionCell: UITableViewCell {
         
         titleLabel = UILabel()
         titleLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 22)
-        titleLabel.textColor = Settings.Theme.text
+        titleLabel.textColor = Settings.Theme.Color.text
         titleLabel.textAlignment = NSTextAlignment.left
         titleLabel.numberOfLines = 1
         titleLabel.text = ""
@@ -124,7 +124,7 @@ class NotionCell: UITableViewCell {
         progressViewLeft = ProgressViewRoundedLeft()
         progressViewLeft.progressViewStyle = .bar
         progressViewLeft.trackTintColor = .clear
-        progressViewLeft.progressTintColor = Settings.Theme.colorGrayDark
+        progressViewLeft.progressTintColor = Settings.Theme.Color.progressbar
         progressViewLeft.progress = 0
 //        progressViewLeft.clipsToBounds = true
 //        progressViewLeft.layer.cornerRadius = 10
@@ -141,7 +141,7 @@ class NotionCell: UITableViewCell {
         ])
         progressViewRight = ProgressViewRoundedRight()
         progressViewRight.progressViewStyle = .bar
-        progressViewRight.trackTintColor = Settings.Theme.colorGrayDark
+        progressViewRight.trackTintColor = Settings.Theme.Color.progressbar
         progressViewRight.progressTintColor = .clear
         progressViewRight.progress = 0
 //        progressViewRight.clipsToBounds = true
@@ -160,7 +160,7 @@ class NotionCell: UITableViewCell {
         
         ageLabel = UILabel()
         ageLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 12)
-        ageLabel.textColor = Settings.Theme.text
+        ageLabel.textColor = Settings.Theme.Color.text
         ageLabel.textAlignment = NSTextAlignment.right
         ageLabel.numberOfLines = 1
         ageLabel.text = ""
@@ -176,7 +176,7 @@ class NotionCell: UITableViewCell {
         
         textTitle = UILabel()
         textTitle.font = UIFont(name: Assets.Fonts.Default.bold, size: 12)
-        textTitle.textColor = Settings.Theme.text
+        textTitle.textColor = Settings.Theme.Color.text
         textTitle.textAlignment = NSTextAlignment.left
         textTitle.numberOfLines = 1
         textTitle.text = ""
@@ -191,9 +191,9 @@ class NotionCell: UITableViewCell {
         ])
         
         textView = UITextView()
-        textView.backgroundColor = Settings.Theme.background
+        textView.backgroundColor = Settings.Theme.Color.background
         textView.font = UIFont(name: Assets.Fonts.Default.regular, size: 14)
-        textView.textColor = Settings.Theme.text
+        textView.textColor = Settings.Theme.Color.text
         textView.textAlignment = NSTextAlignment.left
         textView.text = ""
         textView.isUserInteractionEnabled = false
@@ -208,10 +208,8 @@ class NotionCell: UITableViewCell {
     }
     
     required init?(coder aDecoder: NSCoder) {
-//        Analytics.logEvent("vk_error", parameters: [
-//            "class": "ShipmentBeanCell" as NSObject,
-//            "function": "init" as NSObject,
-//            "description": "init(coder:) has not been implemented" as NSObject
+//        Analytics.logEvent(TableCellError, parameters: [
+//            AnalyticsParameterMethod: "apple.com"
 //        ])
         fatalError("init(coder:) has not been implemented")
     }
@@ -227,9 +225,9 @@ class NotionCell: UITableViewCell {
 //        print("SELECTED SETTINGS ADV CELL")
         super.setSelected(selected, animated: animated)
         if selected {
-            contentView.backgroundColor = Settings.Theme.background
+            contentView.backgroundColor = Settings.Theme.Color.background
         } else {
-            contentView.backgroundColor = Settings.Theme.background
+            contentView.backgroundColor = Settings.Theme.Color.background
         }
     }
 }

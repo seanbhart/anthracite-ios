@@ -11,7 +11,7 @@ import Firebase
 import FirebaseAuth
 
 class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, RepositoryDelegate {
-    let viewName = "NotionView"
+    let className = "NotionView"
     
     var pageTitle = "Gandalf"
     var sortByResponse = false
@@ -42,7 +42,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     let notionTableCellIdentifier: String = "NotionCell"
     
 //    override var preferredStatusBarStyle: UIStatusBarStyle {
-//        print("\(viewName) - preferredStatusBarStyle")
+//        print("\(className) - preferredStatusBarStyle")
 //        return .lightContent
 //    }
     
@@ -50,7 +50,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("\(viewName) - viewDidLoad")
+        print("\(className) - viewDidLoad")
         self.navigationItem.title = ""
         
         let barItemLogo = UIButton(type: .custom)
@@ -58,9 +58,9 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         barItemLogo.setTitle(pageTitle, for: .normal)
         barItemLogo.titleLabel?.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
         barItemLogo.titleLabel?.textAlignment = .left
-        barItemLogo.setTitleColor(Settings.Theme.navBarText, for: .normal)
+        barItemLogo.setTitleColor(Settings.Theme.Color.barText, for: .normal)
         let barItemProfile = UIButton(type: .custom)
-        barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.navBarText, renderingMode: .alwaysOriginal), for: .normal)
+        barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal), for: .normal)
         barItemProfile.addTarget(self, action: #selector(loadProfileView), for: .touchUpInside)
         NSLayoutConstraint.activate([
             barItemLogo.widthAnchor.constraint(equalToConstant:120),
@@ -71,11 +71,11 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         self.navigationItem.hidesBackButton = true
         
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
-            print("\(viewName) - willEnterForegroundNotification")
+            print("\(className) - willEnterForegroundNotification")
             notionRepository.observeQuery()
         }
         observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
-            print("\(viewName) - didEnterBackgroundNotification")
+            print("\(className) - didEnterBackgroundNotification")
             notionRepository.stopObserving()
         }
 //        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: Notification.Name.NSExtensionHostWillEnterForeground, object: nil)
@@ -90,7 +90,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("\(viewName) - viewWillAppear")
+        print("\(className) - viewWillAppear")
 //        setNeedsStatusBarAppearanceUpdate()
         // Ensure the navigation bar is not hidden
         if let nc = self.navigationController {
@@ -172,19 +172,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             tickerContainer.widthAnchor.constraint(equalToConstant: 120),
         ])
         NSLayoutConstraint.activate([
-            tickerClearButton.topAnchor.constraint(equalTo:tickerContainer.topAnchor),
-            tickerClearButton.leftAnchor.constraint(equalTo:tickerContainer.leftAnchor),
-            tickerClearButton.rightAnchor.constraint(equalTo:tickerContainer.rightAnchor),
-            tickerClearButton.heightAnchor.constraint(equalToConstant: 70),
-        ])
-        NSLayoutConstraint.activate([
-            tickerClearIcon.topAnchor.constraint(equalTo:tickerClearButton.topAnchor, constant: 20),
-            tickerClearIcon.leftAnchor.constraint(equalTo:tickerClearButton.leftAnchor, constant: 20),
-            tickerClearIcon.rightAnchor.constraint(equalTo:tickerClearButton.rightAnchor, constant: -20),
-            tickerClearIcon.bottomAnchor.constraint(equalTo:tickerClearButton.bottomAnchor, constant: -20),
-        ])
-        NSLayoutConstraint.activate([
-            tickerTableView.topAnchor.constraint(equalTo:tickerClearButton.bottomAnchor),
+            tickerTableView.topAnchor.constraint(equalTo:tickerContainer.topAnchor),
             tickerTableView.leftAnchor.constraint(equalTo:tickerContainer.leftAnchor),
             tickerTableView.rightAnchor.constraint(equalTo:tickerContainer.rightAnchor),
             tickerTableView.bottomAnchor.constraint(equalTo:tickerContainer.bottomAnchor),
@@ -215,27 +203,27 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        print("\(viewName) - viewWillDisappear")
+        print("\(className) - viewWillDisappear")
 //        navigationController?.setNavigationBarHidden(false, animated: animated)
         notionRepository.stopObserving()
     }
 
     override func loadView() {
         super.loadView()
-        print("\(viewName) - loadView")
+        print("\(className) - loadView")
         notionRepository = NotionRepository(recency: 3600)
         notionRepository.repoDelegate = self
         
         // Make the background the same as the navigation bar
-        view.backgroundColor = Settings.Theme.background
+        view.backgroundColor = Settings.Theme.Color.background
         
         viewContainer = UIView()
-        viewContainer.backgroundColor = Settings.Theme.background
+        viewContainer.backgroundColor = Settings.Theme.Color.background
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(viewContainer)
         
         headerContainer = UIView()
-        headerContainer.backgroundColor = Settings.Theme.colorPrimaryLight
+        headerContainer.backgroundColor = Settings.Theme.Color.header
         headerContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(headerContainer)
         
@@ -249,7 +237,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         
         notionTitle = UILabel()
         notionTitle.font = UIFont(name: Assets.Fonts.Default.black, size: 14)
-        notionTitle.textColor = Settings.Theme.text
+        notionTitle.textColor = Settings.Theme.Color.text
         notionTitle.textAlignment = NSTextAlignment.left
         notionTitle.numberOfLines = 1
         notionTitle.text = "LAST HOUR"
@@ -266,7 +254,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         
         notionCountLabel = UILabel()
         notionCountLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 50)
-        notionCountLabel.textColor = Settings.Theme.text
+        notionCountLabel.textColor = Settings.Theme.Color.text
         notionCountLabel.textAlignment = NSTextAlignment.left
         notionCountLabel.numberOfLines = 1
         notionCountLabel.text = ""
@@ -298,14 +286,14 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         progressViewLeft = ProgressViewRoundedLeft()
         progressViewLeft.progressViewStyle = .bar
         progressViewLeft.trackTintColor = .clear //Settings.Theme.colorGrayLight.withAlphaComponent(0.2)
-        progressViewLeft.progressTintColor = Settings.Theme.colorGrayDark
+        progressViewLeft.progressTintColor = Settings.Theme.Color.progressbar
         progressViewLeft.progress = 1
         progressViewLeft.translatesAutoresizingMaskIntoConstraints = false
         progressViewContainer.addSubview(progressViewLeft)
         
         progressViewRight = ProgressViewRoundedRight()
         progressViewRight.progressViewStyle = .bar
-        progressViewRight.trackTintColor = Settings.Theme.colorGrayDark
+        progressViewRight.trackTintColor = Settings.Theme.Color.progressbar
         progressViewRight.progressTintColor = .clear //Settings.Theme.colorGrayLight.withAlphaComponent(0.2)
         progressViewRight.progress = 0
         progressViewRight.translatesAutoresizingMaskIntoConstraints = false
@@ -315,25 +303,8 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         tickerContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(tickerContainer)
         
-        tickerClearButton = UIView()
-        tickerClearButton.translatesAutoresizingMaskIntoConstraints = false
-        tickerContainer.addSubview(tickerClearButton)
-        
-        let tickerClearButtonGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(tickerClear))
-        tickerClearButtonGestureRecognizer.numberOfTapsRequired = 1
-        tickerClearButton.addGestureRecognizer(tickerClearButtonGestureRecognizer)
-        
-        tickerClearIcon = UIImageView()
-        tickerClearIcon.image = UIImage(systemName: "clear")
-        tickerClearIcon.tintColor = Settings.Theme.backgroundSelected
-        tickerClearIcon.contentMode = UIView.ContentMode.scaleAspectFit
-        tickerClearIcon.clipsToBounds = true
-        tickerClearIcon.translatesAutoresizingMaskIntoConstraints = false
-        tickerClearButton.addSubview(tickerClearIcon)
-        tickerClearIcon.isHidden = true
-        
         tickerTableViewRefreshControl = UIRefreshControl()
-        tickerTableViewRefreshControl.tintColor = Settings.Theme.background
+        tickerTableViewRefreshControl.tintColor = Settings.Theme.Color.background
         tickerTableViewRefreshControl.addTarget(self, action: #selector(tickerClear), for: .valueChanged)
         
         tickerTableView = UITableView()
@@ -367,7 +338,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         tickerTableViewSpinner.isHidden = false
         
         notionTableViewRefreshControl = UIRefreshControl()
-        notionTableViewRefreshControl.tintColor = Settings.Theme.backgroundSelected
+        notionTableViewRefreshControl.tintColor = Settings.Theme.Color.selected
         notionTableViewRefreshControl.addTarget(self, action: #selector(refreshTableData), for: .valueChanged)
         
         notionTableView = UITableView()
@@ -402,7 +373,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         
         notionTableViewEmptyNote = UILabel()
         notionTableViewEmptyNote.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
-        notionTableViewEmptyNote.textColor = Settings.Theme.text
+        notionTableViewEmptyNote.textColor = Settings.Theme.Color.text
         notionTableViewEmptyNote.textAlignment = NSTextAlignment.center
         notionTableViewEmptyNote.numberOfLines = 2
         notionTableViewEmptyNote.text = "Please sign in\nto load data."
@@ -413,7 +384,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         
         // If a user is not logged in, display the Login screen
         if let firUser = Auth.auth().currentUser {
-            print("\(viewName) - currentUser: \(firUser.uid)")
+            print("\(className) - currentUser: \(firUser.uid)")
         } else {
             self.presentSheet(with: ProfileView())
         }
@@ -421,6 +392,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        print("\(className) - didReceiveMemoryWarning")
         // Dispose of any resources that can be recreated.
     }
     
@@ -457,11 +429,11 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     // MARK: -GESTURE RECOGNIZERS
     
     @objc func loadProfileView(_ sender: UITapGestureRecognizer) {
-        print("\(viewName) - loadProfileView")
+        print("\(className) - loadProfileView")
         self.presentSheet(with: ProfileView())
     }
     @objc func filterToggle(_ sender: UITapGestureRecognizer) {
-        print("\(viewName) - filterToggle")
+        print("\(className) - filterToggle")
         if !sortByResponse {
             // Turn on the filter
             sortByResponse = true
@@ -473,11 +445,11 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         sortToggle()
     }
     @objc func scrollTop(_ sender: UITapGestureRecognizer) {
-        print("\(viewName) - scrollTop")
+        print("\(className) - scrollTop")
         notionTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
     }
     @objc func tickerClear(_ sender: UITapGestureRecognizer) {
-        print("\(viewName) - tickerClear")
+        print("\(className) - tickerClear")
         clearTickerFilter()
         self.tickerTableViewRefreshControl.endRefreshing()
     }
@@ -507,10 +479,8 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         } else if tableView == tickerTableView {
             if localTickers.count > 0 {
                 tickerTableViewSpinner.stopAnimating()
-                tickerClearIcon.isHidden = false
             } else {
                 tickerTableViewSpinner.startAnimating()
-                tickerClearIcon.isHidden = true
             }
             return localTickers.count
         }
@@ -581,14 +551,14 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             }
             
             if notion.magnitude > 1 {
-                cell.progressViewLeft.trackTintColor = Settings.Theme.colorSecondary
-                cell.progressViewRight.progressTintColor = Settings.Theme.colorPrimary
+                cell.progressViewLeft.trackTintColor = Settings.Theme.Color.negative
+                cell.progressViewRight.progressTintColor = Settings.Theme.Color.positive
             } else if notion.magnitude > 0.1 {
-                cell.progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.colorSecondaryLight, color2: Settings.Theme.colorSecondary, percent: Double(notion.magnitude))
-                cell.progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.colorPrimaryLight, color2: Settings.Theme.colorPrimary, percent: Double(notion.magnitude))
+                cell.progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.Color.negativeLight, color2: Settings.Theme.Color.negative, percent: Double(notion.magnitude))
+                cell.progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.Color.positiveLight, color2: Settings.Theme.Color.positive, percent: Double(notion.magnitude))
             } else {
-                cell.progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.colorSecondaryLight, color2: Settings.Theme.colorSecondary, percent: 0.1)
-                cell.progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.colorPrimaryLight, color2: Settings.Theme.colorPrimary, percent: 0.1)
+                cell.progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.Color.negativeLight, color2: Settings.Theme.Color.negative, percent: 0.1)
+                cell.progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.Color.positiveLight, color2: Settings.Theme.Color.positive, percent: 0.1)
             }
             
             return cell
@@ -615,9 +585,9 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
                 }
             }
             if cellTicker.selected {
-                cell.containerView.backgroundColor = Settings.Theme.backgroundSelected
+                cell.containerView.backgroundColor = Settings.Theme.Color.selected
             } else {
-                cell.containerView.backgroundColor = Settings.Theme.background
+                cell.containerView.backgroundColor = Settings.Theme.Color.background
             }
             return cell
         }
@@ -634,6 +604,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
                 localTickers[indexPath.row].selected = false
             } else {
                 localTickers[indexPath.row].selected = true
+                print("TICKER - WAVG SENTIMENT: \(localTickers[indexPath.row].wAvgSentiment), MAGNITUDE: \(localTickers[indexPath.row].wAvgMagnitude)")
             }
             fillLocalNotions()
         }
@@ -682,9 +653,8 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     // MARK: -REFRESH CONTROL
     
     @objc private func refreshTableData(_ sender: Any) {
-        print("refreshTableData")
         if let firUser = Auth.auth().currentUser {
-            print("\(viewName) - currentUser: \(firUser.uid)")
+            print("\(className) - currentUser: \(firUser.uid)")
         } else {
             self.presentSheet(with: ProfileView())
         }
@@ -699,8 +669,6 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     // MARK: -DATA FUNCTIONS
     
     func clearTickerFilter() {
-        tickerClearIcon.tintColor = Settings.Theme.backgroundSelected
-        
         // Set all tickers to not selected
         for i in localTickers.indices {
             localTickers[i].selected = false
@@ -718,10 +686,8 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
                 let tickers = $0.tickers
                 return localTickers.filter({ tickers.contains($0.ticker) && $0.selected }).count > 0
             })
-            tickerClearIcon.tintColor = Settings.Theme.colorPrimaryLight
         } else {
             localNotions = notionRepository.notions
-            tickerClearIcon.tintColor = Settings.Theme.backgroundSelected
         }
         tickerTableView.reloadData()
         notionTableView.reloadData()
@@ -808,8 +774,6 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         // Refresh the header values
         let responseCount = localNotions
             .compactMap { $0.responseCount }
-//            .filter { $0.name == "Day" }
-//            .map { $0.value }
             .reduce(0, +)
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
@@ -824,6 +788,8 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             .compactMap { $0.magnitude * Float($0.responseCount) }
             .reduce(0, +) / Float(responseCount)
         
+        print("NOTIONS - WAVG SENTIMENT: \(wAvgSentiment), MAGNITUDE: \(wAvgMagnitude)")
+        
         if wAvgSentiment > 0 {
             progressViewLeft.progress = 1
             progressViewRight.progress = wAvgSentiment
@@ -835,14 +801,14 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             progressViewRight.progress = 1
         }
         if wAvgMagnitude > 1 {
-            progressViewLeft.trackTintColor = Settings.Theme.colorSecondary
-            progressViewRight.progressTintColor = Settings.Theme.colorPrimary
+            progressViewLeft.trackTintColor = Settings.Theme.Color.negative
+            progressViewRight.progressTintColor = Settings.Theme.Color.positive
         } else if wAvgMagnitude > 0.1 {
-            progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.colorSecondaryLight, color2: Settings.Theme.colorSecondary, percent: Double(wAvgMagnitude))
-            progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.colorPrimaryLight, color2: Settings.Theme.colorPrimary, percent: Double(wAvgMagnitude))
+            progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.Color.negativeLight, color2: Settings.Theme.Color.negative, percent: Double(wAvgMagnitude))
+            progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.Color.positiveLight, color2: Settings.Theme.Color.positive, percent: Double(wAvgMagnitude))
         } else {
-            progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.colorSecondaryLight, color2: Settings.Theme.colorSecondary, percent: 0.1)
-            progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.colorPrimaryLight, color2: Settings.Theme.colorPrimary, percent: 0.1)
+            progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.Color.negativeLight, color2: Settings.Theme.Color.negative, percent: 0.1)
+            progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.Color.positiveLight, color2: Settings.Theme.Color.positive, percent: 0.1)
         }
     }
 }

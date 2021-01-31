@@ -13,7 +13,7 @@ import UIKit
 import FirebaseAuth
 
 class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
-    let viewName = "ProfileView"
+    let className = "ProfileView"
     
     // Unhashed nonce - handle locally (not in Account) for security
     fileprivate var currentNonce: String?
@@ -71,19 +71,19 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
 
     override func loadView() {
         super.loadView()
-        print("\(self.viewName) - loadView")
+        print("\(self.className) - loadView")
         
         // Make the overall background black to fill any unfilled areas
-        view.backgroundColor = Settings.Theme.background
+        view.backgroundColor = Settings.Theme.Color.background
         
         viewContainer = UIView()
-        viewContainer.backgroundColor = Settings.Theme.background
+        viewContainer.backgroundColor = Settings.Theme.Color.background
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(viewContainer)
         
         profileName = UILabel()
         profileName.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
-        profileName.textColor = Settings.Theme.text
+        profileName.textColor = Settings.Theme.Color.text
         profileName.textAlignment = NSTextAlignment.center
         profileName.numberOfLines = 1
         profileName.text = ""
@@ -131,6 +131,7 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        print("\(className) - didReceiveMemoryWarning")
         // Dispose of any resources that can be recreated.
     }
     
@@ -158,7 +159,7 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     // MARK: -CUSTOM FUNCTIONS
     
     func signOut() {
-        print("\(self.viewName) - SIGN OUT")
+        print("\(self.className) - SIGN OUT")
         // First request verification
         let signOutAlert = UIAlertController(title: "Sign Out", message: "Are you sure you want to sign out?", preferredStyle: .alert)
         signOutAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
@@ -166,7 +167,7 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
             do {
                 try firebaseAuth.signOut()
             } catch let signOutError as NSError {
-//                Analytics.logEvent("vk_error", parameters: [
+//                Analytics.logEvent("gandalf_error", parameters: [
 //                    "class": "Account" as NSObject,
 //                    "function": "signOut" as NSObject,
 //                    "description": signOutError.localizedDescription as NSObject
@@ -174,7 +175,7 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
                 print ("ACCOUNT - Error signing out: %@", signOutError)
             }
             // Load LoginView
-            print("\(self.viewName) - LOGGED OUT - NOW SHOW LOGIN VIEW")
+            print("\(self.className) - LOGGED OUT - NOW SHOW LOGIN VIEW")
             self.showSignIn()
         }))
         signOutAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
@@ -194,9 +195,9 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     // MARK: -APPLE AUTH METHODS
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        print("\(self.viewName) - APPLE AUTH ERROR: \(error.localizedDescription)")
-//        Analytics.logEvent("vk_error", parameters: [
-//            "class": "ProfileView" as NSObject,
+        print("\(self.className) - APPLE AUTH ERROR: \(error.localizedDescription)")
+//        Analytics.logEvent("gandalf_error", parameters: [
+//            "class": self.className as NSObject,
 //            "function": "authorizationController" as NSObject,
 //            "description": error.localizedDescription as NSObject
 //        ])
@@ -204,26 +205,35 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
             guard let nonce = currentNonce else {
-//                Analytics.logEvent("vk_error", parameters: [
-//                    "class": "ProfileView" as NSObject,
+//                Analytics.logEvent("gandalf_error", parameters: [
+//                    "class": self.className as NSObject,
 //                    "function": "authorizationController" as NSObject,
-//                    "description": "fatalError: Apple SignIn nonce nil" as NSObject
+//                    "description": "fatalError: Apple SignIn nonce nil." as NSObject
 //                ])
-                fatalError("\(self.viewName) - APPLE AUTH ERROR: Invalid state: A login callback was received, but no login request was sent.")
+                fatalError("\(self.className) - APPLE AUTH ERROR: Invalid state: A login callback was received, but no login request was sent.")
             }
             signInWithApple(appleIdCredential: appleIDCredential, nonce: nonce) { result, error in
-                if let e = error {
-                    print("\(self.viewName) - SIGN IN WITH APPLE ERROR: \(e.localizedDescription)")
-//                    Analytics.logEvent("vk_error", parameters: [
-//                        "class": "ProfileView" as NSObject,
+                if let error = error {
+                    print("\(self.className) - SIGN IN WITH APPLE ERROR: \(error.localizedDescription)")
+//                    Analytics.logEvent("gandalf_error", parameters: [
+//                        "class": self.className as NSObject,
 //                        "function": "authorizationController" as NSObject,
-//                        "description": e.localizedDescription as NSObject
+//                        "description": error.localizedDescription as NSObject
 //                    ])
                     return
                 }
-                print("\(self.viewName) - SIGN IN WITH APPLE: \(String(describing: result))")
+                print("\(self.className) - SIGN IN WITH APPLE: \(String(describing: result))")
                 // Continue to the main page
-                self.dismiss(animated: true, completion: nil)
+//                self.dismiss(animated: true, completion: nil)
+                guard let nc = self.navigationController else {
+//                    Analytics.logEvent("gandalf_error", parameters: [
+//                        "class": self.className as NSObject,
+//                        "function": "authorizationController" as NSObject,
+//                        "description": "fatalError: Navigation Controller not found." as NSObject
+//                    ])
+                    fatalError("\(self.className) - Navigation Controller not found.")
+                }
+                nc.pushViewController(NotionView(), animated: true)
             }
         }
     }
@@ -238,12 +248,12 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
         
         // TODO: Verify returned nonce is identical to sent?
         guard let appleIDToken = appleIdCredential.identityToken else {
-            print("\(self.viewName) - SIGN IN: APPLE AUTH ERROR: Unable to fetch identity token")
+            print("\(self.className) - SIGN IN: APPLE AUTH ERROR: Unable to fetch identity token")
             completion(nil,NSError(domain: "appleIdCredential identityToken nil", code: NSCoderValueNotFoundError, userInfo: nil))
             return
         }
         guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
-            print("\(self.viewName) - SIGN IN: APPLE AUTH ERROR: Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+            print("\(self.className) - SIGN IN: APPLE AUTH ERROR: Unable to serialize token string from data: \(appleIDToken.debugDescription)")
             completion(nil,NSError(domain: "appleIDToken nil", code: NSCoderValueNotFoundError, userInfo: nil))
             return
         }
@@ -271,7 +281,7 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
                 // Error. If error.code == .MissingOrInvalidNonce, make sure
                 // you're sending the SHA256-hashed nonce as a hex string with
                 // your request to Apple.
-                print("\(self.viewName) - SIGN IN: FIREBASE AUTH ERROR: \(String(describing: err.localizedDescription))")
+                print("\(self.className) - SIGN IN: FIREBASE AUTH ERROR: \(String(describing: err.localizedDescription))")
                 completion(authResult.debugDescription,err)
                 return
             }
@@ -321,7 +331,7 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
                     changeRequest?.displayName = givenName
                     changeRequest?.commitChanges { (error) in
                         if let err = error {
-                            print("\(self.viewName) - FIREBASE changeRequest ERROR: \(String(describing: err.localizedDescription))")
+                            print("\(self.className) - FIREBASE changeRequest ERROR: \(String(describing: err.localizedDescription))")
                         }
                     }
 
@@ -335,9 +345,9 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
                         "timestamp": accountCreationTimestamp
                     ], merge: true) { err in
                         if let err = err {
-                            print("\(self.viewName) - FIREBASE: ERROR creating account: \(err)")
+                            print("\(self.className) - FIREBASE: ERROR creating account: \(err)")
                         } else {
-                            print("\(self.viewName) - FIREBASE: account successfully created")
+                            print("\(self.className) - FIREBASE: account successfully created")
                         }
                     }
                     

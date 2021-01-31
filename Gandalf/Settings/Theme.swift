@@ -18,26 +18,28 @@ extension Settings {
     
     struct Theme {
         // Light
-        static let barStyle: UIBarStyle = .black
-        static let colorPrimary = UIColor(red: 55/255, green: 63/255, blue: 71/255, alpha: 1.0) //#373f47
-        static let colorPrimaryLight = UIColor(red: 0/255, green: 74/255, blue: 152/255, alpha: 1.0) //#004a98
-//        static let colorPrimary = UIColor(red: 43/255, green: 0/255, blue: 255/255, alpha: 1.0) //#2B00FF
-//        static let colorPrimaryLight = UIColor(red: 0/255, green: 146/255, blue: 255/255, alpha: 1.0) //#0092FF
-        static let colorSecondary = UIColor(red: 191/255, green: 2/255, blue: 106/255, alpha: 1.0) //#bf026a
-        static let colorSecondaryLight = UIColor(red: 252/255, green: 0/255, blue: 126/255, alpha: 1.0) //#fc0080
-        static let navBarBackground = UIColor.black
-        static let navBarText = UIColor.white
-        static let background = UIColor.black
-        static let text = UIColor.white
-        static let backgroundSelected = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0) //#262626
-        
-        static let colorGrayUltraLight = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1.0) //#CCC
-        static let colorGrayLight = UIColor(red: 204/255, green: 204/255, blue: 204/255, alpha: 1.0) //#CCC
-        static let colorGrayMedium = UIColor(red: 81/255, green: 81/255, blue: 81/255, alpha: 1.0) //#515151
-        static let colorGrayDark = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0) //#262626
-        
-        static let colorGandalfDark = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
-        static let colorGandalfLight = UIColor(red: 73/255, green: 80/255, blue: 87/255, alpha: 1.0) //#495057
+        struct Color {
+            static let barStyle: UIBarStyle = .black
+            static let barColor = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
+            static let barText = UIColor.white
+            static let header = UIColor.black
+            static let background = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
+            static let selected = UIColor.black
+            static let text = UIColor.white
+            
+            static let progressbar = UIColor(red: 81/255, green: 81/255, blue: 81/255, alpha: 1.0) //#515151
+            static let positive = UIColor(red: 202/255, green: 231/255, blue: 68/255, alpha: 1.0) //#CAE744
+            static let positiveLight = UIColor(red: 233/255, green: 245/255, blue: 180/255, alpha: 1.0) //#E9F5B4
+//            static let positive = UIColor(red: 43/255, green: 0/255, blue: 255/255, alpha: 1.0) //#2B00FF
+//            static let positiveLight = UIColor(red: 0/255, green: 146/255, blue: 255/255, alpha: 1.0) //#0092FF
+            static let negative = UIColor(red: 191/255, green: 2/255, blue: 106/255, alpha: 1.0) //#bf026a
+            static let negativeLight = UIColor(red: 252/255, green: 0/255, blue: 126/255, alpha: 1.0) //#fc0080
+            
+            static let grayUltraLight = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1.0) //#CCC
+            static let grayLight = UIColor(red: 204/255, green: 204/255, blue: 204/255, alpha: 1.0) //#CCC
+            static let grayMedium = UIColor(red: 81/255, green: 81/255, blue: 81/255, alpha: 1.0) //#515151
+            static let grayDark = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0) //#262626
+        }
         
         // Dark
 //        static let barStyle: UIBarStyle = .black
