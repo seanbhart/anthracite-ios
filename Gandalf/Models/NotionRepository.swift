@@ -45,7 +45,6 @@ class NotionRepository {
         // TODO: UPDATE QUERY FREQUENTLY (REFRESH TIMESTAMP CRITERIA)
         listener = query
             .whereField("created", isGreaterThan: timestamp)
-//            .whereField("tickers", arrayContains: ticker!)
             .addSnapshotListener { [unowned self] (snapshot, error) in
                 if let err = error {
                     if let parent = self.repoDelegate {
@@ -60,22 +59,8 @@ class NotionRepository {
                     return try? queryDocumentSnapshot.data(as: Notion.self)
                 }
                 
-                //TEST////////////////////////
-                var tickerStrings = Set<String>()
-                var rcount = 0
-                for n in self.notions {
-                    for t in n.tickers {
-                        tickerStrings.insert(t)
-                    }
-                    rcount += n.responseCount
-                }
-                //TEST////////////////////////
-                
                 // Create a list of all tickers in the data
                 let tickerList = Set<String>(self.notions.flatMap({ $0.tickers.map({ $0 }) }))
-                print("TICKER COUNT - RAW: \(tickerStrings.count), CALCULATED: \(tickerList.count)")
-                
-                var ccount = 0
                 // Clear the ticker list and add new ticker summary data from the notions data
                 self.tickers.removeAll()
                 for t in tickerList {
@@ -91,10 +76,6 @@ class NotionRepository {
                         .filter({ $0.tickers.compactMap({ $0 }).contains(t) })
                         .map({ $0.magnitude })
                         .reduce(0, +) / Float(responseCount)
-                    ccount += responseCount
-                    if t == "GME" {
-                        print("\(t), \(responseCount), \(wAvgSentiment), \(wAvgMagnitude)")
-                    }
                     
                     // Filter the data so no long tickers appear in the list
                     // and any remove any ticker with less than 5 appearances
@@ -104,11 +85,7 @@ class NotionRepository {
                     // WARNING: Filtering out Tickers below a response count threshold could remove Notions
                     // that also belong to Tickers above the threshold, causing discrepancies to show between
                     // the Ticker summary count and the Notion summary count in the view.
-//                    else if responseCount < 5 {
-//                        self.notions = self.notions.filter({ !$0.tickers.compactMap({ $0 }).contains(t) })
-//                    }
                 }
-                print("RESPONSE COUNT - RAW: \(rcount), CALCULATED: \(ccount)")
                 
                 var selectedTickers = [Ticker]()
                 // but save the currently selected Tickers to update the new list
@@ -128,7 +105,6 @@ class NotionRepository {
                     }
                 })
                 
-//                print(self.notions.count)
                 if let parent = self.repoDelegate {
                     parent.dataUpdate()
                 }

@@ -17,19 +17,22 @@ extension Settings {
 //    Light Pink - #fc0080 = 252, 0, 126
     
     struct Theme {
-        // Light
+        static let barStyle: UIBarStyle = .black
+        
         struct Color {
-            static let barStyle: UIBarStyle = .black
-            static let barColor = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
-            static let barText = UIColor.white
+            // Light
+            static let barColor = UIColor.black
+            static let barText = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
             static let header = UIColor.black
-            static let background = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
+            static let background = UIColor.black
+            static let contentBackground = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
             static let selected = UIColor.black
             static let text = UIColor.white
             
-            static let progressbar = UIColor(red: 81/255, green: 81/255, blue: 81/255, alpha: 1.0) //#515151
-            static let positive = UIColor(red: 202/255, green: 231/255, blue: 68/255, alpha: 1.0) //#CAE744
-            static let positiveLight = UIColor(red: 233/255, green: 245/255, blue: 180/255, alpha: 1.0) //#E9F5B4
+            static let progressbar = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
+//            static let progressbar = UIColor(red: 116/255, green: 125/255, blue: 134/255, alpha: 1.0) //#747D86
+            static let positive = UIColor(red: 106/255, green: 191/255, blue: 2/255, alpha: 1.0) //#6ABF02
+            static let positiveLight = UIColor(red: 180/255, green: 223/255, blue: 128/255, alpha: 1.0) //#B4DF80
 //            static let positive = UIColor(red: 43/255, green: 0/255, blue: 255/255, alpha: 1.0) //#2B00FF
 //            static let positiveLight = UIColor(red: 0/255, green: 146/255, blue: 255/255, alpha: 1.0) //#0092FF
             static let negative = UIColor(red: 191/255, green: 2/255, blue: 106/255, alpha: 1.0) //#bf026a

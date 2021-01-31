@@ -22,16 +22,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if #available(iOS 13.0, *) {
             let appearance = UINavigationBarAppearance()
             appearance.backgroundColor = Settings.Theme.Color.barColor
+            appearance.shadowColor = .clear
             appearance.titleTextAttributes = [.foregroundColor: Settings.Theme.Color.barText]
             appearance.largeTitleTextAttributes = [.foregroundColor: Settings.Theme.Color.barText]
 
-//            UINavigationBar.appearance().barStyle = .default
+            UINavigationBar.appearance().barStyle = Settings.Theme.barStyle
             UINavigationBar.appearance().tintColor = Settings.Theme.Color.barText
             UINavigationBar.appearance().standardAppearance = appearance
             UINavigationBar.appearance().compactAppearance = appearance
             UINavigationBar.appearance().scrollEdgeAppearance = appearance
         } else {
-//            UINavigationBar.appearance().barStyle = .default
+            UINavigationBar.appearance().barStyle = Settings.Theme.barStyle
             UINavigationBar.appearance().tintColor = Settings.Theme.Color.barText
             UINavigationBar.appearance().barTintColor = Settings.Theme.Color.barColor
             UINavigationBar.appearance().isTranslucent = false
@@ -45,9 +46,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         
         navController = UINavigationController(rootViewController: rootView)
-//        navController.navigationBar.barStyle = Settings.Theme.barStyle
-//        navController.navigationBar.barTintColor = Settings.Theme.navBarBackground
-//        navController.navigationBar.tintColor = Settings.Theme.navBarText
+        navController.navigationBar.barStyle = Settings.Theme.barStyle
+        navController.navigationBar.barTintColor = Settings.Theme.Color.barColor
+        navController.navigationBar.tintColor = Settings.Theme.Color.barText
         navController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
         navController.navigationBar.topItem?.title = "Gandalf"
 

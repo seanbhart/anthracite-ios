@@ -10,15 +10,23 @@ import Foundation
 struct Assets {
     
     struct Images {
-        static let notionIconWhiteSmall: String = "WHITE-HAT-SMALL.png"
-        static let notionIconWhiteLarge: String = "WHITE-HAT-LARGE.png"
-        static let notionIconBlueSmall: String = "BLUE-HAT-SMALL.png"
-        static let notionIconBlueLarge: String = "BLUE-HAT-LARGE.png"
-        static let notionIconRedSmall: String = "RED-HAT-SMALL.png"
-        static let notionIconRedLarge: String = "RED-HAT-LARGE.png"
+        static let notionIconWhiteSm: String = "STAR-WHITE-SM.png"
+        static let notionIconWhiteLg: String = "STAR-WHITE-LG.png"
+        static let notionIconGraySm: String = "STAR-GRAY-SM.png"
+        static let notionIconGrayLg: String = "STAR-GRAY-LG.png"
+        static let notionIconPosSm: String = "STAR-GREEN-SM.png"
+        static let notionIconPosLg: String = "STAR-GREEN-LG.png"
+        static let notionIconNegSm: String = "STAR-PINK-SM.png"
+        static let notionIconNegLg: String = "STAR-PINK-LG.png"
         
-        static let twinkleIconBlue: String = "BLUE-TWINKLE.png"
-        static let twinkleIconWhite: String = "WHITE-TWINKLE.png"
+        static let hatIconPurpleLg: String = "HAT-PURPLE-LG.png"
+        static let hatIconWhiteSm: String = "HAT-WHITE-SM.png"
+        static let hatIconWhiteLg: String = "HAT-WHITE-LG.png"
+        
+        static let topIconGraySm: String = "STARS-GRAY-SM.png"
+        static let topIconGrayLg: String = "STARS-GRAY-LG.png"
+        static let topIconPurpleLg: String = "STARS-PURPLE-LG.png"
+        static let topIconWhiteLg: String = "STARS-WHITE-LG.png"
     }
     
     struct Fonts {

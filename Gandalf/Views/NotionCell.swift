@@ -27,11 +27,11 @@ class NotionCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        self.backgroundColor = Settings.Theme.Color.background
+        self.backgroundColor = Settings.Theme.Color.contentBackground
         
         // Create a container and set the frame (auto layout / constraints don't work in UICollectionViewCell?)
         containerView = UIView()
-        containerView.backgroundColor = Settings.Theme.Color.background
+        containerView.backgroundColor = Settings.Theme.Color.contentBackground
         containerView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(containerView)
         NSLayoutConstraint.activate([
@@ -55,6 +55,7 @@ class NotionCell: UITableViewCell {
 //        ])
         
         labelsContainer = UIView()
+        labelsContainer.backgroundColor = .clear
         labelsContainer.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(labelsContainer)
         NSLayoutConstraint.activate([
@@ -65,7 +66,8 @@ class NotionCell: UITableViewCell {
         ])
         
         notionIcon = UIImageView()
-        notionIcon.image = UIImage(named: Assets.Images.notionIconWhiteSmall)
+        notionIcon.backgroundColor = .clear
+        notionIcon.image = UIImage(named: Assets.Images.notionIconWhiteSm)
         notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
         notionIcon.clipsToBounds = true
         notionIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -78,7 +80,7 @@ class NotionCell: UITableViewCell {
         ])
         
         notionCountLabel = UILabel()
-        notionCountLabel.backgroundColor = Settings.Theme.Color.background
+        notionCountLabel.backgroundColor = .clear
         notionCountLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 26)
         notionCountLabel.textColor = Settings.Theme.Color.text
         notionCountLabel.textAlignment = NSTextAlignment.right
@@ -95,6 +97,7 @@ class NotionCell: UITableViewCell {
         ])
         
         titleLabel = UILabel()
+        titleLabel.backgroundColor = .clear
         titleLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 22)
         titleLabel.textColor = Settings.Theme.Color.text
         titleLabel.textAlignment = NSTextAlignment.left
@@ -111,7 +114,6 @@ class NotionCell: UITableViewCell {
         ])
         
         progressViewContainer = UIView()
-//        progressViewContainer.backgroundColor = .red
         progressViewContainer.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(progressViewContainer)
         NSLayoutConstraint.activate([
@@ -126,11 +128,6 @@ class NotionCell: UITableViewCell {
         progressViewLeft.trackTintColor = .clear
         progressViewLeft.progressTintColor = Settings.Theme.Color.progressbar
         progressViewLeft.progress = 0
-//        progressViewLeft.clipsToBounds = true
-//        progressViewLeft.layer.cornerRadius = 10
-//        progressViewLeft.layer.masksToBounds = true
-//        progressViewLeft.layer.sublayers![1].cornerRadius = 5
-//        progressViewLeft.subviews[1].clipsToBounds = true
         progressViewLeft.translatesAutoresizingMaskIntoConstraints = false
         progressViewContainer.addSubview(progressViewLeft)
         NSLayoutConstraint.activate([
@@ -144,11 +141,6 @@ class NotionCell: UITableViewCell {
         progressViewRight.trackTintColor = Settings.Theme.Color.progressbar
         progressViewRight.progressTintColor = .clear
         progressViewRight.progress = 0
-//        progressViewRight.clipsToBounds = true
-//        progressViewRight.layer.cornerRadius = 10
-//        progressViewRight.layer.masksToBounds = true
-//        progressViewRight.layer.sublayers![1].cornerRadius = 5
-//        progressViewRight.subviews[1].clipsToBounds = true
         progressViewRight.translatesAutoresizingMaskIntoConstraints = false
         progressViewContainer.addSubview(progressViewRight)
         NSLayoutConstraint.activate([
@@ -159,6 +151,7 @@ class NotionCell: UITableViewCell {
         ])
         
         ageLabel = UILabel()
+        ageLabel.backgroundColor = .clear
         ageLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 12)
         ageLabel.textColor = Settings.Theme.Color.text
         ageLabel.textAlignment = NSTextAlignment.right
@@ -175,6 +168,7 @@ class NotionCell: UITableViewCell {
         ])
         
         textTitle = UILabel()
+        textTitle.backgroundColor = .clear
         textTitle.font = UIFont(name: Assets.Fonts.Default.bold, size: 12)
         textTitle.textColor = Settings.Theme.Color.text
         textTitle.textAlignment = NSTextAlignment.left
@@ -191,7 +185,7 @@ class NotionCell: UITableViewCell {
         ])
         
         textView = UITextView()
-        textView.backgroundColor = Settings.Theme.Color.background
+        textView.backgroundColor = .clear
         textView.font = UIFont(name: Assets.Fonts.Default.regular, size: 14)
         textView.textColor = Settings.Theme.Color.text
         textView.textAlignment = NSTextAlignment.left

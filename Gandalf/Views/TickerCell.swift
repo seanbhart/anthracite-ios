@@ -18,11 +18,11 @@ class TickerCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        self.backgroundColor = Settings.Theme.Color.background
+        self.backgroundColor = Settings.Theme.Color.contentBackground
         
         // Create a container and set the frame (auto layout / constraints don't work in UICollectionViewCell?)
         containerView = UIView()
-        containerView.backgroundColor = Settings.Theme.Color.background
+        containerView.backgroundColor = Settings.Theme.Color.contentBackground
         containerView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(containerView)
         NSLayoutConstraint.activate([
@@ -32,19 +32,20 @@ class TickerCell: UITableViewCell {
             containerView.rightAnchor.constraint(equalTo:contentView.rightAnchor),
         ])
         
-        containerBorder = UIView()
-        containerBorder.layer.borderColor = Settings.Theme.Color.header.cgColor
-        containerBorder.layer.borderWidth = 1
-        containerBorder.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(containerBorder)
-        NSLayoutConstraint.activate([
-            containerBorder.topAnchor.constraint(equalTo:containerView.topAnchor),
-            containerBorder.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
-            containerBorder.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
-            containerBorder.heightAnchor.constraint(equalToConstant: 1)
-        ])
+//        containerBorder = UIView()
+//        containerBorder.layer.borderColor = Settings.Theme.Color.background.cgColor
+//        containerBorder.layer.borderWidth = 1
+//        containerBorder.translatesAutoresizingMaskIntoConstraints = false
+//        containerView.addSubview(containerBorder)
+//        NSLayoutConstraint.activate([
+//            containerBorder.topAnchor.constraint(equalTo:containerView.topAnchor),
+//            containerBorder.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
+//            containerBorder.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
+//            containerBorder.heightAnchor.constraint(equalToConstant: 1)
+//        ])
         
         title = UILabel()
+        title.backgroundColor = .clear
         title.font = UIFont(name: Assets.Fonts.Default.black, size: 20)
         title.textColor = Settings.Theme.Color.text
         title.textAlignment = NSTextAlignment.center
@@ -54,26 +55,28 @@ class TickerCell: UITableViewCell {
         title.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(title)
         NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo:containerView.topAnchor, constant: 10),
+            title.topAnchor.constraint(equalTo:containerView.topAnchor, constant: 15),
             title.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 5),
             title.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -5),
             title.heightAnchor.constraint(equalToConstant:30),
         ])
         
         notionIcon = UIImageView()
-        notionIcon.image = UIImage(named: Assets.Images.notionIconBlueLarge)
+        notionIcon.backgroundColor = .clear
+        notionIcon.image = UIImage(named: Assets.Images.notionIconGraySm)
         notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
         notionIcon.clipsToBounds = true
         notionIcon.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(notionIcon)
         NSLayoutConstraint.activate([
-            notionIcon.topAnchor.constraint(equalTo:title.bottomAnchor, constant: 0),
+            notionIcon.topAnchor.constraint(equalTo:title.bottomAnchor, constant: 5),
             notionIcon.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
             notionIcon.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
-            notionIcon.heightAnchor.constraint(equalToConstant: 50),
+            notionIcon.heightAnchor.constraint(equalToConstant: 30),
         ])
         
         countText = UILabel()
+        countText.backgroundColor = .clear
         countText.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 20)
         countText.textColor = Settings.Theme.Color.text
         countText.textAlignment = NSTextAlignment.center
@@ -86,7 +89,7 @@ class TickerCell: UITableViewCell {
             countText.topAnchor.constraint(equalTo:notionIcon.bottomAnchor, constant: 0),
             countText.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 5),
             countText.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -5),
-            countText.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -5)
+            countText.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10)
         ])
     }
     

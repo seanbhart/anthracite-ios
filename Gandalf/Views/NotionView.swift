@@ -41,10 +41,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var notionTableViewEmptyNote: UILabel!
     let notionTableCellIdentifier: String = "NotionCell"
     
-//    override var preferredStatusBarStyle: UIStatusBarStyle {
-//        print("\(className) - preferredStatusBarStyle")
-//        return .lightContent
-//    }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        print("\(className) - preferredStatusBarStyle")
+        return .lightContent
+    }
     
     private var observer: NSObjectProtocol?
     
@@ -54,21 +54,30 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         self.navigationItem.title = ""
         
         let barItemLogo = UIButton(type: .custom)
-//        barItemAdd.setImage(UIImage(systemName: "plus.app.fill"), for: .normal)
-        barItemLogo.setTitle(pageTitle, for: .normal)
-        barItemLogo.titleLabel?.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
-        barItemLogo.titleLabel?.textAlignment = .left
-        barItemLogo.setTitleColor(Settings.Theme.Color.barText, for: .normal)
+        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
+//        barItemLogo.setTitle(pageTitle, for: .normal)
+//        barItemLogo.titleLabel?.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
+//        barItemLogo.titleLabel?.textAlignment = .left
+//        barItemLogo.setTitleColor(Settings.Theme.Color.barText, for: .normal)
         let barItemProfile = UIButton(type: .custom)
         barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal), for: .normal)
         barItemProfile.addTarget(self, action: #selector(loadProfileView), for: .touchUpInside)
         NSLayoutConstraint.activate([
-            barItemLogo.widthAnchor.constraint(equalToConstant:120),
-            barItemProfile.widthAnchor.constraint(equalToConstant:70),
+            barItemLogo.widthAnchor.constraint(equalToConstant:30),
+            barItemLogo.heightAnchor.constraint(equalToConstant:30),
+            barItemProfile.widthAnchor.constraint(equalToConstant:30),
         ])
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
         self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: barItemProfile)]
         self.navigationItem.hidesBackButton = true
+        
+//        let imageView = UIImageView(image: UIImage(named: Assets.Images.hatIconWhiteSm))
+//        imageView.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+//        imageView.contentMode = .scaleAspectFit
+//        let titleView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+//        titleView.addSubview(imageView)
+//        titleView.backgroundColor = .clear
+//        self.navigationItem.titleView = titleView
         
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - willEnterForegroundNotification")
@@ -154,10 +163,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             notionTitle.heightAnchor.constraint(equalToConstant: 20),
         ])
         NSLayoutConstraint.activate([
-            notionIcon.topAnchor.constraint(equalTo:notionTitle.topAnchor, constant: 10),
+            notionIcon.topAnchor.constraint(equalTo:notionTitle.topAnchor, constant: 20),
             notionIcon.bottomAnchor.constraint(equalTo:notionContainer.bottomAnchor, constant: -5),
             notionIcon.leftAnchor.constraint(equalTo:notionContainer.leftAnchor, constant: 5),
-            notionIcon.widthAnchor.constraint(equalToConstant: 50),
+            notionIcon.widthAnchor.constraint(equalToConstant: 40),
         ])
         NSLayoutConstraint.activate([
             notionCountLabel.topAnchor.constraint(equalTo:notionTitle.bottomAnchor, constant: 0),
@@ -169,7 +178,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             tickerContainer.topAnchor.constraint(equalTo:headerContainer.bottomAnchor),
             tickerContainer.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
             tickerContainer.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
-            tickerContainer.widthAnchor.constraint(equalToConstant: 120),
+            tickerContainer.widthAnchor.constraint(equalToConstant: 100),
         ])
         NSLayoutConstraint.activate([
             tickerTableView.topAnchor.constraint(equalTo:tickerContainer.topAnchor),
@@ -246,7 +255,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         notionContainer.addSubview(notionTitle)
         
         notionIcon = UIImageView()
-        notionIcon.image = UIImage(named: Assets.Images.notionIconWhiteLarge)
+        notionIcon.image = UIImage(named: Assets.Images.notionIconWhiteLg)
         notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
         notionIcon.clipsToBounds = true
         notionIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -272,7 +281,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         filterButton.addGestureRecognizer(filterButtonGestureRecognizer)
         
         filterIcon = UIImageView()
-        filterIcon.image = UIImage(named: Assets.Images.twinkleIconBlue)
+        filterIcon.image = UIImage(named: Assets.Images.topIconWhiteLg)
         filterIcon.contentMode = UIView.ContentMode.scaleAspectFit
         filterIcon.clipsToBounds = true
         filterIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -304,7 +313,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         viewContainer.addSubview(tickerContainer)
         
         tickerTableViewRefreshControl = UIRefreshControl()
-        tickerTableViewRefreshControl.tintColor = Settings.Theme.Color.background
+        tickerTableViewRefreshControl.tintColor = .clear
         tickerTableViewRefreshControl.addTarget(self, action: #selector(tickerClear), for: .valueChanged)
         
         tickerTableView = UITableView()
@@ -338,7 +347,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         tickerTableViewSpinner.isHidden = false
         
         notionTableViewRefreshControl = UIRefreshControl()
-        notionTableViewRefreshControl.tintColor = Settings.Theme.Color.selected
+        notionTableViewRefreshControl.tintColor = Settings.Theme.Color.text
         notionTableViewRefreshControl.addTarget(self, action: #selector(refreshTableData), for: .valueChanged)
         
         notionTableView = UITableView()
@@ -437,10 +446,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         if !sortByResponse {
             // Turn on the filter
             sortByResponse = true
-            filterIcon.image = UIImage(named: Assets.Images.twinkleIconWhite)
+            filterIcon.image = UIImage(named: Assets.Images.topIconPurpleLg)
         } else {
             sortByResponse = false
-            filterIcon.image = UIImage(named: Assets.Images.twinkleIconBlue)
+            filterIcon.image = UIImage(named: Assets.Images.topIconWhiteLg)
         }
         sortToggle()
     }
@@ -566,9 +575,9 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         } else if tableView == tickerTableView {
             let cell = tableView.dequeueReusableCell(withIdentifier: tickerTableCellIdentifier, for: indexPath) as! TickerCell
             cell.selectionStyle = .none
-            if indexPath.row == 0 {
-                cell.containerBorder.layer.borderColor = UIColor.clear.cgColor
-            }
+//            if indexPath.row == 0 {
+//                cell.containerBorder.layer.borderColor = UIColor.clear.cgColor
+//            }
             let cellTicker = localTickers[indexPath.row]
             if let t = cellTicker.ticker {
                 cell.title.text = "$" + t
@@ -579,15 +588,15 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
                 cell.countText.text = formattedSum
                 
                 if cellTicker.wAvgSentiment >= 0 {
-                    cell.notionIcon.image = UIImage(named: Assets.Images.notionIconBlueLarge)
+                    cell.notionIcon.image = UIImage(named: Assets.Images.notionIconPosSm)
                 } else {
-                    cell.notionIcon.image = UIImage(named: Assets.Images.notionIconRedLarge)
+                    cell.notionIcon.image = UIImage(named: Assets.Images.notionIconNegSm)
                 }
             }
             if cellTicker.selected {
                 cell.containerView.backgroundColor = Settings.Theme.Color.selected
             } else {
-                cell.containerView.backgroundColor = Settings.Theme.Color.background
+                cell.containerView.backgroundColor = Settings.Theme.Color.contentBackground
             }
             return cell
         }
@@ -596,15 +605,15 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == notionTableView {
-            print("NOTION ROW \(indexPath.row)")
+//            print("NOTION ROW \(indexPath.row)")
             
         } else if tableView == tickerTableView {
-            print("TICKER ROW \(indexPath.row)")
+//            print("TICKER ROW \(indexPath.row)")
             if localTickers[indexPath.row].selected {
                 localTickers[indexPath.row].selected = false
             } else {
                 localTickers[indexPath.row].selected = true
-                print("TICKER - WAVG SENTIMENT: \(localTickers[indexPath.row].wAvgSentiment), MAGNITUDE: \(localTickers[indexPath.row].wAvgMagnitude)")
+//                print("TICKER - WAVG SENTIMENT: \(localTickers[indexPath.row].wAvgSentiment), MAGNITUDE: \(localTickers[indexPath.row].wAvgMagnitude)")
             }
             fillLocalNotions()
         }
@@ -788,7 +797,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             .compactMap { $0.magnitude * Float($0.responseCount) }
             .reduce(0, +) / Float(responseCount)
         
-        print("NOTIONS - WAVG SENTIMENT: \(wAvgSentiment), MAGNITUDE: \(wAvgMagnitude)")
+//        print("NOTIONS - WAVG SENTIMENT: \(wAvgSentiment), MAGNITUDE: \(wAvgMagnitude)")
         
         if wAvgSentiment > 0 {
             progressViewLeft.progress = 1
