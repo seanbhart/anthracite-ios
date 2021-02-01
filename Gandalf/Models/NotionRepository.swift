@@ -7,14 +7,16 @@
 
 import FirebaseFirestore
 
-protocol RepositoryDelegate {
-    func dataUpdate()
+protocol NotionRepositoryDelegate {
+    func notionDataUpdate()
     func showLogin()
     func getLocalTickers() -> [Ticker]
 }
 
 class NotionRepository {
-    var repoDelegate: RepositoryDelegate?
+    var className = "NotionRepository"
+    
+    var delegate: NotionRepositoryDelegate?
     var recency: Double! //seconds
     var notions = [Notion]()
     var tickers = [Ticker]()
@@ -38,21 +40,17 @@ class NotionRepository {
     func observeQuery() {
         guard let query = query else { return }
         stopObserving()
-        
-        let timestamp = Date().timeIntervalSince1970 - recency
-        print(timestamp)
 
-        // TODO: UPDATE QUERY FREQUENTLY (REFRESH TIMESTAMP CRITERIA)
         listener = query
-            .whereField("created", isGreaterThan: timestamp)
+            .whereField("created", isGreaterThan: Date().timeIntervalSince1970 - recency)
             .addSnapshotListener { [unowned self] (snapshot, error) in
                 if let err = error {
-                    if let parent = self.repoDelegate {
-                        print(err)
+                    if let parent = self.delegate {
+                        print("\(className) - LISTENER ERROR: \(err)")
                         parent.showLogin()
                     }
                 }
-                guard let snapshot = snapshot else { print("snapshot error: \(error!)"); return }
+                guard let snapshot = snapshot else { print("\(className) snapshot error: \(error!)"); return }
                 
                 self.notions.removeAll()
                 self.notions = snapshot.documents.compactMap { queryDocumentSnapshot -> Notion? in
@@ -70,11 +68,11 @@ class NotionRepository {
                         .reduce(0, +)
                     let wAvgSentiment = self.notions
                         .filter({ $0.tickers.compactMap({ $0 }).contains(t) })
-                        .map({ $0.sentiment })
+                        .map({ $0.sentiment * Float($0.responseCount) })
                         .reduce(0, +) / Float(responseCount)
                     let wAvgMagnitude = self.notions
                         .filter({ $0.tickers.compactMap({ $0 }).contains(t) })
-                        .map({ $0.magnitude })
+                        .map { $0.magnitude * Float($0.responseCount) }
                         .reduce(0, +) / Float(responseCount)
                     
                     // Filter the data so no long tickers appear in the list
@@ -89,7 +87,7 @@ class NotionRepository {
                 
                 var selectedTickers = [Ticker]()
                 // but save the currently selected Tickers to update the new list
-                if let parent = self.repoDelegate {
+                if let parent = self.delegate {
                     selectedTickers = parent.getLocalTickers().filter({ $0.selected })
                 }
                 // Set tickers in the new list to selected if they were previously
@@ -105,14 +103,14 @@ class NotionRepository {
                     }
                 })
                 
-                if let parent = self.repoDelegate {
-                    parent.dataUpdate()
+                if let parent = self.delegate {
+                    parent.notionDataUpdate()
                 }
         }
     }
 
     func stopObserving() {
-        print("NotionRepository: stopObserving")
+        print("\(className): stopObserving")
         listener?.remove()
     }
 }

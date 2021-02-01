@@ -10,14 +10,16 @@ import Firebase
 //import FirebaseAnalytics
 import FirebaseAuth
 
-class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, RepositoryDelegate {
+class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, NotionRepositoryDelegate, NotionActionRepositoryDelegate, HoleViewDelegate {
     let className = "NotionView"
     
     var pageTitle = "Gandalf"
     var sortByResponse = false
+    var allowUpdates = true
     var localTickers = [Ticker]()
     var localNotions = [Notion]()
     var notionRepository: NotionRepository!
+    var notionActionRepository: NotionActionRepository!
     
     var viewContainer: UIView!
     var headerContainer: UIView!
@@ -41,10 +43,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var notionTableViewEmptyNote: UILabel!
     let notionTableCellIdentifier: String = "NotionCell"
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        print("\(className) - preferredStatusBarStyle")
-        return .lightContent
-    }
+//    override var preferredStatusBarStyle: UIStatusBarStyle {
+//        print("\(className) - preferredStatusBarStyle")
+//        return .lightContent
+//    }
     
     private var observer: NSObjectProtocol?
     
@@ -82,10 +84,12 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - willEnterForegroundNotification")
             notionRepository.observeQuery()
+            notionActionRepository.observeQuery()
         }
         observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - didEnterBackgroundNotification")
             notionRepository.stopObserving()
+            notionActionRepository.stopObserving()
         }
 //        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: Notification.Name.NSExtensionHostWillEnterForeground, object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.NSExtensionHostDidEnterBackground, object: nil)
@@ -188,7 +192,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         ])
         NSLayoutConstraint.activate([
             tickerTableViewSpinner.centerXAnchor.constraint(equalTo:tickerTableView.centerXAnchor, constant: 0),
-            tickerTableViewSpinner.centerYAnchor.constraint(equalTo:tickerTableView.centerYAnchor, constant: -130),
+            tickerTableViewSpinner.centerYAnchor.constraint(equalTo:tickerTableView.centerYAnchor, constant: -100),
         ])
         NSLayoutConstraint.activate([
             notionTableView.topAnchor.constraint(equalTo:headerContainer.bottomAnchor),
@@ -208,6 +212,29 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         ])
         
         notionRepository.observeQuery()
+        notionActionRepository.observeQuery()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        // If the tutorial has not been viewed, show it for this user
+        if let firUser = Auth.auth().currentUser {
+            Settings.Firebase.db().collection("accounts").document(firUser.uid)
+                .getDocument { (document, error) in
+                    guard let doc = document else { self.showTutorial(); return }
+                    if !doc.exists { self.showTutorial(); return }
+                    guard let accountData = doc.data() else { self.showTutorial(); return }
+                    guard let tutorialsViewed = accountData["tutorials"] as? [String] else { self.showTutorial(); return }
+                    if (tutorialsViewed.firstIndex(of: "v1.0.0") == nil) {
+                        self.showTutorial()
+                    }
+                }
+        }
+    }
+    
+    func showTutorial() {
+        let holeView = HoleView(holeViewPosition: 1, frame: viewContainer.bounds, circleOffsetX: 0, circleOffsetY: 0, circleRadius: 0, textOffsetX: (viewContainer.bounds.width / 2) - 160, textOffsetY: 60, textWidth: 320, textFontSize: 32, text: "Welcome to Gandalf!\n\nGandalf is an investment information app detecting public sentiment regarding tradeable assets to predict future prices.")
+        holeView.holeViewDelegate = self
+        viewContainer.addSubview(holeView)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -215,13 +242,12 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         print("\(className) - viewWillDisappear")
 //        navigationController?.setNavigationBarHidden(false, animated: animated)
         notionRepository.stopObserving()
+        notionActionRepository.stopObserving()
     }
 
     override func loadView() {
         super.loadView()
         print("\(className) - loadView")
-        notionRepository = NotionRepository(recency: 3600)
-        notionRepository.repoDelegate = self
         
         // Make the background the same as the navigation bar
         view.backgroundColor = Settings.Theme.Color.background
@@ -358,6 +384,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         notionTableView.register(NotionCell.self, forCellReuseIdentifier: notionTableCellIdentifier)
         notionTableView.separatorStyle = .none
         notionTableView.backgroundColor = .clear
+        notionTableView.isSpringLoaded = true
 //        notionTableView.rowHeight = UITableView.automaticDimension
 //        notionTableView.estimatedRowHeight = UITableView.automaticDimension
         notionTableView.estimatedRowHeight = 0
@@ -394,6 +421,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         // If a user is not logged in, display the Login screen
         if let firUser = Auth.auth().currentUser {
             print("\(className) - currentUser: \(firUser.uid)")
+            notionActionRepository = NotionActionRepository(recency: 3600)
+            notionActionRepository.delegate = self
+            notionRepository = NotionRepository(recency: 3600)
+            notionRepository.delegate = self
         } else {
             self.presentSheet(with: ProfileView())
         }
@@ -416,8 +447,13 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     func showLogin() {
         self.presentSheet(with: ProfileView())
     }
-    func dataUpdate() {
-        updateDataLists()
+    func notionDataUpdate() {
+        if allowUpdates {
+            updateDataLists()
+        }
+    }
+    func notionActionDataUpdate() {
+        fillNotionActions()
     }
     func getLocalTickers() -> [Ticker] {
         return localTickers
@@ -515,6 +551,17 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             let notion = localNotions[indexPath.row]
             cell.id = notion.id
             cell.textView.text = notion.text //String(notion.sentiment) + ", " + String(notion.magnitude)
+            
+            // Get the Notion actions and set the action indicator
+            // and adjust the sentiment by however many actions were taken
+            cell.clearTrianges()
+            if let sAction = notion.sentimentAction {
+                if sAction.quantity < 0 {
+                    cell.insertTriangleNegative()
+                } else if sAction.quantity > 0 {
+                    cell.insertTrianglePositive()
+                }
+            }
             
             let numberFormatter = NumberFormatter()
             numberFormatter.numberStyle = .decimal
@@ -628,24 +675,39 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
     }
     
-//    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        let action = UIContextualAction(style: .normal, title: "Not\nRelevant") { [weak self] (action, view, completionHandler) in
-////            self?.handleMarkAsFavourite()
-//            print("DELETE ROW: \(indexPath.row)")
-//            completionHandler(true)
-//        }
-//        action.backgroundColor = .systemBlue
-//        return UISwipeActionsConfiguration(actions: [action])
-//    }
-//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        let hide = UIContextualAction(style: .destructive, title: "Not\nRelevant") { [weak self] (action, view, completionHandler) in
-////            self?.handleMarkAsFavourite()
-//            print("HIDE ROW: \(indexPath.row)")
-//            completionHandler(true)
-//        }
-//        hide.backgroundColor = Settings.Theme.colorSecondary
-//        return UISwipeActionsConfiguration(actions: [hide])
-//    }
+    func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+        allowUpdates = false
+    }
+    
+    func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?) {
+        allowUpdates = true
+        notionDataUpdate()
+    }
+    
+    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let positive = UIContextualAction(style: .normal, title: "") { (action, view, completionHandler) in
+            print("MOVE POSITIVE: \(indexPath.row)")
+            let notion = self.localNotions[indexPath.row]
+            guard let notionId = notion.id else { return }
+            self.notionActionRepository.addSentimentAction(notion: notionId, quantity: 1)
+//            self.fillNotionActions()
+            completionHandler(true)
+        }
+        positive.backgroundColor = Settings.Theme.Color.positive
+        return UISwipeActionsConfiguration(actions: [positive])
+    }
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let negative = UIContextualAction(style: .normal, title: "") { (action, view, completionHandler) in
+            print("MOVE NEGATIVE: \(indexPath.row)")
+            let notion = self.localNotions[indexPath.row]
+            guard let notionId = notion.id else { return }
+            self.notionActionRepository.addSentimentAction(notion: notionId, quantity: -1)
+//            self.fillNotionActions()
+            completionHandler(true)
+        }
+        negative.backgroundColor = Settings.Theme.Color.negative
+        return UISwipeActionsConfiguration(actions: [negative])
+    }
     
 
     // MARK: -SCROLL VIEW DELEGATE METHODS
@@ -687,6 +749,25 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         fillLocalNotions()
     }
     
+    func fillNotionActions() {
+        // Fill the Notions with associated NotionActions
+        // Also fill an additional array with just NotionActions from this user
+        // to determine if action indicators need to be set on Notion cells
+        for i in localNotions.indices {
+            // Filter for the actions for this notion
+            // and filter the filtered actions for this account's actions
+            let sentimentActions = notionActionRepository.notionActions.filter({ $0.notion == localNotions[i].id && $0.type == "sentiment" })
+            // There should only be one sentiment action for this user on this notion
+            if sentimentActions.count < 1 { continue }
+            localNotions[i].sentimentAction = sentimentActions[0]
+            
+            // Calculate the total positive and negative corrections and apply the correction total
+            // (multiplied by the sentiment adjustment amount - see settings) to the sentiment value
+            localNotions[i].sentiment = localNotions[i].sentiment + (Float(sentimentActions[0].quantity) * Settings.sentimentAdjAmt)
+        }
+        updateDataSummaries()
+        sortToggle()
+    }
     func fillLocalNotions() {
         localNotions.removeAll()
         // Filter the data based on ticker selection ONLY IF ANY ARE SELECTED
@@ -699,10 +780,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             localNotions = notionRepository.notions
         }
         tickerTableView.reloadData()
-        notionTableView.reloadData()
-        
-        sortToggle()
-        updateDataSummaries()
+        fillNotionActions()
     }
     func sortToggle() {
         if sortByResponse {
@@ -777,8 +855,12 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         format.dateFormat = "h:mm a"
         format.amSymbol = "AM"
         format.pmSymbol = "PM"
-        let dateString = format.string(from: Date(timeIntervalSince1970: Double(localNotions[localNotions.count-1].created)))
-        notionTitle.text = "SINCE  " + dateString
+        if localNotions.count > 0 {
+            if let min = localNotions.map({ $0.created }).min() {
+                let dateString = format.string(from: Date(timeIntervalSince1970: Double(min)))
+                notionTitle.text = "SINCE  " + dateString
+            }
+        }
         
         // Refresh the header values
         let responseCount = localNotions
@@ -791,10 +873,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         
         // Handle the aggregated sentiment values
         let wAvgSentiment = localNotions
-            .compactMap { $0.sentiment * Float($0.responseCount) }
+            .map { $0.sentiment * Float($0.responseCount) }
             .reduce(0, +) / Float(responseCount)
         let wAvgMagnitude = localNotions
-            .compactMap { $0.magnitude * Float($0.responseCount) }
+            .map { $0.magnitude * Float($0.responseCount) }
             .reduce(0, +) / Float(responseCount)
         
 //        print("NOTIONS - WAVG SENTIMENT: \(wAvgSentiment), MAGNITUDE: \(wAvgMagnitude)")
@@ -818,6 +900,69 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         } else {
             progressViewLeft.trackTintColor = Settings.gradientColor(color1: Settings.Theme.Color.negativeLight, color2: Settings.Theme.Color.negative, percent: 0.1)
             progressViewRight.progressTintColor = Settings.gradientColor(color1: Settings.Theme.Color.positiveLight, color2: Settings.Theme.Color.positive, percent: 0.1)
+        }
+    }
+    
+    
+    // MARK: -HOLE VIEW DELEGATE
+    
+    func holeViewRemoved(removingViewAtPosition: Int) {
+        // Give a short tutorial for new users
+        switch removingViewAtPosition {
+        case 1:
+            // Explain the feed.
+            print("\(className) - TUTORIAL 2")
+            let holeView = HoleView(holeViewPosition: 2, frame: viewContainer.bounds, circleOffsetX: 180, circleOffsetY: 220, circleRadius: 130, textOffsetX: (viewContainer.bounds.width / 2) - 160, textOffsetY: 370, textWidth: 320, textFontSize: 24, text: "Social media posts regarding stocks, cryptocurrencies, or hot investment topics are displayed in the feed.")
+            holeView.holeViewDelegate = self
+            viewContainer.addSubview(holeView)
+        case 2:
+            // Explain the response indicator.
+            print("\(className) - TUTORIAL 3")
+            let holeView = HoleView(holeViewPosition: 3, frame: viewContainer.bounds, circleOffsetX: viewContainer.frame.width - 40, circleOffsetY: 150, circleRadius: 40, textOffsetX: (viewContainer.bounds.width / 2) - 150, textOffsetY: 240, textWidth: 300, textFontSize: 24, text: "The number of responses from the associated social media platform include upvotes, downvotes, awards, and comments to indicate overall attention.")
+            holeView.holeViewDelegate = self
+            viewContainer.addSubview(holeView)
+        case 3:
+            // Explain the sentiment bar.
+            print("\(className) - TUTORIAL 4")
+            let holeView = HoleView(holeViewPosition: 4, frame: viewContainer.bounds, circleOffsetX: (viewContainer.frame.width / 2) + 50, circleOffsetY: 170, circleRadius: 60, textOffsetX: (viewContainer.bounds.width / 2) - 160, textOffsetY: 260, textWidth: 320, textFontSize: 22, text: "The sentiment bar shows green when positive emotion is detected, and red when emotions are negative. Brighter colors indicate more intense emotions.\n\nNot all emotional analyses will be accurate; we are constantly training our artificial intelligence model to better detect emotions regarding investments.")
+            holeView.holeViewDelegate = self
+            viewContainer.addSubview(holeView)
+        case 4:
+            allowUpdates = false
+            // Explain the sentiment bar.
+            print("\(className) - TUTORIAL 5")
+            let holeView = HoleView(holeViewPosition: 5, frame: viewContainer.bounds, circleOffsetX: viewContainer.frame.width, circleOffsetY: 250, circleRadius: 140, textOffsetX: (viewContainer.bounds.width / 2) - 150, textOffsetY: 400, textWidth: 300, textFontSize: 24, text: "Swipe the row left or right to correct the sentiment analysis and help train our AI model.\n\nSwipe multiple times for larger corrections.")
+            holeView.holeViewDelegate = self
+            viewContainer.addSubview(holeView)
+            
+            if localNotions.count > 0 {
+                let cell = notionTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! NotionCell
+                cell.tutorialAnimation()
+            }
+        case 5:
+            allowUpdates = true
+            // Conclusion.
+            print("\(className) - TUTORIAL 6")
+            let holeView = HoleView(holeViewPosition: 6, frame: viewContainer.bounds, circleOffsetX: 0, circleOffsetY: 0, circleRadius: 0, textOffsetX: (viewContainer.bounds.width / 2) - 160, textOffsetY: 60, textWidth: 320, textFontSize: 28, text: "We hope you enjoy Gandalf!\n\nThe Gandalf team is constantly adding more sources for sentiment analysis and building features to enhance your own investment conversations and prediction of future prices.")
+            holeView.holeViewDelegate = self
+            viewContainer.addSubview(holeView)
+        default:
+            // The tutorial has ended - Record the Tutorial as viewed for this user.
+            print("\(className) - TUTORIAL END")
+            
+            if let firUser = Auth.auth().currentUser {
+                Settings.Firebase.db().collection("accounts").document(firUser.uid).setData([
+                    "tutorials": ["v1.0.0"]
+                ], merge: true) { err in
+                    if let err = err {
+                        print("\(self.className) - FIREBASE: ERROR saving tutorial view: \(err)")
+                    } else {
+                        print("\(self.className) - FIREBASE: tutorial view saved")
+                    }
+                }
+            } else {
+                print("\(className) - TUTORIAL END ERROR: NO USER")
+            }
         }
     }
 }

@@ -11,12 +11,14 @@ import UIKit
 class NotionCell: UITableViewCell {
     var id: String?
     
+    var tutorialBackgroundView: UIView!
     var containerView: UIView!
 //    var containerBorder: UIView!
     var labelsContainer: UIView!
     var titleLabel: UILabel!
     var notionCountLabel: UILabel!
     var notionIcon: UIImageView!
+    var cornerShape = CAShapeLayer()
     var progressViewContainer: UIView!
     var progressViewLeft: ProgressViewRoundedLeft!
     var progressViewRight: ProgressViewRoundedRight!
@@ -28,6 +30,18 @@ class NotionCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.backgroundColor = Settings.Theme.Color.contentBackground
+        
+        // Create a view behind the containerView with the color needed as background for the tutorial animation
+        tutorialBackgroundView = UIView()
+        tutorialBackgroundView.backgroundColor = Settings.Theme.Color.negative
+        tutorialBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(tutorialBackgroundView)
+        NSLayoutConstraint.activate([
+            tutorialBackgroundView.topAnchor.constraint(equalTo:contentView.topAnchor),
+            tutorialBackgroundView.bottomAnchor.constraint(equalTo:contentView.bottomAnchor),
+            tutorialBackgroundView.leftAnchor.constraint(equalTo:contentView.leftAnchor),
+            tutorialBackgroundView.rightAnchor.constraint(equalTo:contentView.rightAnchor),
+        ])
         
         // Create a container and set the frame (auto layout / constraints don't work in UICollectionViewCell?)
         containerView = UIView()
@@ -222,6 +236,44 @@ class NotionCell: UITableViewCell {
             contentView.backgroundColor = Settings.Theme.Color.background
         } else {
             contentView.backgroundColor = Settings.Theme.Color.background
+        }
+    }
+    
+    func clearTrianges() {
+        cornerShape.removeFromSuperlayer()
+    }
+    func insertTrianglePositive() {
+        let path = CGMutablePath()
+        path.move(to: CGPoint(x: labelsContainer.frame.width-20, y: 0))
+        path.addLine(to: CGPoint(x: labelsContainer.frame.width, y: 0))
+        path.addLine(to: CGPoint(x: labelsContainer.frame.width, y: 20))
+        path.addLine(to: CGPoint(x: labelsContainer.frame.width-20, y: 0))
+
+        cornerShape.path = path
+        cornerShape.fillColor = Settings.Theme.Color.positive.cgColor
+        labelsContainer.layer.insertSublayer(cornerShape, at: 0)
+    }
+    func insertTriangleNegative() {
+        let path = CGMutablePath()
+        path.move(to: CGPoint(x: 20, y: 0))
+        path.addLine(to: CGPoint(x: 0, y: 0))
+        path.addLine(to: CGPoint(x: 0, y: 20))
+        path.addLine(to: CGPoint(x: 20, y: 0))
+
+        cornerShape.path = path
+        cornerShape.fillColor = Settings.Theme.Color.negative.cgColor
+        labelsContainer.layer.insertSublayer(cornerShape, at: 0)
+    }
+    
+    func tutorialAnimation() {
+        UIView.animate(withDuration: 1.0, delay: 0.5, usingSpringWithDamping: 0.9, initialSpringVelocity: 2, options: .curveEaseInOut, animations: {
+            self.containerView.transform = CGAffineTransform(translationX: -150, y: 0)
+        }) { _ in
+            UIView.animate(withDuration: 2.0, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 1, options: .curveEaseInOut, animations: {
+                self.containerView.transform = CGAffineTransform(translationX: 0, y: 0)
+            }) { _ in
+                print("animation done")
+            }
         }
     }
 }

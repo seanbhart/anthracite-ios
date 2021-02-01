@@ -24,6 +24,9 @@
 		B80E050C25C73CBD009DBE34 /* STARS-GRAY-SM.png in Resources */ = {isa = PBXBuildFile; fileRef = B80E050A25C73CBD009DBE34 /* STARS-GRAY-SM.png */; };
 		B80E051325C742FD009DBE34 /* STARS-PURPLE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B80E051225C742FD009DBE34 /* STARS-PURPLE-LG.png */; };
 		B80E051725C7499C009DBE34 /* HAT-PURPLE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B80E051625C7499C009DBE34 /* HAT-PURPLE-LG.png */; };
+		B80E053425C76D08009DBE34 /* HoleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E053325C76D08009DBE34 /* HoleView.swift */; };
+		B80E053725C83DFE009DBE34 /* NotionAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E053625C83DFE009DBE34 /* NotionAction.swift */; };
+		B80E053A25C8403B009DBE34 /* NotionActionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E053925C8403B009DBE34 /* NotionActionRepository.swift */; };
 		B873503B25C256320007A8FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503A25C256320007A8FE /* AppDelegate.swift */; };
 		B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503C25C256320007A8FE /* SceneDelegate.swift */; };
 		B873504125C256330007A8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504025C256330007A8FE /* Assets.xcassets */; };
@@ -76,6 +79,9 @@
 		B80E050A25C73CBD009DBE34 /* STARS-GRAY-SM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STARS-GRAY-SM.png"; sourceTree = "<group>"; };
 		B80E051225C742FD009DBE34 /* STARS-PURPLE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STARS-PURPLE-LG.png"; sourceTree = "<group>"; };
 		B80E051625C7499C009DBE34 /* HAT-PURPLE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "HAT-PURPLE-LG.png"; sourceTree = "<group>"; };
+		B80E053325C76D08009DBE34 /* HoleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoleView.swift; sourceTree = "<group>"; };
+		B80E053625C83DFE009DBE34 /* NotionAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotionAction.swift; sourceTree = "<group>"; };
+		B80E053925C8403B009DBE34 /* NotionActionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotionActionRepository.swift; sourceTree = "<group>"; };
 		B873503725C256320007A8FE /* Gandalf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gandalf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B873503A25C256320007A8FE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B873503C25C256320007A8FE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -224,6 +230,8 @@
 				B873508A25C258C50007A8FE /* Notion.swift */,
 				B873508925C258C50007A8FE /* NotionRepository.swift */,
 				B87350B725C2A2D00007A8FE /* Ticker.swift */,
+				B80E053625C83DFE009DBE34 /* NotionAction.swift */,
+				B80E053925C8403B009DBE34 /* NotionActionRepository.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -245,6 +253,7 @@
 				B873507E25C258BD0007A8FE /* NotionView.swift */,
 				B873508025C258BD0007A8FE /* TickerCell.swift */,
 				B80E04C225C32A96009DBE34 /* ProfileView.swift */,
+				B80E053325C76D08009DBE34 /* HoleView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -426,7 +435,9 @@
 				B873508B25C258C50007A8FE /* NotionRepository.swift in Sources */,
 				B873509425C258D60007A8FE /* Settings.swift in Sources */,
 				B873508C25C258C50007A8FE /* Notion.swift in Sources */,
+				B80E053425C76D08009DBE34 /* HoleView.swift in Sources */,
 				B873503B25C256320007A8FE /* AppDelegate.swift in Sources */,
+				B80E053725C83DFE009DBE34 /* NotionAction.swift in Sources */,
 				B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */,
 				B873508425C258BE0007A8FE /* NotionView.swift in Sources */,
 				B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */,
@@ -436,6 +447,7 @@
 				B80E04C325C32A96009DBE34 /* ProfileView.swift in Sources */,
 				B873508F25C258CF0007A8FE /* LocalCollection.swift in Sources */,
 				B873509325C258D60007A8FE /* Theme.swift in Sources */,
+				B80E053A25C8403B009DBE34 /* NotionActionRepository.swift in Sources */,
 				B873508725C258BE0007A8FE /* CustomProgressView.swift in Sources */,
 				B873509725C258DA0007A8FE /* UIKitExtensions.swift in Sources */,
 			);

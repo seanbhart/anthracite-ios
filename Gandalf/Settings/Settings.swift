@@ -18,6 +18,9 @@ struct Settings {
     static var serverLastRefresh: TimeInterval = Date().timeIntervalSince1970 // Used to prevent looping through failed requests in a short period of time
     static var lastCredentials: TimeInterval = Date().timeIntervalSince1970
     
+    static let sentimentAdjAmt: Float = 0.25
+    static let sentimentAdjMaxActions: Int = 4 //Max adjustment actions in one direction
+    
     struct Firebase {
         static let settings = { () -> FirestoreSettings in
             let settings = FirestoreSettings()

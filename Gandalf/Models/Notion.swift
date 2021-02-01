@@ -10,6 +10,7 @@ import FirebaseFirestoreSwift
 
 struct Notion: Identifiable, Codable {
     @DocumentID var id: String?
+    var status: Int?
     var host: String
     var hostId: String
     var text: String
@@ -26,9 +27,12 @@ struct Notion: Identifiable, Codable {
     var magnitude: Float = 0.0
     var tickers: [String] = []
     var confidence: Float = 0.0
+    var sentimentAction: NotionAction?
+//    var accountActions = [NotionAction]() //NotionActions created by this account
 
     enum CodingKeys: String, CodingKey {
         case id
+        case status
         case host
         case hostId = "host_id"
         case text
