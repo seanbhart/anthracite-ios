@@ -63,7 +63,7 @@ class TickerCell: UITableViewCell {
         
         notionIcon = UIImageView()
         notionIcon.backgroundColor = .clear
-        notionIcon.image = UIImage(named: Assets.Images.notionIconGraySm)
+        notionIcon.image = UIImage(named: Assets.Images.notionIconGrayLg)
         notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
         notionIcon.clipsToBounds = true
         notionIcon.translatesAutoresizingMaskIntoConstraints = false

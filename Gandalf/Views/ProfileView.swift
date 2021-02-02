@@ -185,10 +185,18 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     func showSignIn() {
         self.signOutButton.isHidden = true
         self.signInButton.isHidden = false
+        
+        profileName.text = ""
     }
     func hideSignIn() {
         self.signOutButton.isHidden = false
         self.signInButton.isHidden = true
+        
+        if let cUser = Auth.auth().currentUser {
+            if let name = cUser.displayName {
+                profileName.text = "Welcome, \(name)"
+            }
+        }
     }
     
     
@@ -222,18 +230,20 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
 //                    ])
                     return
                 }
-                print("\(self.className) - SIGN IN WITH APPLE: \(String(describing: result))")
-                // Continue to the main page
+                print("\(self.className) - SIGNED IN WITH APPLE: \(String(describing: result))")
+                self.hideSignIn()
+                
+                
 //                self.dismiss(animated: true, completion: nil)
-                guard let nc = self.navigationController else {
-//                    Analytics.logEvent("gandalf_error", parameters: [
-//                        "class": self.className as NSObject,
-//                        "function": "authorizationController" as NSObject,
-//                        "description": "fatalError: Navigation Controller not found." as NSObject
-//                    ])
-                    fatalError("\(self.className) - Navigation Controller not found.")
-                }
-                nc.pushViewController(NotionView(), animated: true)
+//                guard let nc = self.navigationController else {
+////                    Analytics.logEvent("gandalf_error", parameters: [
+////                        "class": self.className as NSObject,
+////                        "function": "authorizationController" as NSObject,
+////                        "description": "fatalError: Navigation Controller not found." as NSObject
+////                    ])
+//                    fatalError("\(self.className) - Navigation Controller not found.")
+//                }
+//                nc.pushViewController(NotionView(), animated: true)
             }
         }
     }

@@ -40,7 +40,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var notionTableView: UITableView!
     var notionTableViewRefreshControl: UIRefreshControl!
     var notionTableViewSpinner = UIActivityIndicatorView(style: .large)
-    var notionTableViewEmptyNote: UILabel!
+//    var notionTableViewEmptyNote: UILabel!
     let notionTableCellIdentifier: String = "NotionCell"
     
 //    override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -54,24 +54,24 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         super.viewDidLoad()
         print("\(className) - viewDidLoad")
         self.navigationItem.title = ""
-        
-        let barItemLogo = UIButton(type: .custom)
-        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
-//        barItemLogo.setTitle(pageTitle, for: .normal)
-//        barItemLogo.titleLabel?.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
-//        barItemLogo.titleLabel?.textAlignment = .left
-//        barItemLogo.setTitleColor(Settings.Theme.Color.barText, for: .normal)
-        let barItemProfile = UIButton(type: .custom)
-        barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal), for: .normal)
-        barItemProfile.addTarget(self, action: #selector(loadProfileView), for: .touchUpInside)
-        NSLayoutConstraint.activate([
-            barItemLogo.widthAnchor.constraint(equalToConstant:30),
-            barItemLogo.heightAnchor.constraint(equalToConstant:30),
-            barItemProfile.widthAnchor.constraint(equalToConstant:30),
-        ])
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
-        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: barItemProfile)]
         self.navigationItem.hidesBackButton = true
+        
+//        let barItemLogo = UIButton(type: .custom)
+//        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
+////        barItemLogo.setTitle(pageTitle, for: .normal)
+////        barItemLogo.titleLabel?.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
+////        barItemLogo.titleLabel?.textAlignment = .left
+////        barItemLogo.setTitleColor(Settings.Theme.Color.barText, for: .normal)
+//        let barItemProfile = UIButton(type: .custom)
+//        barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal), for: .normal)
+//        barItemProfile.addTarget(self, action: #selector(loadProfileView), for: .touchUpInside)
+//        NSLayoutConstraint.activate([
+//            barItemLogo.widthAnchor.constraint(equalToConstant:30),
+//            barItemLogo.heightAnchor.constraint(equalToConstant:30),
+//            barItemProfile.widthAnchor.constraint(equalToConstant:30),
+//        ])
+//        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
+//        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: barItemProfile)]
         
 //        let imageView = UIImageView(image: UIImage(named: Assets.Images.hatIconWhiteSm))
 //        imageView.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
@@ -204,12 +204,12 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             notionTableViewSpinner.centerXAnchor.constraint(equalTo:notionTableView.centerXAnchor, constant: 0),
             notionTableViewSpinner.centerYAnchor.constraint(equalTo:notionTableView.centerYAnchor, constant: -100),
         ])
-        NSLayoutConstraint.activate([
-            notionTableViewEmptyNote.topAnchor.constraint(equalTo:notionTableView.topAnchor, constant: 40),
-            notionTableViewEmptyNote.leftAnchor.constraint(equalTo:viewContainer.leftAnchor, constant: 20),
-            notionTableViewEmptyNote.rightAnchor.constraint(equalTo:viewContainer.rightAnchor, constant: -20),
-            notionTableViewEmptyNote.heightAnchor.constraint(equalToConstant: 200),
-        ])
+//        NSLayoutConstraint.activate([
+//            notionTableViewEmptyNote.topAnchor.constraint(equalTo:notionTableView.topAnchor, constant: 40),
+//            notionTableViewEmptyNote.leftAnchor.constraint(equalTo:viewContainer.leftAnchor, constant: 20),
+//            notionTableViewEmptyNote.rightAnchor.constraint(equalTo:viewContainer.rightAnchor, constant: -20),
+//            notionTableViewEmptyNote.heightAnchor.constraint(equalToConstant: 200),
+//        ])
         
         notionRepository.observeQuery()
         notionActionRepository.observeQuery()
@@ -228,6 +228,8 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
                         self.showTutorial()
                     }
                 }
+        } else {
+            self.showTutorial()
         }
     }
     
@@ -407,27 +409,21 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         notionTableView.addSubview(notionTableViewSpinner)
         notionTableViewSpinner.isHidden = false
         
-        notionTableViewEmptyNote = UILabel()
-        notionTableViewEmptyNote.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
-        notionTableViewEmptyNote.textColor = Settings.Theme.Color.text
-        notionTableViewEmptyNote.textAlignment = NSTextAlignment.center
-        notionTableViewEmptyNote.numberOfLines = 2
-        notionTableViewEmptyNote.text = "Please sign in\nto load data."
-        notionTableViewEmptyNote.isUserInteractionEnabled = false
-        notionTableViewEmptyNote.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(notionTableViewEmptyNote)
-        notionTableViewEmptyNote.isHidden = true
+//        notionTableViewEmptyNote = UILabel()
+//        notionTableViewEmptyNote.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
+//        notionTableViewEmptyNote.textColor = Settings.Theme.Color.text
+//        notionTableViewEmptyNote.textAlignment = NSTextAlignment.center
+//        notionTableViewEmptyNote.numberOfLines = 2
+//        notionTableViewEmptyNote.text = "Please sign in\nto load data."
+//        notionTableViewEmptyNote.isUserInteractionEnabled = false
+//        notionTableViewEmptyNote.translatesAutoresizingMaskIntoConstraints = false
+//        viewContainer.addSubview(notionTableViewEmptyNote)
+//        notionTableViewEmptyNote.isHidden = true
         
-        // If a user is not logged in, display the Login screen
-        if let firUser = Auth.auth().currentUser {
-            print("\(className) - currentUser: \(firUser.uid)")
-            notionActionRepository = NotionActionRepository(recency: 3600)
-            notionActionRepository.delegate = self
-            notionRepository = NotionRepository(recency: 3600)
-            notionRepository.delegate = self
-        } else {
-            self.presentSheet(with: ProfileView())
-        }
+        notionActionRepository = NotionActionRepository(recency: 3600)
+        notionActionRepository.delegate = self
+        notionRepository = NotionRepository(recency: 3600)
+        notionRepository.delegate = self
     }
     
     override func didReceiveMemoryWarning() {
@@ -445,7 +441,8 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     // MARK: -CUSTOM DELEGATE METHODS
     
     func showLogin() {
-        self.presentSheet(with: ProfileView())
+//        self.presentSheet(with: ProfileView())
+        // TODO: toggle the Profile tab
     }
     func notionDataUpdate() {
         if allowUpdates {
@@ -470,13 +467,12 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         }
     }
     
-    
     // MARK: -GESTURE RECOGNIZERS
     
-    @objc func loadProfileView(_ sender: UITapGestureRecognizer) {
-        print("\(className) - loadProfileView")
-        self.presentSheet(with: ProfileView())
-    }
+//    @objc func loadProfileView(_ sender: UITapGestureRecognizer) {
+//        print("\(className) - loadProfileView")
+//        self.presentSheet(with: ProfileView())
+//    }
     @objc func filterToggle(_ sender: UITapGestureRecognizer) {
         print("\(className) - filterToggle")
         if !sortByResponse {
@@ -509,10 +505,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == notionTableView {
             if localNotions.count > 0 {
-                notionTableViewEmptyNote.isHidden = true
+//                notionTableViewEmptyNote.isHidden = true
                 notionTableViewSpinner.stopAnimating()
             } else if Auth.auth().currentUser == nil {
-                notionTableViewEmptyNote.isHidden = false
+//                notionTableViewEmptyNote.isHidden = false
                 notionTableViewSpinner.stopAnimating()
                 tickerTableViewSpinner.stopAnimating()
             } else {
@@ -635,9 +631,9 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
                 cell.countText.text = formattedSum
                 
                 if cellTicker.wAvgSentiment >= 0 {
-                    cell.notionIcon.image = UIImage(named: Assets.Images.notionIconPosSm)
+                    cell.notionIcon.image = UIImage(named: Assets.Images.notionIconPosLg)
                 } else {
-                    cell.notionIcon.image = UIImage(named: Assets.Images.notionIconNegSm)
+                    cell.notionIcon.image = UIImage(named: Assets.Images.notionIconNegLg)
                 }
             }
             if cellTicker.selected {
@@ -689,8 +685,11 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             print("MOVE POSITIVE: \(indexPath.row)")
             let notion = self.localNotions[indexPath.row]
             guard let notionId = notion.id else { return }
-            self.notionActionRepository.addSentimentAction(notion: notionId, quantity: 1)
-//            self.fillNotionActions()
+            // Ensure the previous sentiment is not equal to or more than 1 or less than -1
+            if abs(notion.sentiment) < 1 {
+                self.notionActionRepository.addSentimentAction(notion: notionId, quantity: 1)
+//                self.fillNotionActions()
+            }
             completionHandler(true)
         }
         positive.backgroundColor = Settings.Theme.Color.positive
@@ -701,8 +700,11 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             print("MOVE NEGATIVE: \(indexPath.row)")
             let notion = self.localNotions[indexPath.row]
             guard let notionId = notion.id else { return }
-            self.notionActionRepository.addSentimentAction(notion: notionId, quantity: -1)
-//            self.fillNotionActions()
+            // Ensure the previous sentiment is not equal to or more than 1 or less than -1
+            if abs(notion.sentiment) < 1 {
+                self.notionActionRepository.addSentimentAction(notion: notionId, quantity: -1)
+//                self.fillNotionActions()
+            }
             completionHandler(true)
         }
         negative.backgroundColor = Settings.Theme.Color.negative
@@ -724,12 +726,6 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     // MARK: -REFRESH CONTROL
     
     @objc private func refreshTableData(_ sender: Any) {
-        if let firUser = Auth.auth().currentUser {
-            print("\(className) - currentUser: \(firUser.uid)")
-        } else {
-            self.presentSheet(with: ProfileView())
-        }
-        
         // Data is refreshed automatically - pause before dismissing the spinner to convey this to the user.
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
             self.notionTableViewRefreshControl.endRefreshing()

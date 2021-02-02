@@ -81,7 +81,7 @@ class NotionCell: UITableViewCell {
         
         notionIcon = UIImageView()
         notionIcon.backgroundColor = .clear
-        notionIcon.image = UIImage(named: Assets.Images.notionIconWhiteSm)
+        notionIcon.image = UIImage(named: Assets.Images.notionIconWhiteLg)
         notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
         notionIcon.clipsToBounds = true
         notionIcon.translatesAutoresizingMaskIntoConstraints = false

@@ -86,14 +86,11 @@ class NotionActionRepository {
                 // There should only be one document with this query combo (if any),
                 // so use the first one, otherwise create a new document
                 if returnedNotionActions.count > 0 {
-                    // Get the current quantity amount and adjust by the passed quantity
-                    // up to the max (should not have been passed if at max anyway)
                     // If the status is 0, pretend the quantity on the doc is 0 (was ignored anyway)
                     var newQuantity = returnedNotionActions[0].quantity + quantity
                     if returnedNotionActions[0].status == 0 {
                         newQuantity = quantity
                     }
-                    if newQuantity > abs(Settings.sentimentAdjMaxActions) { return }
                     Settings.Firebase.db().collection("notion_action").document(snapshot.documents[0].documentID).setData([
                         "quantity": newQuantity,
                         "status": NSNumber(value: 1)
