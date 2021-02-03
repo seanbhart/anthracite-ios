@@ -27,11 +27,17 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.title = "Sign In"
-        
-        self.navigationItem.rightBarButtonItem = nil
-        self.navigationItem.leftBarButtonItem = nil
+        print("\(className) - viewDidLoad")
+        self.navigationItem.title = ""
         self.navigationItem.hidesBackButton = true
+        
+        let barItemLogo = UIButton(type: .custom)
+        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
+        NSLayoutConstraint.activate([
+            barItemLogo.widthAnchor.constraint(equalToConstant:30),
+            barItemLogo.heightAnchor.constraint(equalToConstant:30),
+        ])
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

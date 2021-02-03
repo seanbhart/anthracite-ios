@@ -14,16 +14,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     let className = "SceneDelegate"
 
     var window: UIWindow?
-    var navController: UINavigationController!
     
     var notionVC = NotionView()
-    var notionTabItem = UITabBarItem()
+    var notionVcNavController: UINavigationController!
     let notionVcIndex = 0
     var groupVC = GroupView()
-    var groupTabItem = UITabBarItem()
+    var groupVcNavController: UINavigationController!
     let groupVcIndex = 1
     var profileVC = ProfileView()
-    var profileTabItem = UITabBarItem()
+    var profileVcNavController: UINavigationController!
     let profileVcIndex = 2
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -47,49 +46,57 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             UINavigationBar.appearance().isTranslucent = false
         }
         
-        notionVC.tabBarItem = notionTabItem
-        notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal) //"list.bullet.rectangle" "tablecells.fill"
+        notionVcNavController = UINavigationController(rootViewController: notionVC)
+        notionVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
+        notionVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
+        notionVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
+        notionVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
+        let tabImageNotionWhite = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal) //"list.bullet.rectangle" "tablecells.fill"
+        let tabImageNotionColor = UIImage(systemName: "globe")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+        notionVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageNotionWhite, selectedImage: tabImageNotionColor)
         
-        groupVC.tabBarItem = groupTabItem
-        groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        groupVcNavController = UINavigationController(rootViewController: groupVC)
+        groupVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
+        groupVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
+        groupVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
+        groupVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
+        let tabImageGroupWhite = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        let tabImageGroupColor = UIImage(systemName: "text.bubble.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+        groupVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageGroupWhite, selectedImage: tabImageGroupColor)
         
-        profileVC.tabBarItem = profileTabItem
-        profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+        profileVcNavController = UINavigationController(rootViewController: profileVC)
+        profileVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
+        profileVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
+        profileVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
+        profileVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
+        let tabImageProfileWhite = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        let tabImageProfileColor = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+        profileVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageProfileWhite, selectedImage: tabImageProfileColor)
         
         let tabBarController = UITabBarController()
         tabBarController.delegate = self
-        tabBarController.viewControllers = [notionVC, groupVC, profileVC]
+//        tabBarController.tabBar.barStyle = .black
+        tabBarController.tabBar.barTintColor = Settings.Theme.Color.background
+//        tabBarController.tabBar.layer.shadowColor = Settings.Theme.Color.background.cgColor
+//        tabBarController.tabBar.layer.shadowOffset = CGSize(width: 0.0, height: 0.0)
+//        tabBarController.tabBar.layer.shadowRadius = 0
+//        tabBarController.tabBar.layer.shadowOpacity = 0
+//        tabBarController.tabBar.layer.masksToBounds = true
+        tabBarController.tabBar.clipsToBounds = true
+        tabBarController.viewControllers = [notionVcNavController, groupVcNavController, profileVcNavController]
         tabBarController.selectedIndex = profileVcIndex
         
         // If a user is not logged in, display the Login screen
         if let firUser = Auth.auth().currentUser {
             print("\(className) - currentUser: \(firUser.uid)")
             tabBarController.selectedIndex = notionVcIndex
-            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         }
         
-        navController = UINavigationController(rootViewController: tabBarController)
-        navController.navigationBar.barStyle = Settings.Theme.barStyle
-        navController.navigationBar.barTintColor = Settings.Theme.Color.barColor
-        navController.navigationBar.tintColor = Settings.Theme.Color.barText
-        navController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
-//        navController.navigationBar.topItem?.title = "Gandalf"
-        
-        let imageView = UIImageView(image: UIImage(named: Assets.Images.hatIconPurpleLg))
-        imageView.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-        imageView.contentMode = .scaleAspectFit
-        let titleView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        titleView.addSubview(imageView)
-        titleView.backgroundColor = .clear
-        navController.navigationBar.topItem?.titleView = titleView
-
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             self.window = window
-            window.rootViewController = navController
+            window.rootViewController = tabBarController
             window.makeKeyAndVisible()
         }
     }
@@ -132,30 +139,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         print("\(className) - tabBarController didSelect: \(viewController)")
-        guard let _ = Auth.auth().currentUser else {
-            print("\(className) - tabBarController didSelect: No user logged in; remain in Profile view")
-            tabBarController.selectedIndex = profileVcIndex
-            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-            return
-        }
-        
-        if viewController == notionVC {
-            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-            
-        } else if viewController == groupVC {
-            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-            
-        } else if viewController == profileVC {
-            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-        }
+//        guard let _ = Auth.auth().currentUser else {
+//            print("\(className) - tabBarController didSelect: No user logged in; remain in Profile view")
+//            tabBarController.selectedIndex = profileVcIndex
+//            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+//            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+//            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+//            return
+//        }
+//
+//        if viewController == notionVC {
+//            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+//            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+//            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+//
+//        } else if viewController == groupVC {
+//            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+//            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+//            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+//
+//        } else if viewController == profileVC {
+//            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+//            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+//            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+//        }
         
     }
 

@@ -27,7 +27,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var tickerTableView: UITableView!
     var tickerTableViewRefreshControl: UIRefreshControl!
     var tickerTableViewSpinner = UIActivityIndicatorView(style: .medium)
-    let tickerTableCellIdentifier: String = "TickerCell"
+    let tickerTableCellIdentifier: String = "NotionTickerCell"
     var notionContainer: UIView!
     var notionTitle: UILabel!
     var notionCountLabel: UILabel!
@@ -39,8 +39,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var progressViewRight: ProgressViewRoundedRight!
     var notionTableView: UITableView!
     var notionTableViewRefreshControl: UIRefreshControl!
-    var notionTableViewSpinner = UIActivityIndicatorView(style: .large)
-//    var notionTableViewEmptyNote: UILabel!
+    var notionTableViewSpinner = UIActivityIndicatorView(style: .medium)
     let notionTableCellIdentifier: String = "NotionCell"
     
 //    override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -56,30 +55,13 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         self.navigationItem.title = ""
         self.navigationItem.hidesBackButton = true
         
-//        let barItemLogo = UIButton(type: .custom)
-//        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
-////        barItemLogo.setTitle(pageTitle, for: .normal)
-////        barItemLogo.titleLabel?.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
-////        barItemLogo.titleLabel?.textAlignment = .left
-////        barItemLogo.setTitleColor(Settings.Theme.Color.barText, for: .normal)
-//        let barItemProfile = UIButton(type: .custom)
-//        barItemProfile.setImage(UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal), for: .normal)
-//        barItemProfile.addTarget(self, action: #selector(loadProfileView), for: .touchUpInside)
-//        NSLayoutConstraint.activate([
-//            barItemLogo.widthAnchor.constraint(equalToConstant:30),
-//            barItemLogo.heightAnchor.constraint(equalToConstant:30),
-//            barItemProfile.widthAnchor.constraint(equalToConstant:30),
-//        ])
-//        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
-//        self.navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: barItemProfile)]
-        
-//        let imageView = UIImageView(image: UIImage(named: Assets.Images.hatIconWhiteSm))
-//        imageView.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-//        imageView.contentMode = .scaleAspectFit
-//        let titleView = UIView(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-//        titleView.addSubview(imageView)
-//        titleView.backgroundColor = .clear
-//        self.navigationItem.titleView = titleView
+        let barItemLogo = UIButton(type: .custom)
+        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
+        NSLayoutConstraint.activate([
+            barItemLogo.widthAnchor.constraint(equalToConstant:30),
+            barItemLogo.heightAnchor.constraint(equalToConstant:30),
+        ])
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
         
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - willEnterForegroundNotification")
@@ -91,8 +73,6 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             notionRepository.stopObserving()
             notionActionRepository.stopObserving()
         }
-//        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: Notification.Name.NSExtensionHostWillEnterForeground, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.NSExtensionHostDidEnterBackground, object: nil)
     }
     
     deinit {
@@ -204,12 +184,6 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             notionTableViewSpinner.centerXAnchor.constraint(equalTo:notionTableView.centerXAnchor, constant: 0),
             notionTableViewSpinner.centerYAnchor.constraint(equalTo:notionTableView.centerYAnchor, constant: -100),
         ])
-//        NSLayoutConstraint.activate([
-//            notionTableViewEmptyNote.topAnchor.constraint(equalTo:notionTableView.topAnchor, constant: 40),
-//            notionTableViewEmptyNote.leftAnchor.constraint(equalTo:viewContainer.leftAnchor, constant: 20),
-//            notionTableViewEmptyNote.rightAnchor.constraint(equalTo:viewContainer.rightAnchor, constant: -20),
-//            notionTableViewEmptyNote.heightAnchor.constraint(equalToConstant: 200),
-//        ])
         
         notionRepository.observeQuery()
         notionActionRepository.observeQuery()
@@ -349,7 +323,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         tickerTableView.delegate = self
         tickerTableView.refreshControl = tickerTableViewRefreshControl
         tickerTableView.dragInteractionEnabled = true
-        tickerTableView.register(TickerCell.self, forCellReuseIdentifier: tickerTableCellIdentifier)
+        tickerTableView.register(NotionTickerCell.self, forCellReuseIdentifier: tickerTableCellIdentifier)
         tickerTableView.separatorStyle = .none
         tickerTableView.backgroundColor = .clear
 //        tickerTableView.rowHeight = UITableView.automaticDimension
@@ -409,17 +383,6 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         notionTableView.addSubview(notionTableViewSpinner)
         notionTableViewSpinner.isHidden = false
         
-//        notionTableViewEmptyNote = UILabel()
-//        notionTableViewEmptyNote.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
-//        notionTableViewEmptyNote.textColor = Settings.Theme.Color.text
-//        notionTableViewEmptyNote.textAlignment = NSTextAlignment.center
-//        notionTableViewEmptyNote.numberOfLines = 2
-//        notionTableViewEmptyNote.text = "Please sign in\nto load data."
-//        notionTableViewEmptyNote.isUserInteractionEnabled = false
-//        notionTableViewEmptyNote.translatesAutoresizingMaskIntoConstraints = false
-//        viewContainer.addSubview(notionTableViewEmptyNote)
-//        notionTableViewEmptyNote.isHidden = true
-        
         notionActionRepository = NotionActionRepository(recency: 3600)
         notionActionRepository.delegate = self
         notionRepository = NotionRepository(recency: 3600)
@@ -431,11 +394,6 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         print("\(className) - didReceiveMemoryWarning")
         // Dispose of any resources that can be recreated.
     }
-    
-//    // TODO: Detect LoginView dismissal to refresh data
-//    public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-//        print("DISMISS")
-//    }
     
     
     // MARK: -CUSTOM DELEGATE METHODS
@@ -616,7 +574,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             return cell
             
         } else if tableView == tickerTableView {
-            let cell = tableView.dequeueReusableCell(withIdentifier: tickerTableCellIdentifier, for: indexPath) as! TickerCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: tickerTableCellIdentifier, for: indexPath) as! NotionTickerCell
             cell.selectionStyle = .none
 //            if indexPath.row == 0 {
 //                cell.containerBorder.layer.borderColor = UIColor.clear.cgColor
@@ -681,6 +639,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if tableView != notionTableView { return nil }
         let positive = UIContextualAction(style: .normal, title: "") { (action, view, completionHandler) in
             print("MOVE POSITIVE: \(indexPath.row)")
             let notion = self.localNotions[indexPath.row]
@@ -696,6 +655,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         return UISwipeActionsConfiguration(actions: [positive])
     }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if tableView != notionTableView { return nil }
         let negative = UIContextualAction(style: .normal, title: "") { (action, view, completionHandler) in
             print("MOVE NEGATIVE: \(indexPath.row)")
             let notion = self.localNotions[indexPath.row]

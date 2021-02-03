@@ -8,9 +8,9 @@
 import UIKit
 //import FirebaseAnalytics
 
-class TickerCell: UITableViewCell {
+class NotionTickerCell: UITableViewCell {
     var containerView: UIView!
-    var containerBorder: UIView!
+//    var containerBorder: UIView!
     var title: UILabel!
     var notionIcon: UIImageView!
     var countText: UILabel!
@@ -119,4 +119,3 @@ class TickerCell: UITableViewCell {
         }
     }
 }
-

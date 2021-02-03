@@ -37,4 +37,23 @@ struct Settings {
             return db
         }
     }
+    
+    static func formatDateString(timestamp: TimeInterval) -> String {
+        let format = DateFormatter()
+        format.timeZone = .current
+        format.dateFormat = "h:mm a"
+        format.amSymbol = "AM"
+        format.pmSymbol = "PM"
+        
+        // Format the date based on the current time
+        let currentTimestamp = Date().timeIntervalSince1970
+        // Less than a day, just show the time
+        if currentTimestamp - timestamp <= (60*60*24) {
+            format.dateFormat = "h:mm a"
+            return format.string(from: Date(timeIntervalSince1970: Double(timestamp)))
+        } else {
+            format.dateFormat = "MMM d  h:mm a"
+            return format.string(from: Date(timeIntervalSince1970: Double(timestamp)))
+        }
+    }
 }
