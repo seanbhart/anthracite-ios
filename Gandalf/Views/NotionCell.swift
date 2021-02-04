@@ -13,7 +13,6 @@ class NotionCell: UITableViewCell {
     
     var tutorialBackgroundView: UIView!
     var containerView: UIView!
-//    var containerBorder: UIView!
     var labelsContainer: UIView!
     var titleLabel: UILabel!
     var notionCountLabel: UILabel!
@@ -54,19 +53,6 @@ class NotionCell: UITableViewCell {
             containerView.leftAnchor.constraint(equalTo:contentView.leftAnchor),
             containerView.rightAnchor.constraint(equalTo:contentView.rightAnchor),
         ])
-        
-//        containerBorder = UIView()
-//        containerBorder.backgroundColor = Settings.Theme.Color.background
-//        containerBorder.layer.borderColor = Settings.Theme.colorGrayLight.cgColor
-//        containerBorder.layer.borderWidth = 1
-//        containerBorder.translatesAutoresizingMaskIntoConstraints = false
-//        containerView.addSubview(containerBorder)
-//        NSLayoutConstraint.activate([
-//            containerBorder.topAnchor.constraint(equalTo:containerView.topAnchor),
-//            containerBorder.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
-//            containerBorder.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
-//            containerBorder.heightAnchor.constraint(equalToConstant: 1)
-//        ])
         
         labelsContainer = UIView()
         labelsContainer.backgroundColor = .clear

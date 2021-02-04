@@ -10,6 +10,7 @@ import FirebaseFirestore
 
 protocol GroupRepositoryDelegate {
     func groupDataUpdate()
+    func requestError(message: String)
 }
 
 class GroupRepository {
@@ -17,35 +18,15 @@ class GroupRepository {
     
     var delegate: GroupRepositoryDelegate?
     var groups = [Group]()
-    
-    fileprivate var query: Query? {
-        didSet {
-            if let listener = listener {
-                listener.remove()
-                observeQuery()
-            }
-        }
-    }
-    
-    init() {
-        query = Settings.Firebase.db().collection("group")
-    }
 
-    private var listener: ListenerRegistration?
-
-    func observeQuery() {
-        guard let query = query else { return }
+    func getGroups() {
         guard let firUser = Auth.auth().currentUser else { return }
-        stopObserving()
-        
-        // Listen for NotionAction for the signed in account in the same time period
-        // as the listener for Notions
-        listener = query
+        Settings.Firebase.db().collection("group")
             .whereField("status", isEqualTo: 1)
             .whereField("members", arrayContains: firUser.uid)
-            .addSnapshotListener { [unowned self] (snapshot, error) in
-                if let err = error { print("\(className) - LISTENER ERROR: \(err)") }
-                guard let snapshot = snapshot else { print("\(className) snapshot error: \(error!)"); return }
+            .getDocuments(completion: { (snapshot, error) in
+                if let err = error { print("\(self.className) - FIRESTORE GET ERROR: \(err)") }
+                guard let snapshot = snapshot else { print("\(self.className) snapshot error: \(error!)"); return }
                 
                 self.groups.removeAll()
                 self.groups = snapshot.documents.compactMap { queryDocumentSnapshot -> Group? in
@@ -55,12 +36,7 @@ class GroupRepository {
                 if let parent = self.delegate {
                     parent.groupDataUpdate()
                 }
-            }
-    }
-
-    func stopObserving() {
-        print("\(className): stopObserving")
-        listener?.remove()
+            })
     }
     
     func createGroup(title: String) {
@@ -75,20 +51,77 @@ class GroupRepository {
         ], merge: true) { err in
             if let err = err {
                 print("\(self.className) - FIREBASE: ERROR creating group: \(err)")
+                if let parent = self.delegate {
+                    parent.requestError(message: "We're sorry, there was a problem creating the group. Please try again.")
+                }
             } else {
                 print("\(self.className) - FIREBASE: group successfully created")
+                self.getGroups()
             }
         }
     }
     
-    func editGroupTitle(group: String, title: String) {
-        Settings.Firebase.db().collection("group").document(group).setData([
+    func joinGroup(code: String) {
+        guard let firUser = Auth.auth().currentUser else { return }
+        
+        // Ensure the group already exists first
+        Settings.Firebase.db().collection("group").document(code)
+            .getDocument(completion: { (snapshot, error) in
+                if let err = error { print("\(self.className) - FIRESTORE GET ERROR: \(err)") }
+                guard let snapshot = snapshot else { print("\(self.className) snapshot error: \(error!)"); return }
+                
+                if snapshot.exists {
+                    Settings.Firebase.db().collection("group").document(code).setData([
+                        "members": [firUser.uid]
+                    ], merge: true) { err in
+                        if let err = err {
+                            print("\(self.className) - FIREBASE: ERROR joining group: \(err)")
+                            if let parent = self.delegate {
+                                parent.requestError(message: "We're sorry, there was a problem joining the group. Please try again.")
+                            }
+                        } else {
+                            print("\(self.className) - FIREBASE: group successfully joined")
+                            self.getGroups()
+                        }
+                    }
+                } else {
+                    if let parent = self.delegate {
+                        parent.requestError(message: "We're sorry, that group code does not appear valid. Please check the code and try again.")
+                    }
+                }
+            })
+    }
+    
+    func editGroupTitle(groupId: String, title: String) {
+        Settings.Firebase.db().collection("group").document(groupId).setData([
             "title": title
         ], merge: true) { err in
             if let err = err {
                 print("\(self.className) - FIREBASE: ERROR editing group title: \(err)")
+                if let parent = self.delegate {
+                    parent.requestError(message: "We're sorry, there was a problem editing the name. Please try again.")
+                }
             } else {
                 print("\(self.className) - FIREBASE: group successfully edited group title")
+                self.getGroups()
+            }
+        }
+    }
+    
+    func removeCurrentAccount(groupId: String) {
+        guard let firUser = Auth.auth().currentUser else { return }
+        
+        Settings.Firebase.db().collection("group").document(groupId).setData([
+            "members": FieldValue.arrayRemove([firUser.uid])
+        ], merge: true) { err in
+            if let err = err {
+                print("\(self.className) - FIREBASE: ERROR editing group title: \(err)")
+                if let parent = self.delegate {
+                    parent.requestError(message: "We're sorry, there was a problem removing you from the group. Please try again.")
+                }
+            } else {
+                print("\(self.className) - FIREBASE: group successfully edited group title")
+                self.getGroups()
             }
         }
     }

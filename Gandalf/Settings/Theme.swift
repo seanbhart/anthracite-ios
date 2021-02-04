@@ -26,6 +26,7 @@ extension Settings {
             static let header = UIColor.black
             static let background = UIColor.black
             static let contentBackground = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
+            static let contentBackgroundLight = UIColor(red: 67/255, green: 75/255, blue: 83/255, alpha: 1.0) //#434B53
             static let selected = UIColor.black
             static let text = UIColor.white
             
@@ -38,9 +39,9 @@ extension Settings {
             static let negative = UIColor(red: 191/255, green: 2/255, blue: 106/255, alpha: 1.0) //#bf026a
             static let negativeLight = UIColor(red: 252/255, green: 0/255, blue: 126/255, alpha: 1.0) //#fc0080
             
-            static let grayUltraLight = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1.0) //#CCC
-            static let grayLight = UIColor(red: 204/255, green: 204/255, blue: 204/255, alpha: 1.0) //#CCC
-            static let grayMedium = UIColor(red: 81/255, green: 81/255, blue: 81/255, alpha: 1.0) //#515151
+            static let grayUltraLight = UIColor(red: 200/255, green: 200/255, blue: 200/255, alpha: 1.0) //#C8C8C8
+            static let grayLight = UIColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1.0) //#646464
+            static let grayMedium = UIColor(red: 58/255, green: 58/255, blue: 58/255, alpha: 1.0) //#3A3A3A
             static let grayDark = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0) //#262626
         }
         

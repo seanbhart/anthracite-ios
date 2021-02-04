@@ -14,7 +14,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     let className = "NotionView"
     
     var pageTitle = "Gandalf"
-    var sortByResponse = false
+    var sortByResponse = true
     var allowUpdates = true
     var localTickers = [Ticker]()
     var localNotions = [Notion]()
@@ -56,22 +56,26 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         self.navigationItem.hidesBackButton = true
         
         let barItemLogo = UIButton(type: .custom)
-        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
+        barItemLogo.setImage(UIImage(named: Assets.Images.logotypeLg), for: .normal)
         NSLayoutConstraint.activate([
-            barItemLogo.widthAnchor.constraint(equalToConstant:30),
-            barItemLogo.heightAnchor.constraint(equalToConstant:30),
+            barItemLogo.widthAnchor.constraint(equalToConstant:110),
+            barItemLogo.heightAnchor.constraint(equalToConstant:20),
         ])
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
         
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - willEnterForegroundNotification")
-            notionRepository.observeQuery()
-            notionActionRepository.observeQuery()
+            guard let notionRepo = notionRepository else { return }
+            guard let notionActionRepo = notionActionRepository else { return }
+            notionRepo.observeQuery()
+            notionActionRepo.observeQuery()
         }
         observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - didEnterBackgroundNotification")
-            notionRepository.stopObserving()
-            notionActionRepository.stopObserving()
+            guard let notionRepo = notionRepository else { return }
+            guard let notionActionRepo = notionActionRepository else { return }
+            notionRepo.stopObserving()
+            notionActionRepo.stopObserving()
         }
     }
     
@@ -185,8 +189,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             notionTableViewSpinner.centerYAnchor.constraint(equalTo:notionTableView.centerYAnchor, constant: -100),
         ])
         
-        notionRepository.observeQuery()
-        notionActionRepository.observeQuery()
+        guard let notionRepo = notionRepository else { return }
+        guard let notionActionRepo = notionActionRepository else { return }
+        notionRepo.observeQuery()
+        notionActionRepo.observeQuery()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -216,9 +222,10 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         print("\(className) - viewWillDisappear")
-//        navigationController?.setNavigationBarHidden(false, animated: animated)
-        notionRepository.stopObserving()
-        notionActionRepository.stopObserving()
+        guard let notionRepo = notionRepository else { return }
+        guard let notionActionRepo = notionActionRepository else { return }
+        notionRepo.stopObserving()
+        notionActionRepo.stopObserving()
     }
 
     override func loadView() {
@@ -283,7 +290,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         filterButton.addGestureRecognizer(filterButtonGestureRecognizer)
         
         filterIcon = UIImageView()
-        filterIcon.image = UIImage(named: Assets.Images.topIconWhiteLg)
+        filterIcon.image = UIImage(named: Assets.Images.topIconPurpleLg)
         filterIcon.contentMode = UIView.ContentMode.scaleAspectFit
         filterIcon.clipsToBounds = true
         filterIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -296,7 +303,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         
         progressViewLeft = ProgressViewRoundedLeft()
         progressViewLeft.progressViewStyle = .bar
-        progressViewLeft.trackTintColor = .clear //Settings.Theme.colorGrayLight.withAlphaComponent(0.2)
+        progressViewLeft.trackTintColor = .clear
         progressViewLeft.progressTintColor = Settings.Theme.Color.progressbar
         progressViewLeft.progress = 1
         progressViewLeft.translatesAutoresizingMaskIntoConstraints = false
@@ -305,7 +312,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         progressViewRight = ProgressViewRoundedRight()
         progressViewRight.progressViewStyle = .bar
         progressViewRight.trackTintColor = Settings.Theme.Color.progressbar
-        progressViewRight.progressTintColor = .clear //Settings.Theme.colorGrayLight.withAlphaComponent(0.2)
+        progressViewRight.progressTintColor = .clear
         progressViewRight.progress = 0
         progressViewRight.translatesAutoresizingMaskIntoConstraints = false
         progressViewContainer.addSubview(progressViewRight)
@@ -725,15 +732,16 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         sortToggle()
     }
     func fillLocalNotions() {
+        guard let notionRepo = notionRepository else { return }
         localNotions.removeAll()
         // Filter the data based on ticker selection ONLY IF ANY ARE SELECTED
         if localTickers.filter({ $0.selected }).count > 0 {
-            localNotions = notionRepository.notions.filter({
+            localNotions = notionRepo.notions.filter({
                 let tickers = $0.tickers
                 return localTickers.filter({ tickers.contains($0.ticker) && $0.selected }).count > 0
             })
         } else {
-            localNotions = notionRepository.notions
+            localNotions = notionRepo.notions
         }
         tickerTableView.reloadData()
         fillNotionActions()
@@ -748,6 +756,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     }
     
     func updateDataLists() {
+        guard let notionRepo = notionRepository else { return }
         // Get the ids of the cells currently in view
         // then scroll to those cells after the update
 //        var topId = ""
@@ -767,7 +776,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         // Switch out the local data with newly synced data
         // Handle tickers first to prep for filling notion list
         localTickers.removeAll()
-        localTickers = notionRepository.tickers.sorted(by: { $0.responseCount > $1.responseCount })
+        localTickers = notionRepo.tickers.sorted(by: { $0.responseCount > $1.responseCount })
         fillLocalNotions()
         // Sort after filling the local notion list
         sortToggle()

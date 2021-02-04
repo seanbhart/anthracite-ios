@@ -27,6 +27,9 @@ struct Assets {
         static let topIconGrayLg: String = "STARS-GRAY-LG.png"
         static let topIconPurpleLg: String = "STARS-PURPLE-LG.png"
         static let topIconWhiteLg: String = "STARS-WHITE-LG.png"
+        
+        static let logotypeLg: String = "LOGOTYPE-LG.png"
+        static let logotype: String = "LOGOTYPE.png"
     }
     
     struct Fonts {

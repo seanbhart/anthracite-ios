@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 //import FirebaseAnalytics
 import FirebaseAuth
+//import SideMenuSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
     let className = "SceneDelegate"
@@ -18,7 +19,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     var notionVC = NotionView()
     var notionVcNavController: UINavigationController!
     let notionVcIndex = 0
-    var groupVC = GroupView()
+    var groupsVC = GroupsMenu()
+//    var groupVC = GroupView()
     var groupVcNavController: UINavigationController!
     let groupVcIndex = 1
     var profileVC = ProfileView()
@@ -55,14 +57,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let tabImageNotionColor = UIImage(systemName: "globe")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
         notionVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageNotionWhite, selectedImage: tabImageNotionColor)
         
-        groupVcNavController = UINavigationController(rootViewController: groupVC)
+//        groupsVC.delegate = groupVC
+        groupVcNavController = UINavigationController(rootViewController: groupsVC)
         groupVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
         groupVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
         groupVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
         groupVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
+//        let groupVcSideMenuController = SideMenuController(contentViewController: groupVcNavController, menuViewController: groupsVC)
         let tabImageGroupWhite = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         let tabImageGroupColor = UIImage(systemName: "text.bubble.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
         groupVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageGroupWhite, selectedImage: tabImageGroupColor)
+//        SideMenuController.preferences.basic.menuWidth = 300
+//        SideMenuController.preferences.basic.position = .sideBySide
+//        SideMenuController.preferences.basic.direction = .left
+//        SideMenuController.preferences.basic.enablePanGesture = true
+//        SideMenuController.preferences.basic.supportedOrientations = .portrait
         
         profileVcNavController = UINavigationController(rootViewController: profileVC)
         profileVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
@@ -139,15 +148,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         print("\(className) - tabBarController didSelect: \(viewController)")
-//        guard let _ = Auth.auth().currentUser else {
-//            print("\(className) - tabBarController didSelect: No user logged in; remain in Profile view")
-//            tabBarController.selectedIndex = profileVcIndex
-//            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-//            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-//            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-//            return
-//        }
-//
+        guard let _ = Auth.auth().currentUser else {
+            print("\(className) - tabBarController didSelect: No user logged in; remain in Profile view")
+            tabBarController.selectedIndex = profileVcIndex
+            return
+        }
+
 //        if viewController == notionVC {
 //            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
 //            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)

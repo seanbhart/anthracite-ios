@@ -66,7 +66,9 @@
 		B87350B825C2A2D00007A8FE /* Ticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350B725C2A2D00007A8FE /* Ticker.swift */; };
 		B87350C025C322FE0007A8FE /* STARS-WHITE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BE25C322FE0007A8FE /* STARS-WHITE-LG.png */; };
 		B87350C125C322FE0007A8FE /* STARS-BLUE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BF25C322FE0007A8FE /* STARS-BLUE-LG.png */; };
-		B8B9905725CA51E900CF539C /* GroupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B9905625CA51E900CF539C /* GroupsView.swift */; };
+		B89B79F525CB9F4F00531E9E /* LOGOTYPE.png in Resources */ = {isa = PBXBuildFile; fileRef = B89B79F325CB9F4F00531E9E /* LOGOTYPE.png */; };
+		B89B79F625CB9F4F00531E9E /* LOGOTYPE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */; };
+		B8B9905725CA51E900CF539C /* GroupsMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B9905625CA51E900CF539C /* GroupsMenu.swift */; };
 		B8B9905A25CA74F400CF539C /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B9905925CA74F400CF539C /* GroupCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -134,7 +136,9 @@
 		B87350B725C2A2D00007A8FE /* Ticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticker.swift; sourceTree = "<group>"; };
 		B87350BE25C322FE0007A8FE /* STARS-WHITE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STARS-WHITE-LG.png"; sourceTree = "<group>"; };
 		B87350BF25C322FE0007A8FE /* STARS-BLUE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STARS-BLUE-LG.png"; sourceTree = "<group>"; };
-		B8B9905625CA51E900CF539C /* GroupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsView.swift; sourceTree = "<group>"; };
+		B89B79F325CB9F4F00531E9E /* LOGOTYPE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LOGOTYPE.png; sourceTree = "<group>"; };
+		B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LOGOTYPE-LG.png"; sourceTree = "<group>"; };
+		B8B9905625CA51E900CF539C /* GroupsMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsMenu.swift; sourceTree = "<group>"; };
 		B8B9905925CA74F400CF539C /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
 		C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Gandalf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -227,6 +231,8 @@
 				B80E051625C7499C009DBE34 /* HAT-PURPLE-LG.png */,
 				B873509925C258E40007A8FE /* HAT-WHITE-LG.png */,
 				B873509A25C258E40007A8FE /* HAT-WHITE-SM.png */,
+				B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */,
+				B89B79F325CB9F4F00531E9E /* LOGOTYPE.png */,
 				B80E04F825C7394E009DBE34 /* STAR-GRAY-LG.png */,
 				B80E04FA25C7394E009DBE34 /* STAR-GRAY-SM.png */,
 				B80E04FD25C7394E009DBE34 /* STAR-GREEN-LG.png */,
@@ -272,8 +278,9 @@
 			isa = PBXGroup;
 			children = (
 				B873508125C258BE0007A8FE /* CustomProgressView.swift */,
+				B8B9905925CA74F400CF539C /* GroupCell.swift */,
 				B80E056C25C9A207009DBE34 /* GroupInputCell.swift */,
-				B8B9905625CA51E900CF539C /* GroupsView.swift */,
+				B8B9905625CA51E900CF539C /* GroupsMenu.swift */,
 				B85BC62725CA18F7003FCA6C /* GroupTickerCell.swift */,
 				B80E056825C8C507009DBE34 /* GroupView.swift */,
 				B80E053325C76D08009DBE34 /* HoleView.swift */,
@@ -283,7 +290,6 @@
 				B873507E25C258BD0007A8FE /* NotionView.swift */,
 				B80E04C225C32A96009DBE34 /* ProfileView.swift */,
 				B873507D25C258BC0007A8FE /* ViewExtensions.swift */,
-				B8B9905925CA74F400CF539C /* GroupCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -379,6 +385,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B80E050C25C73CBD009DBE34 /* STARS-GRAY-SM.png in Resources */,
+				B89B79F625CB9F4F00531E9E /* LOGOTYPE-LG.png in Resources */,
 				B80E050525C7394E009DBE34 /* STAR-GREEN-LG.png in Resources */,
 				B80E050B25C73CBD009DBE34 /* STARS-GRAY-LG.png in Resources */,
 				B87350C025C322FE0007A8FE /* STARS-WHITE-LG.png in Resources */,
@@ -396,6 +403,7 @@
 				B80E050425C7394E009DBE34 /* STAR-WHITE-LG.png in Resources */,
 				B80E051725C7499C009DBE34 /* HAT-PURPLE-LG.png in Resources */,
 				B873504425C256330007A8FE /* Preview Assets.xcassets in Resources */,
+				B89B79F525CB9F4F00531E9E /* LOGOTYPE.png in Resources */,
 				B87350AF25C284C30007A8FE /* Rubik-Light.ttf in Resources */,
 				B873509D25C258E50007A8FE /* HAT-WHITE-LG.png in Resources */,
 				B87350B125C284C30007A8FE /* Rubik-Regular.ttf in Resources */,
@@ -488,7 +496,7 @@
 				B80E053A25C8403B009DBE34 /* NotionActionRepository.swift in Sources */,
 				B80E057625C9BC44009DBE34 /* GroupRepository.swift in Sources */,
 				B873508725C258BE0007A8FE /* CustomProgressView.swift in Sources */,
-				B8B9905725CA51E900CF539C /* GroupsView.swift in Sources */,
+				B8B9905725CA51E900CF539C /* GroupsMenu.swift in Sources */,
 				B873509725C258DA0007A8FE /* UIKitExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -639,7 +647,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.gandalf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -663,7 +671,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.gandalf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

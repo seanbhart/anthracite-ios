@@ -23,15 +23,15 @@ class GroupCell: UITableViewCell {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(containerView)
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo:contentView.topAnchor),
-            containerView.bottomAnchor.constraint(equalTo:contentView.bottomAnchor),
+            containerView.topAnchor.constraint(equalTo:contentView.topAnchor, constant: 5),
+            containerView.bottomAnchor.constraint(equalTo:contentView.bottomAnchor, constant: -5),
             containerView.leftAnchor.constraint(equalTo:contentView.leftAnchor),
             containerView.rightAnchor.constraint(equalTo:contentView.rightAnchor),
         ])
         
         title = UILabel()
         title.backgroundColor = .clear
-        title.font = UIFont(name: Assets.Fonts.Default.black, size: 30)
+        title.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
         title.textColor = Settings.Theme.Color.text
         title.textAlignment = NSTextAlignment.left
         title.numberOfLines = 1
@@ -40,10 +40,9 @@ class GroupCell: UITableViewCell {
         title.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(title)
         NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo:containerView.topAnchor, constant: 10),
-            title.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 10),
+            title.centerYAnchor.constraint(equalTo:containerView.centerYAnchor),
+            title.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 20),
             title.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -10),
-            title.bottomAnchor.constraint(equalTo:containerView.bottomAnchor, constant: -10),
         ])
     }
     

@@ -7,20 +7,22 @@
 
 import UIKit
 import FirebaseAuth
+import SideMenuSwift
 
-class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate, MessageRepositoryDelegate {
+class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate, SideMenuControllerDelegate, MessageRepositoryDelegate {
     let className = "GroupView"
     
     var initialLoad = true
     var allowEndEditing = false
-    var localGroups = [Group]()
-//    var groupRepository: GroupRepository!
+    var currentGroup: Group!
     var localTickers = [Ticker]()
     var localMessages = [Message]()
     var messageRepository: MessageRepository!
     var accountNames = [String: String]()
     var inputTickers = [String]()
     
+    var barItemLogo: UIButton!
+    var barItemTitle: UIButton!
     var viewContainer: UIView!
     var headerLabel: UILabel!
     var inputContainer: UIView!
@@ -46,30 +48,51 @@ class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UI
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(className) - viewDidLoad")
-        self.navigationItem.title = ""
-        self.navigationItem.hidesBackButton = true
+        self.navigationItem.title = currentGroup.title
+        self.navigationItem.hidesBackButton = false
         
-        let barItemLogo = UIButton(type: .custom)
-        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
-        NSLayoutConstraint.activate([
-            barItemLogo.widthAnchor.constraint(equalToConstant:30),
-            barItemLogo.heightAnchor.constraint(equalToConstant:30),
-        ])
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
+//        barItemLogo = UIButton(type: .custom)
+//        barItemLogo.setImage(UIImage(named: Assets.Images.logotypeLg), for: .normal)
+//        barItemTitle = UIButton(type: .custom)
+//        barItemTitle.setTitle("Message Group", for: .normal)
+//        barItemTitle.setTitleColor(Settings.Theme.Color.text, for: .normal)
+//        barItemTitle.setTitle(currentGroup.title, for: .normal)
+//        NSLayoutConstraint.activate([
+//            barItemLogo.widthAnchor.constraint(equalToConstant:30),
+//            barItemLogo.heightAnchor.constraint(equalToConstant:30),
+//            barItemTitle.heightAnchor.constraint(equalToConstant:30),
+//        ])
+//        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
+//        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: barItemTitle)
         
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - willEnterForegroundNotification")
-            messageRepository.observeQuery()
+            guard let messageRepo = messageRepository else { return }
+            messageRepo.observeQuery()
         }
         observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - didEnterBackgroundNotification")
-            messageRepository.stopObserving()
+            guard let messageRepo = messageRepository else { return }
+            messageRepo.stopObserving()
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    init(group: Group) {
+        super.init(nibName: nil, bundle: nil)
+        currentGroup = group
+//        loadGroup(group: group)
+        
+        // Set new data
+        guard let groupId = group.id else { return }
+        messageRepository = MessageRepository(groupId: groupId)
+        messageRepository.delegate = self
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     deinit {
         if let observer = observer {
             NotificationCenter.default.removeObserver(observer)
@@ -137,9 +160,8 @@ class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UI
             messageTableViewSpinner.centerYAnchor.constraint(equalTo:messageTableView.centerYAnchor, constant: -100),
         ])
         
-        if messageRepository != nil {
-            messageRepository.observeQuery()
-        }
+        guard let messageRepo = messageRepository else { return }
+        messageRepo.observeQuery()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -169,9 +191,8 @@ class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UI
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         print("\(className) - viewWillDisappear")
-        if messageRepository != nil {
-            messageRepository.stopObserving()
-        }
+        guard let messageRepo = messageRepository else { return }
+        messageRepo.stopObserving()
     }
 
     override func loadView() {
@@ -302,8 +323,6 @@ class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UI
         messageTableViewSpinner.startAnimating()
         messageTableView.addSubview(messageTableViewSpinner)
         messageTableViewSpinner.isHidden = false
-        
-        getGroups()
     }
     
     override func didReceiveMemoryWarning() {
@@ -318,6 +337,22 @@ class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UI
 //        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
 //            self.messageTableViewRefreshControl.endRefreshing()
 //        }
+//    }
+    
+//    // MARK: -GROUPS DELEGATE
+//
+//    func loadGroup(group: Group) {
+//        guard let groupId = group.id else { return }
+//
+//        // Reset local data
+//        currentGroup = group
+//        localMessages.removeAll()
+//        messageTableView.reloadData()
+//        tickerTableView.reloadData()
+//
+//        // Set new data
+//        messageRepository = MessageRepository(group: groupId)
+//        self.barItemTitle.setTitle(group.title, for: .normal)
 //    }
     
     
@@ -612,7 +647,8 @@ class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UI
         return localTickers
     }
     func messageDataUpdate() {
-        if messageRepository.messages.count < 1 {
+        guard let messageRepo = messageRepository else { return }
+        if messageRepo.messages.count < 1 {
             noMessagesSetup()
             return
         } else {
@@ -622,10 +658,10 @@ class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UI
         // Switch out the local data with newly synced data
         // Handle tickers first to prep for filling notion list
         localTickers.removeAll()
-        localTickers = messageRepository.tickers.sorted(by: { $0.responseCount < $1.responseCount })
-        
+        localTickers = messageRepo.tickers.sorted(by: { $0.responseCount < $1.responseCount })
+        print("localTickers count: \(localTickers.count)")
         fillLocalMessages()
-        accountNames = messageRepository.accountNames
+        accountNames = messageRepo.accountNames
         
         let bottomDist = messageTableView.contentSize.height - messageTableView.contentOffset.y - messageTableView.frame.height
         if initialLoad || bottomDist < messageCellHeight * 2 {
@@ -655,15 +691,16 @@ class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UI
         fillLocalMessages()
     }
     func fillLocalMessages() {
+        guard let messageRepo = messageRepository else { return }
         localMessages.removeAll()
         // Filter the data based on ticker selection ONLY IF ANY ARE SELECTED
         if localTickers.filter({ $0.selected }).count > 0 {
-            localMessages = messageRepository.messages.filter({
+            localMessages = messageRepo.messages.filter({
                 let tickers = $0.tickers
                 return localTickers.filter({ tickers?.contains($0.ticker) ?? false && $0.selected }).count > 0
             })
         } else {
-            localMessages = messageRepository.messages
+            localMessages = messageRepo.messages
         }
         localMessages = localMessages.sorted(by: { $0.timestamp < $1.timestamp })
         messageTableView.reloadData()
@@ -717,32 +754,5 @@ class GroupView: UIViewController, UITextViewDelegate, UITableViewDataSource, UI
             }
         }
         return string
-    }
-    
-    
-    // MARK: -FIRESTORE FUNCTIONS
-    
-    func getGroups() {
-        print("\(className) - getGroups")
-        guard let firUser = Auth.auth().currentUser else { return }
-        Settings.Firebase.db().collection("group")
-            .whereField("members", arrayContains: firUser.uid)
-            .getDocuments(completion: { (snapshot, error) in
-                if let err = error { print("\(self.className) - getGroups ERROR: \(err)") }
-                guard let snapshot = snapshot else { print("\(self.className) getGroups snapshot error: \(error!)"); return }
-                
-                self.localGroups = snapshot.documents.compactMap { queryDocumentSnapshot -> Group? in
-                    return try? queryDocumentSnapshot.data(as: Group.self)
-                }
-                // TODO: populate group menu with all groups
-                if self.localGroups.count > 0 {
-                    guard let groupId = self.localGroups[0].id else { return }
-                    self.messageRepository = MessageRepository(group: groupId)
-                    self.messageRepository.delegate = self
-                    self.messageRepository.observeQuery()
-                    
-                    self.navigationItem.title = self.localGroups[0].title
-                }
-            })
     }
 }

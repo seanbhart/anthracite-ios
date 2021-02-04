@@ -17,7 +17,7 @@ class MessageRepository {
     var className = "MessageRepository"
     
     var delegate: MessageRepositoryDelegate?
-    var group: String!
+    var groupId: String!
     var messages = [Message]()
     var accountNames = [String: String]()
     var tickers = [Ticker]()
@@ -31,9 +31,9 @@ class MessageRepository {
         }
     }
     
-    init(group: String) {
-        self.group = group
-        query = Settings.Firebase.db().collection("group").document(group).collection("messages")
+    init(groupId: String) {
+        self.groupId = groupId
+        query = Settings.Firebase.db().collection("group").document(groupId).collection("messages")
     }
 
     private var listener: ListenerRegistration?
@@ -83,7 +83,7 @@ class MessageRepository {
                         return $0
                     }
                 })
-                print("snapshot listener")
+                print("snapshot listener: \(self.tickers.count)")
                 if let parent = self.delegate {
                     parent.messageDataUpdate()
                 }
@@ -99,7 +99,7 @@ class MessageRepository {
         if text == "" { return }
         guard let firUser = Auth.auth().currentUser else { return }
         
-        Settings.Firebase.db().collection("group").document(group).collection("messages").document().setData([
+        Settings.Firebase.db().collection("group").document(groupId).collection("messages").document().setData([
             "account": firUser.uid,
             "status": NSNumber(value: 1),
             "text": text,
@@ -116,7 +116,7 @@ class MessageRepository {
     
     func deleteMessage(id: String?) {
         guard let id = id else { return }
-        Settings.Firebase.db().collection("group").document(group).collection("messages").document(id).setData([
+        Settings.Firebase.db().collection("group").document(groupId).collection("messages").document(id).setData([
             "status": NSNumber(value: 0),
         ], merge: true) { err in
             if let err = err {

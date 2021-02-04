@@ -32,10 +32,10 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
         self.navigationItem.hidesBackButton = true
         
         let barItemLogo = UIButton(type: .custom)
-        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
+        barItemLogo.setImage(UIImage(named: Assets.Images.logotypeLg), for: .normal)
         NSLayoutConstraint.activate([
-            barItemLogo.widthAnchor.constraint(equalToConstant:30),
-            barItemLogo.heightAnchor.constraint(equalToConstant:30),
+            barItemLogo.widthAnchor.constraint(equalToConstant:110),
+            barItemLogo.heightAnchor.constraint(equalToConstant:20),
         ])
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
     }
