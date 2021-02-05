@@ -1,5 +1,5 @@
 //
-//  GroupInputCell.swift
+//  MessageInputCell.swift
 //  Gandalf
 //
 //  Created by Sean Hart on 2/2/21.
@@ -8,7 +8,7 @@
 import UIKit
 //import FirebaseAnalytics
 
-class GroupInputCell: UITableViewCell {
+class MessageInputCell: UITableViewCell {
     var containerView: UIView!
     var placeholder: UILabel!
     var textView: UITextView!

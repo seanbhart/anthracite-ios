@@ -5,7 +5,7 @@
 //  Created by Sean Hart on 1/28/21.
 //
 
-import Foundation
+import UIKit
 
 struct Ticker {
     var ticker: String!

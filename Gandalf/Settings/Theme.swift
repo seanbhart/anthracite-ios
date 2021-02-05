@@ -21,6 +21,7 @@ extension Settings {
         
         struct Color {
             // Light
+            static let primary = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
             static let barColor = UIColor.black
             static let barText = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
             static let header = UIColor.black

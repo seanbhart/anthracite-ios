@@ -180,7 +180,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         ])
         NSLayoutConstraint.activate([
             notionTableView.topAnchor.constraint(equalTo:headerContainer.bottomAnchor),
-            notionTableView.leftAnchor.constraint(equalTo:tickerContainer.rightAnchor),
+            notionTableView.leftAnchor.constraint(equalTo:tickerContainer.rightAnchor, constant: 5),
             notionTableView.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
             notionTableView.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
         ])
@@ -775,8 +775,15 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         
         // Switch out the local data with newly synced data
         // Handle tickers first to prep for filling notion list
+        // Sort tickers first by response then alphabetically
         localTickers.removeAll()
-        localTickers = notionRepo.tickers.sorted(by: { $0.responseCount > $1.responseCount })
+        localTickers = notionRepo.tickers.sorted(by: {
+            if $0.responseCount != $1.responseCount {
+                return $0.responseCount > $1.responseCount
+            } else {
+                return $0.ticker < $1.ticker
+            }
+        })
         fillLocalNotions()
         // Sort after filling the local notion list
         sortToggle()

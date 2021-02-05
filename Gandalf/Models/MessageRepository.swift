@@ -53,17 +53,37 @@ class MessageRepository {
                 self.messages = snapshot.documents.compactMap { queryDocumentSnapshot -> Message? in
                     return try? queryDocumentSnapshot.data(as: Message.self)
                 }
+                
                 // Query for the display names of all message senders
-                for m in messages {
+                // and convert any embedded Tickers from dict to objects
+                for (i, m) in self.messages.enumerated() {
                     self.getAccountDisplayName(account: m.account)
+                    self.messages[i].fillTickers()
                 }
                 
                 // Clear the ticker list and add new ticker summary data
                 self.tickers.removeAll()
-                let tickerStringsAll = self.messages.compactMap({ $0.tickers?.map({ $0 }) }).reduce([], +)
+                // Get a list of all tickers with no duplicates
+                let tickerStringsAll = self.messages.compactMap({ $0.tickers?.map({ $0.ticker }) }).reduce([], +)
+                // Count how many of each ticker exist
                 let tickerOccurrences = tickerStringsAll.reduce(into: [:]) { $0[$1, default: 0] += 1 }
+                // Create the Ticker object and add the weighted average sentiment
                 for ticker in tickerOccurrences {
-                    self.tickers.append(Ticker(ticker: ticker.key, responseCount: ticker.value))
+                    guard let key = ticker.key else { return }
+                    var tObj = Ticker(ticker: key, responseCount: ticker.value)
+                    
+                    // TODO: simplify with closure method
+                    var sentimentSum = 0
+                    for m in self.messages {
+                        guard let mTickers = m.tickers else { continue }
+                        for t in mTickers {
+                            if t.ticker == tObj.ticker {
+                                sentimentSum += t.getSentimentMathValue()
+                            }
+                        }
+                    }
+                    tObj.wAvgSentiment = Float(sentimentSum)
+                    self.tickers.append(tObj)
                 }
                 
                 var selectedTickers = [Ticker]()
@@ -83,7 +103,7 @@ class MessageRepository {
                         return $0
                     }
                 })
-                print("snapshot listener: \(self.tickers.count)")
+                
                 if let parent = self.delegate {
                     parent.messageDataUpdate()
                 }
@@ -95,15 +115,24 @@ class MessageRepository {
         listener?.remove()
     }
     
-    func createMessage(text: String, tickers: [String]) {
+    func createMessage(text: String, tickers: [MessageTicker]) {
         if text == "" { return }
         guard let firUser = Auth.auth().currentUser else { return }
+        
+        // Convert TickerInputs to an array of dictionaries
+        var tickerDicts = [[String:String]]()
+        for ticker in tickers {
+            var tickerDict = [String:String]()
+            tickerDict["ticker"] = ticker.ticker
+            tickerDict["sentiment_indicator"] = String(ticker.sentiment.rawValue)
+            tickerDicts.append(tickerDict)
+        }
         
         Settings.Firebase.db().collection("group").document(groupId).collection("messages").document().setData([
             "account": firUser.uid,
             "status": NSNumber(value: 1),
             "text": text,
-            "tickers": tickers,
+            "tickers": tickerDicts,
             "timestamp": Date().timeIntervalSince1970,
         ], merge: true) { err in
             if let err = err {

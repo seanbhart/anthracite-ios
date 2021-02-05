@@ -19,8 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     var notionVC = NotionView()
     var notionVcNavController: UINavigationController!
     let notionVcIndex = 0
-    var groupsVC = GroupsMenu()
-//    var groupVC = GroupView()
+    var groupVC = GroupView()
     var groupVcNavController: UINavigationController!
     let groupVcIndex = 1
     var profileVC = ProfileView()
@@ -57,13 +56,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let tabImageNotionColor = UIImage(systemName: "globe")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
         notionVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageNotionWhite, selectedImage: tabImageNotionColor)
         
-//        groupsVC.delegate = groupVC
-        groupVcNavController = UINavigationController(rootViewController: groupsVC)
+        groupVcNavController = UINavigationController(rootViewController: groupVC)
         groupVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
         groupVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
         groupVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
         groupVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
-//        let groupVcSideMenuController = SideMenuController(contentViewController: groupVcNavController, menuViewController: groupsVC)
+//        let groupVcSideMenuController = SideMenuController(contentViewController: groupVcNavController, menuViewController: groupVC)
         let tabImageGroupWhite = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         let tabImageGroupColor = UIImage(systemName: "text.bubble.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
         groupVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageGroupWhite, selectedImage: tabImageGroupColor)
@@ -86,11 +84,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         tabBarController.delegate = self
 //        tabBarController.tabBar.barStyle = .black
         tabBarController.tabBar.barTintColor = Settings.Theme.Color.background
-//        tabBarController.tabBar.layer.shadowColor = Settings.Theme.Color.background.cgColor
-//        tabBarController.tabBar.layer.shadowOffset = CGSize(width: 0.0, height: 0.0)
-//        tabBarController.tabBar.layer.shadowRadius = 0
-//        tabBarController.tabBar.layer.shadowOpacity = 0
-//        tabBarController.tabBar.layer.masksToBounds = true
         tabBarController.tabBar.clipsToBounds = true
         tabBarController.viewControllers = [notionVcNavController, groupVcNavController, profileVcNavController]
         tabBarController.selectedIndex = profileVcIndex
@@ -153,23 +146,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             tabBarController.selectedIndex = profileVcIndex
             return
         }
-
-//        if viewController == notionVC {
-//            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-//            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-//            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-//
-//        } else if viewController == groupVC {
-//            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-//            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-//            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-//
-//        } else if viewController == profileVC {
-//            notionTabItem.image = UIImage(systemName: "globe")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-//            groupTabItem.image = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-//            profileTabItem.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-//        }
-        
     }
 
 }

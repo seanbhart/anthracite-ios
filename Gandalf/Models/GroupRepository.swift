@@ -72,7 +72,7 @@ class GroupRepository {
                 
                 if snapshot.exists {
                     Settings.Firebase.db().collection("group").document(code).setData([
-                        "members": [firUser.uid]
+                        "members": FieldValue.arrayUnion([firUser.uid])
                     ], merge: true) { err in
                         if let err = err {
                             print("\(self.className) - FIREBASE: ERROR joining group: \(err)")

@@ -1,5 +1,5 @@
 //
-//  GroupTickerCell.swift
+//  MessageTickerCell.swift
 //  Gandalf
 //
 //  Created by Sean Hart on 2/2/21.
@@ -8,10 +8,10 @@
 import UIKit
 //import FirebaseAnalytics
 
-class GroupTickerCell: UITableViewCell {
+class MessageTickerCell: UITableViewCell {
     var containerView: UIView!
     var title: UILabel!
-//    var notionIcon: UIImageView!
+    var notionIcon: UIImageView!
     var countText: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -48,19 +48,19 @@ class GroupTickerCell: UITableViewCell {
             title.heightAnchor.constraint(equalToConstant:30),
         ])
         
-//        notionIcon = UIImageView()
-//        notionIcon.backgroundColor = .clear
-//        notionIcon.image = UIImage(named: Assets.Images.notionIconGrayLg)
-//        notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
-//        notionIcon.clipsToBounds = true
-//        notionIcon.translatesAutoresizingMaskIntoConstraints = false
-//        containerView.addSubview(notionIcon)
-//        NSLayoutConstraint.activate([
-//            notionIcon.topAnchor.constraint(equalTo:title.bottomAnchor, constant: 5),
-//            notionIcon.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
-//            notionIcon.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
-//            notionIcon.heightAnchor.constraint(equalToConstant: 30),
-//        ])
+        notionIcon = UIImageView()
+        notionIcon.backgroundColor = .clear
+        notionIcon.image = UIImage(named: Assets.Images.notionIconGrayLg)
+        notionIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        notionIcon.clipsToBounds = true
+        notionIcon.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(notionIcon)
+        NSLayoutConstraint.activate([
+            notionIcon.topAnchor.constraint(equalTo:title.bottomAnchor, constant: 5),
+            notionIcon.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 0),
+            notionIcon.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: 0),
+            notionIcon.heightAnchor.constraint(equalToConstant: 30),
+        ])
         
         countText = UILabel()
         countText.backgroundColor = .clear
@@ -73,7 +73,7 @@ class GroupTickerCell: UITableViewCell {
         countText.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(countText)
         NSLayoutConstraint.activate([
-            countText.topAnchor.constraint(equalTo:title.bottomAnchor, constant: 20),
+            countText.topAnchor.constraint(equalTo:notionIcon.bottomAnchor, constant: 0),
             countText.leftAnchor.constraint(equalTo:containerView.leftAnchor, constant: 5),
             countText.rightAnchor.constraint(equalTo:containerView.rightAnchor, constant: -5),
             countText.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10)
