@@ -12,15 +12,18 @@ import UIKit
 //import FirebaseAnalytics
 import FirebaseAuth
 
-class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding, ProfileRepositoryDelegate {
     let className = "ProfileView"
     
+    var profileRepository: ProfileRepository!
     // Unhashed nonce - handle locally (not in Account) for security
     fileprivate var currentNonce: String?
     var controller: ASAuthorizationController!
     
     var viewContainer: UIView!
-    var profileName: UILabel!
+    var usernameContainer: UIView!
+    var usernameEditIcon: UIImageView!
+    var usernameLabel: UILabel!
     var signInButton: ASAuthorizationAppleIDButton!
     var signOutButton: UILabel!
     var signOutButtonTapGestureRecognizer: UITapGestureRecognizer!
@@ -51,10 +54,22 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
             viewContainer.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
         ])
         NSLayoutConstraint.activate([
-            profileName.centerYAnchor.constraint(equalTo:view.centerYAnchor, constant: -50),
-            profileName.centerXAnchor.constraint(equalTo:view.centerXAnchor),
-            profileName.widthAnchor.constraint(equalTo: viewContainer.widthAnchor),
-            profileName.heightAnchor.constraint(equalToConstant:50),
+            usernameContainer.centerYAnchor.constraint(equalTo:view.centerYAnchor, constant: -100),
+            usernameContainer.centerXAnchor.constraint(equalTo:view.centerXAnchor),
+            usernameContainer.widthAnchor.constraint(equalToConstant: 290),
+            usernameContainer.heightAnchor.constraint(equalToConstant:50),
+        ])
+        NSLayoutConstraint.activate([
+            usernameEditIcon.topAnchor.constraint(equalTo:usernameContainer.topAnchor),
+            usernameEditIcon.leftAnchor.constraint(equalTo:usernameContainer.leftAnchor),
+            usernameEditIcon.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor),
+            usernameEditIcon.widthAnchor.constraint(equalToConstant: 50),
+        ])
+        NSLayoutConstraint.activate([
+            usernameLabel.topAnchor.constraint(equalTo:usernameContainer.topAnchor),
+            usernameLabel.leftAnchor.constraint(equalTo:usernameEditIcon.rightAnchor, constant: 20),
+            usernameLabel.rightAnchor.constraint(equalTo:usernameContainer.rightAnchor),
+            usernameLabel.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor),
         ])
         NSLayoutConstraint.activate([
             signInButton.centerYAnchor.constraint(equalTo:view.centerYAnchor),
@@ -68,6 +83,17 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
             signOutButton.widthAnchor.constraint(equalToConstant:280),
             signOutButton.heightAnchor.constraint(equalToConstant:50),
         ])
+        
+        // Show the correct button based on if the user is signed in
+        if let firUser = Auth.auth().currentUser {
+            print("firUser \(firUser.uid)")
+            self.hideSignIn()
+            profileRepository = ProfileRepository(id: firUser.uid)
+            profileRepository.delegate = self
+            profileRepository.getAccount()
+        } else {
+            self.showSignIn()
+        }
     }
     
 //    override func viewWillDisappear(_ animated: Bool) {
@@ -87,21 +113,31 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(viewContainer)
         
-        profileName = UILabel()
-        profileName.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
-        profileName.textColor = Settings.Theme.Color.text
-        profileName.textAlignment = NSTextAlignment.center
-        profileName.numberOfLines = 1
-        profileName.text = ""
-        profileName.isUserInteractionEnabled = false
-        profileName.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(profileName)
+        usernameContainer = UIView()
+        usernameContainer.backgroundColor = Settings.Theme.Color.background
+        usernameContainer.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(usernameContainer)
         
-        if let cUser = Auth.auth().currentUser {
-            if let name = cUser.displayName {
-                profileName.text = "Welcome, \(name)"
-            }
-        }
+        let usernameContainerGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(usernameContainerTap))
+        usernameContainerGestureRecognizer.numberOfTapsRequired = 1
+        usernameContainer.addGestureRecognizer(usernameContainerGestureRecognizer)
+        
+        usernameEditIcon = UIImageView()
+        usernameEditIcon.image = UIImage(systemName: "square.and.pencil")
+        usernameEditIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        usernameEditIcon.clipsToBounds = true
+        usernameEditIcon.translatesAutoresizingMaskIntoConstraints = false
+        usernameContainer.addSubview(usernameEditIcon)
+        
+        usernameLabel = UILabel()
+        usernameLabel.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
+        usernameLabel.textColor = Settings.Theme.Color.text
+        usernameLabel.textAlignment = NSTextAlignment.left
+        usernameLabel.numberOfLines = 1
+        usernameLabel.text = ""
+        usernameLabel.isUserInteractionEnabled = false
+        usernameLabel.translatesAutoresizingMaskIntoConstraints = false
+        usernameContainer.addSubview(usernameLabel)
         
         signInButton = ASAuthorizationAppleIDButton(type: .default, style: .white)
         signInButton.cornerRadius = 2
@@ -125,14 +161,6 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
         signOutButtonTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ProfileView.signOutTap(_:)))
         signOutButtonTapGestureRecognizer.numberOfTapsRequired = 1  // add single tap
         signOutButton.addGestureRecognizer(signOutButtonTapGestureRecognizer)
-        
-        // Show the correct button based on if the user is signed in
-        if let firUser = Auth.auth().currentUser {
-            print("firUser \(firUser.uid)")
-            self.hideSignIn()
-        } else {
-            self.showSignIn()
-        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -160,6 +188,74 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     @objc func signOutTap(_ sender: UITapGestureRecognizer) {
         signOut()
     }
+    @objc func usernameContainerTap(_ sender: UITapGestureRecognizer) {
+        print("\(className) - usernameContainerTap")
+        guard let profile = profileRepository.profile else { return }
+//        print("profile: \(profile.username)")
+        
+        let alert = UIAlertController(title: "Edit Username", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { action in
+            let textField = alert.textFields![0] as UITextField
+//            print("EDIT USERNAME TO: \(textField.text)")
+            guard let username = textField.text else { return }
+            if username.count > 0 {
+                if let profileRepo = self.profileRepository {
+                    profileRepo.setUserName(username: username)
+                    self.profileRepository.getAccount()
+                }
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addTextField(configurationHandler: { (textField: UITextField!) -> Void in
+            textField.placeholder = "Username"
+            textField.text = profile.username
+            textField.font = UIFont(name: Assets.Fonts.Default.light, size: 14)
+            textField.autocorrectionType = UITextAutocorrectionType.no
+            textField.keyboardType = UIKeyboardType.default
+            textField.returnKeyType = UIReturnKeyType.done
+            textField.clearButtonMode = UITextField.ViewMode.whileEditing
+            textField.contentVerticalAlignment = UIControl.ContentVerticalAlignment.center
+            NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: textField, queue: OperationQueue.main, using: { (notification) in
+                    if let tf = notification.object as? UITextField {
+                        let maxLength = 20
+                        if let text = tf.text {
+                            if text.count > maxLength {
+                                tf.text = String(text.prefix(maxLength))
+                            }
+                        }
+                    }
+                })
+        })
+        self.present(alert, animated: true)
+    }
+    
+    
+    // MARK: -REPO DELEGATE
+    
+    func profileDataUpdate() {
+        print("\(className) - profileDataUpdate")
+        if let profile = profileRepository.profile {
+            // If the username is empty, use the known account name
+            if let username = profile.username {
+                usernameLabel.text = username
+            } else {
+                if let name = profile.name {
+                    let given = name["given"] ?? "anonymous"
+                    let family = name["family"] ?? ""
+                    usernameLabel.text = given + " " + family
+                } else {
+                    usernameLabel.text = "anonymous"
+                }
+            }
+        }
+    }
+    
+    func requestError(message: String) {
+        let alert = UIAlertController(title: "Something went wrong!", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
     
     
     // MARK: -CUSTOM FUNCTIONS
@@ -192,17 +288,11 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
         self.signOutButton.isHidden = true
         self.signInButton.isHidden = false
         
-        profileName.text = ""
+        usernameLabel.text = ""
     }
     func hideSignIn() {
         self.signOutButton.isHidden = false
         self.signInButton.isHidden = true
-        
-        if let cUser = Auth.auth().currentUser {
-            if let name = cUser.displayName {
-                profileName.text = "Welcome, \(name)"
-            }
-        }
     }
     
     

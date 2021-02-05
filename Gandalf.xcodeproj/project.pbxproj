@@ -70,6 +70,8 @@
 		B89B79F625CB9F4F00531E9E /* LOGOTYPE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */; };
 		B8B9905725CA51E900CF539C /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B9905625CA51E900CF539C /* GroupView.swift */; };
 		B8B9905A25CA74F400CF539C /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B9905925CA74F400CF539C /* GroupCell.swift */; };
+		B8BA188B25CDB694008ACBA0 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA188A25CDB694008ACBA0 /* Profile.swift */; };
+		B8BA188E25CDB6B5008ACBA0 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA188D25CDB6B5008ACBA0 /* ProfileRepository.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -140,6 +142,8 @@
 		B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LOGOTYPE-LG.png"; sourceTree = "<group>"; };
 		B8B9905625CA51E900CF539C /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		B8B9905925CA74F400CF539C /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
+		B8BA188A25CDB694008ACBA0 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		B8BA188D25CDB6B5008ACBA0 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
 		C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Gandalf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -258,9 +262,11 @@
 				B80E056F25C9B96C009DBE34 /* Message.swift */,
 				B80E057925C9C1AA009DBE34 /* MessageRepository.swift */,
 				B873508A25C258C50007A8FE /* Notion.swift */,
+				B873508925C258C50007A8FE /* NotionRepository.swift */,
 				B80E053625C83DFE009DBE34 /* NotionAction.swift */,
 				B80E053925C8403B009DBE34 /* NotionActionRepository.swift */,
-				B873508925C258C50007A8FE /* NotionRepository.swift */,
+				B8BA188A25CDB694008ACBA0 /* Profile.swift */,
+				B8BA188D25CDB6B5008ACBA0 /* ProfileRepository.swift */,
 				B87350B725C2A2D00007A8FE /* Ticker.swift */,
 			);
 			path = Models;
@@ -470,6 +476,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B80E056D25C9A207009DBE34 /* MessageInputCell.swift in Sources */,
+				B8BA188B25CDB694008ACBA0 /* Profile.swift in Sources */,
 				B873508525C258BE0007A8FE /* NotionCell.swift in Sources */,
 				B873508B25C258C50007A8FE /* NotionRepository.swift in Sources */,
 				B80E056925C8C508009DBE34 /* MessageView.swift in Sources */,
@@ -488,6 +495,7 @@
 				B873508625C258BE0007A8FE /* NotionTickerCell.swift in Sources */,
 				B80E057A25C9C1AA009DBE34 /* MessageRepository.swift in Sources */,
 				B80E04C325C32A96009DBE34 /* ProfileView.swift in Sources */,
+				B8BA188E25CDB6B5008ACBA0 /* ProfileRepository.swift in Sources */,
 				B80E057D25C9C3E7009DBE34 /* MessageCell.swift in Sources */,
 				B873508F25C258CF0007A8FE /* LocalCollection.swift in Sources */,
 				B80E057025C9B96C009DBE34 /* Message.swift in Sources */,
@@ -647,7 +655,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.gandalf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -671,7 +679,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tangojlabs.gandalf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

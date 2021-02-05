@@ -282,7 +282,7 @@ class GroupView: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func requestError(message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Something went wrong!", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
@@ -338,7 +338,7 @@ class GroupView: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         alert.addTextField(configurationHandler: { (textField: UITextField!) -> Void in
             textField.placeholder = "Group Code"
             textField.font = UIFont(name: Assets.Fonts.Default.light, size: 14)
-            textField.autocorrectionType = UITextAutocorrectionType.yes
+            textField.autocorrectionType = UITextAutocorrectionType.no
             textField.keyboardType = UIKeyboardType.default
             textField.returnKeyType = UIReturnKeyType.done
             textField.clearButtonMode = UITextField.ViewMode.whileEditing
@@ -363,7 +363,7 @@ class GroupView: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             textField.placeholder = "Group Name"
             textField.text = currentTitle
             textField.font = UIFont(name: Assets.Fonts.Default.light, size: 14)
-            textField.autocorrectionType = UITextAutocorrectionType.yes
+            textField.autocorrectionType = UITextAutocorrectionType.no
             textField.keyboardType = UIKeyboardType.default
             textField.returnKeyType = UIReturnKeyType.done
             textField.clearButtonMode = UITextField.ViewMode.whileEditing

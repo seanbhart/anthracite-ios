@@ -231,6 +231,9 @@ PODS:
   - Firebase/Firestore (7.2.0-M1):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 7.2.0)
+  - Firebase/Messaging (7.2.0-M1):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (~> 7.2.0)
   - FirebaseAnalytics (7.2.0-M1):
     - FirebaseCore (~> 7.0)
     - FirebaseInstallations (~> 7.0)
@@ -273,6 +276,18 @@ PODS:
     - GoogleUtilities/Environment (~> 7.0)
     - GoogleUtilities/UserDefaults (~> 7.0)
     - PromisesObjC (~> 1.2)
+  - FirebaseInstanceID (7.5.0):
+    - FirebaseCore (~> 7.0)
+    - FirebaseInstallations (~> 7.0)
+    - GoogleUtilities/Environment (~> 7.0)
+    - GoogleUtilities/UserDefaults (~> 7.0)
+  - FirebaseMessaging (7.2.0):
+    - FirebaseCore (~> 7.0)
+    - FirebaseInstanceID (~> 7.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
+    - GoogleUtilities/Environment (~> 7.0)
+    - GoogleUtilities/Reachability (~> 7.0)
+    - GoogleUtilities/UserDefaults (~> 7.0)
   - GoogleAppMeasurement (7.2.0-M1):
     - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
     - GoogleUtilities/MethodSwizzler (~> 7.0)
@@ -338,6 +353,7 @@ DEPENDENCIES:
   - Firebase/Analytics (= 7.2-M1)
   - Firebase/Auth (= 7.2-M1)
   - Firebase/Firestore (= 7.2-M1)
+  - Firebase/Messaging
   - FirebaseFirestoreSwift (= 7.4-beta)
   - SideMenuSwift
 
@@ -353,6 +369,8 @@ SPEC REPOS:
     - FirebaseFirestore
     - FirebaseFirestoreSwift
     - FirebaseInstallations
+    - FirebaseInstanceID
+    - FirebaseMessaging
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
@@ -375,6 +393,8 @@ SPEC CHECKSUMS:
   FirebaseFirestore: 526c70e247f550206e5c02a7bafc264588847499
   FirebaseFirestoreSwift: dbffafc159c23d347193af22b5ec06e9534ba944
   FirebaseInstallations: 971df89b48ae5ee4cc2bf6935f3857a525d28550
+  FirebaseInstanceID: 47fcb3b70d6349cfd471f430b01bbd01a7698e8f
+  FirebaseMessaging: 7091222bfac24ca89c569c3c59e58390311e487f
   GoogleAppMeasurement: 793ab7b9a09326f991c089152a2ba5beecef0c83
   GoogleDataTransport: 116c84c4bdeb76be2a7a46de51244368f9794eab
   GoogleUtilities: 3dc4ff0d5e4840e2fa8eef0889620e8c33d4218c
@@ -386,6 +406,6 @@ SPEC CHECKSUMS:
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   SideMenuSwift: ffbbc88d23741932177ad1320df837cedfb3bc5e
 
-PODFILE CHECKSUM: 7414eb97b4af1e9b716263bf006b0bd48c737f92
+PODFILE CHECKSUM: 8eaafa7988033d5b93f4e2e4aacfb2cc61af5bf9
 
 COCOAPODS: 1.10.0

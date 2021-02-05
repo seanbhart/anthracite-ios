@@ -7,9 +7,9 @@
 
 import UIKit
 import FirebaseAuth
-import SideMenuSwift
+//import SideMenuSwift
 
-class MessageView: UIViewController, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate, SideMenuControllerDelegate, MessageRepositoryDelegate {
+class MessageView: UIViewController, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate, MessageRepositoryDelegate {
     let className = "MessageView"
     
     var initialLoad = true
@@ -672,17 +672,17 @@ class MessageView: UIViewController, UITextViewDelegate, UITableViewDataSource, 
         tickerTableViewSpinner.stopAnimating()
         messageTableViewSpinner.stopAnimating()
         
-        var messageTicker1 = MessageTicker(ticker: "AAPL")
-        messageTicker1.sentiment = .positive
-        var messageTicker2 = MessageTicker(ticker: "MSFT")
-        messageTicker2.sentiment = .neutral
-        var messageTicker3 = MessageTicker(ticker: "S&P")
-        messageTicker3.sentiment = .negative
-        messageRepository.createMessage(text: "Check out $AAPL and $MSFT on the $S&P. Use the \"$\" sign to track stock tickers and topics.\n\nTap tickers at the bottom to set your price expectations and swipe right to post your message.", tickers: [
-            messageTicker1,
-            messageTicker2,
-            messageTicker3
-        ])
+//        var messageTicker1 = MessageTicker(ticker: "AAPL")
+//        messageTicker1.sentiment = .positive
+//        var messageTicker2 = MessageTicker(ticker: "MSFT")
+//        messageTicker2.sentiment = .neutral
+//        var messageTicker3 = MessageTicker(ticker: "S&P")
+//        messageTicker3.sentiment = .negative
+//        messageRepository.createMessage(text: "Check out $AAPL and $MSFT on the $S&P. Use the \"$\" sign to track stock tickers and topics.\n\nTap tickers at the bottom to set your price expectations and swipe right to post your message.", tickers: [
+//            messageTicker1,
+//            messageTicker2,
+//            messageTicker3
+//        ])
     }
     func messagesSetup() {
         headerLabel.removeFromSuperview()

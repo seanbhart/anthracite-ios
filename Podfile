@@ -14,6 +14,7 @@ target 'Gandalf' do
   # Optionally, include the Swift extensions if you're using Swift.
 #  pod 'FirebaseFirestoreSwift'
   pod 'FirebaseFirestoreSwift', '7.4-beta'
+  pod 'Firebase/Messaging'
   
   pod 'SideMenuSwift'
 

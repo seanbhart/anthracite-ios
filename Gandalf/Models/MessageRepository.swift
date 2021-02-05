@@ -167,7 +167,11 @@ class MessageRepository {
                 guard let name = data["name"] as? [String: String] else { return }
                 guard let givenName = name["given"] else { return }
                 guard let familyName = name["family"] else { return }
-                self.accountNames[account] = givenName + " " + familyName
+                if let username = data["username"] as? String {
+                    self.accountNames[account] = username
+                } else {
+                    self.accountNames[account] = givenName + " " + familyName
+                }
                 
                 if let parent = self.delegate {
                     parent.messageDataUpdate()
