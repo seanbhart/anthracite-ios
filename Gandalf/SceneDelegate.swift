@@ -9,7 +9,6 @@ import UIKit
 import SwiftUI
 //import FirebaseAnalytics
 import FirebaseAuth
-//import SideMenuSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
     let className = "SceneDelegate"
@@ -61,15 +60,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         groupVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
         groupVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
         groupVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
-//        let groupVcSideMenuController = SideMenuController(contentViewController: groupVcNavController, menuViewController: groupVC)
         let tabImageGroupWhite = UIImage(systemName: "text.bubble.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         let tabImageGroupColor = UIImage(systemName: "text.bubble.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
         groupVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageGroupWhite, selectedImage: tabImageGroupColor)
-//        SideMenuController.preferences.basic.menuWidth = 300
-//        SideMenuController.preferences.basic.position = .sideBySide
-//        SideMenuController.preferences.basic.direction = .left
-//        SideMenuController.preferences.basic.enablePanGesture = true
-//        SideMenuController.preferences.basic.supportedOrientations = .portrait
         
         profileVcNavController = UINavigationController(rootViewController: profileVC)
         profileVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
@@ -138,7 +131,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     
     // MARK: -TABBARCONTROLLER METHODS
-
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         print("\(className) - tabBarController didSelect: \(viewController)")
         guard let _ = Auth.auth().currentUser else {
@@ -149,4 +141,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
 
 }
-

@@ -231,9 +231,15 @@ PODS:
   - Firebase/Firestore (7.2.0-M1):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 7.2.0)
+  - Firebase/Functions (7.2.0-M1):
+    - Firebase/CoreOnly
+    - FirebaseFunctions (~> 7.2.0)
   - Firebase/Messaging (7.2.0-M1):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 7.2.0)
+  - Firebase/Storage (7.2.0-M1):
+    - Firebase/CoreOnly
+    - FirebaseStorage (~> 7.2.0)
   - FirebaseAnalytics (7.2.0-M1):
     - FirebaseCore (~> 7.0)
     - FirebaseInstallations (~> 7.0)
@@ -271,6 +277,9 @@ PODS:
     - nanopb (~> 2.30906.0)
   - FirebaseFirestoreSwift (7.4.0-beta):
     - FirebaseFirestore (~> 7.0)
+  - FirebaseFunctions (7.2.0):
+    - FirebaseCore (~> 7.0)
+    - GTMSessionFetcher/Core (~> 1.4)
   - FirebaseInstallations (7.3.0):
     - FirebaseCore (~> 7.0)
     - GoogleUtilities/Environment (~> 7.0)
@@ -288,6 +297,9 @@ PODS:
     - GoogleUtilities/Environment (~> 7.0)
     - GoogleUtilities/Reachability (~> 7.0)
     - GoogleUtilities/UserDefaults (~> 7.0)
+  - FirebaseStorage (7.2.0):
+    - FirebaseCore (~> 7.0)
+    - GTMSessionFetcher/Core (~> 1.4)
   - GoogleAppMeasurement (7.2.0-M1):
     - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
     - GoogleUtilities/MethodSwizzler (~> 7.0)
@@ -347,15 +359,17 @@ PODS:
   - nanopb/decode (2.30906.0)
   - nanopb/encode (2.30906.0)
   - PromisesObjC (1.2.11)
-  - SideMenuSwift (2.0.7)
+  - SideMenu (6.5.0)
 
 DEPENDENCIES:
   - Firebase/Analytics (= 7.2-M1)
   - Firebase/Auth (= 7.2-M1)
   - Firebase/Firestore (= 7.2-M1)
+  - Firebase/Functions
   - Firebase/Messaging
+  - Firebase/Storage (= 7.2-M1)
   - FirebaseFirestoreSwift (= 7.4-beta)
-  - SideMenuSwift
+  - SideMenu
 
 SPEC REPOS:
   trunk:
@@ -368,9 +382,11 @@ SPEC REPOS:
     - FirebaseCoreDiagnostics
     - FirebaseFirestore
     - FirebaseFirestoreSwift
+    - FirebaseFunctions
     - FirebaseInstallations
     - FirebaseInstanceID
     - FirebaseMessaging
+    - FirebaseStorage
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
@@ -380,7 +396,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - PromisesObjC
-    - SideMenuSwift
+    - SideMenu
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
@@ -392,9 +408,11 @@ SPEC CHECKSUMS:
   FirebaseCoreDiagnostics: d50e11039e5984d92c8a512be2395f13df747350
   FirebaseFirestore: 526c70e247f550206e5c02a7bafc264588847499
   FirebaseFirestoreSwift: dbffafc159c23d347193af22b5ec06e9534ba944
+  FirebaseFunctions: 64d08fe979f2c5b38cb80f19ed99bbe08e952708
   FirebaseInstallations: 971df89b48ae5ee4cc2bf6935f3857a525d28550
   FirebaseInstanceID: 47fcb3b70d6349cfd471f430b01bbd01a7698e8f
   FirebaseMessaging: 7091222bfac24ca89c569c3c59e58390311e487f
+  FirebaseStorage: 4c2cdd98dfe5f6b3fae02db0da72105ac5554bbd
   GoogleAppMeasurement: 793ab7b9a09326f991c089152a2ba5beecef0c83
   GoogleDataTransport: 116c84c4bdeb76be2a7a46de51244368f9794eab
   GoogleUtilities: 3dc4ff0d5e4840e2fa8eef0889620e8c33d4218c
@@ -404,8 +422,8 @@ SPEC CHECKSUMS:
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
-  SideMenuSwift: ffbbc88d23741932177ad1320df837cedfb3bc5e
+  SideMenu: f583187d21c5b1dd04c72002be544b555a2627a2
 
-PODFILE CHECKSUM: 8eaafa7988033d5b93f4e2e4aacfb2cc61af5bf9
+PODFILE CHECKSUM: 516de8547858c5982646f51a88a63c5e82cb42f5
 
 COCOAPODS: 1.10.0

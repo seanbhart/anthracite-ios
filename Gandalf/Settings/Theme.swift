@@ -20,16 +20,17 @@ extension Settings {
         static let barStyle: UIBarStyle = .black
         
         struct Color {
-            // Light
             static let primary = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
             static let barColor = UIColor.black
             static let barText = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
             static let header = UIColor.black
-            static let background = UIColor.black
+            static let background = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
             static let contentBackground = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
             static let contentBackgroundLight = UIColor(red: 67/255, green: 75/255, blue: 83/255, alpha: 1.0) //#434B53
-            static let selected = UIColor.black
+            static let selected = UIColor(red: 58/255, green: 58/255, blue: 58/255, alpha: 1.0) //#3A3A3A
             static let text = UIColor.white
+            static let textGrayLight = UIColor(red: 141/255, green: 153/255, blue: 174/255, alpha: 1.0) //#8D99AE
+            static let textGrayDark = UIColor(red: 112/255, green: 122/255, blue: 139/255, alpha: 1.0) //#707A8B
             
             static let progressbar = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
 //            static let progressbar = UIColor(red: 116/255, green: 125/255, blue: 134/255, alpha: 1.0) //#747D86
@@ -45,13 +46,6 @@ extension Settings {
             static let grayMedium = UIColor(red: 58/255, green: 58/255, blue: 58/255, alpha: 1.0) //#3A3A3A
             static let grayDark = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0) //#262626
         }
-        
-        // Dark
-//        static let barStyle: UIBarStyle = .black
-//        static let navBarBackground = UIColor(red: 12/255, green: 12/255, blue: 12/255, alpha: 1.0) //#1F1F1F
-//        static let navBarText = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1.0) //#FFF
-//        static let background = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0) //#262626
-//        static let text = UIColor(red: 247/255, green: 247/255, blue: 247/255, alpha: 1.0) //#FFF
     }
     
     static func gradientColor(color1: UIColor, color2: UIColor, percent: Double) -> UIColor {

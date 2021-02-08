@@ -10,12 +10,12 @@ target 'Gandalf' do
   pod 'Firebase/Analytics', '7.2-M1'
   pod 'Firebase/Auth', '7.2-M1'
   pod 'Firebase/Firestore', '7.2-M1'
-#  pod 'Firebase/Storage', '7.2-M1'
-  # Optionally, include the Swift extensions if you're using Swift.
-#  pod 'FirebaseFirestoreSwift'
-  pod 'FirebaseFirestoreSwift', '7.4-beta'
+  pod 'Firebase/Functions'
+  pod 'Firebase/Storage', '7.2-M1'
   pod 'Firebase/Messaging'
+  pod 'FirebaseFirestoreSwift', '7.4-beta'
   
-  pod 'SideMenuSwift'
+#  pod 'SideMenu'
+#  pod 'SideMenuSwift'
 
 end
