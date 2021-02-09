@@ -60,25 +60,26 @@ class MessageCellGandalf: UITableViewCell {
         title = UILabel()
         title.backgroundColor = .clear
         title.font = UIFont(name: Assets.Fonts.Default.black, size: 16)
-        title.textColor = Settings.Theme.Color.grayLight
+        title.textColor = Settings.Theme.Color.textGrayLight
         title.textAlignment = NSTextAlignment.left
         title.numberOfLines = 1
         title.text = ""
+//        title.adjustsFontSizeToFitWidth = true
+//        title.minimumScaleFactor = 0.5
         title.isUserInteractionEnabled = false
         title.translatesAutoresizingMaskIntoConstraints = false
         rightContainer.addSubview(title)
         NSLayoutConstraint.activate([
             title.topAnchor.constraint(equalTo:rightContainer.topAnchor, constant: 0),
             title.leftAnchor.constraint(equalTo:rightContainer.leftAnchor, constant: 5),
-            title.rightAnchor.constraint(equalTo:rightContainer.centerXAnchor, constant: -5),
             title.heightAnchor.constraint(equalToConstant:20),
         ])
         
         timeLabel = UILabel()
         timeLabel.backgroundColor = .clear
         timeLabel.font = UIFont(name: Assets.Fonts.Default.regular, size: 10)
-        timeLabel.textColor = Settings.Theme.Color.grayLight
-        timeLabel.textAlignment = NSTextAlignment.right
+        timeLabel.textColor = Settings.Theme.Color.textGrayDark
+        timeLabel.textAlignment = NSTextAlignment.left
         timeLabel.numberOfLines = 1
         timeLabel.text = ""
         timeLabel.isUserInteractionEnabled = false
@@ -87,7 +88,7 @@ class MessageCellGandalf: UITableViewCell {
         NSLayoutConstraint.activate([
             timeLabel.topAnchor.constraint(equalTo:rightContainer.topAnchor, constant: 0),
             timeLabel.rightAnchor.constraint(equalTo:rightContainer.rightAnchor, constant: -5),
-            timeLabel.leftAnchor.constraint(equalTo:rightContainer.centerXAnchor, constant: 5),
+            timeLabel.leftAnchor.constraint(equalTo:title.rightAnchor, constant: 5),
             timeLabel.heightAnchor.constraint(equalToConstant:20),
         ])
         

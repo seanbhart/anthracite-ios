@@ -32,7 +32,7 @@ class MessageInputCell: UITableViewCell {
         ])
         
         containerBorder = UIView()
-        containerBorder.layer.borderColor = Settings.Theme.Color.grayLight.cgColor
+        containerBorder.layer.borderColor = Settings.Theme.Color.textGrayLight.cgColor
         containerBorder.layer.borderWidth = 1
         containerBorder.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(containerBorder)
@@ -46,7 +46,7 @@ class MessageInputCell: UITableViewCell {
         placeholder = UILabel()
         placeholder.backgroundColor = .clear
         placeholder.font = UIFont(name: Assets.Fonts.Default.medium, size: 16)
-        placeholder.textColor = Settings.Theme.Color.grayLight
+        placeholder.textColor = Settings.Theme.Color.textGrayLight
         placeholder.textAlignment = NSTextAlignment.left
         placeholder.numberOfLines = 1
         placeholder.text = "New Message"

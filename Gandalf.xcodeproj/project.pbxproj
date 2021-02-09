@@ -74,6 +74,8 @@
 		B8BA188E25CDB6B5008ACBA0 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA188D25CDB6B5008ACBA0 /* ProfileRepository.swift */; };
 		B8BA1BC425D17D0D008ACBA0 /* GroupViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1BC325D17D0D008ACBA0 /* GroupViewTableView.swift */; };
 		B8BA1BC725D17DF5008ACBA0 /* GroupViewDataHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1BC625D17DF5008ACBA0 /* GroupViewDataHandlers.swift */; };
+		B8BA1C2825D33F85008ACBA0 /* MessageViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C2725D33F85008ACBA0 /* MessageViewTableView.swift */; };
+		B8BA1C2B25D33FF3008ACBA0 /* MessageViewDataHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C2A25D33FF3008ACBA0 /* MessageViewDataHandlers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -148,6 +150,8 @@
 		B8BA188D25CDB6B5008ACBA0 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
 		B8BA1BC325D17D0D008ACBA0 /* GroupViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupViewTableView.swift; sourceTree = "<group>"; };
 		B8BA1BC625D17DF5008ACBA0 /* GroupViewDataHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupViewDataHandlers.swift; sourceTree = "<group>"; };
+		B8BA1C2725D33F85008ACBA0 /* MessageViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewTableView.swift; sourceTree = "<group>"; };
+		B8BA1C2A25D33FF3008ACBA0 /* MessageViewDataHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewDataHandlers.swift; sourceTree = "<group>"; };
 		C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Gandalf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -339,6 +343,8 @@
 				B80E056C25C9A207009DBE34 /* MessageInputCell.swift */,
 				B85BC62725CA18F7003FCA6C /* MessageTickerCell.swift */,
 				B80E056825C8C507009DBE34 /* MessageView.swift */,
+				B8BA1C2A25D33FF3008ACBA0 /* MessageViewDataHandlers.swift */,
+				B8BA1C2725D33F85008ACBA0 /* MessageViewTableView.swift */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -348,8 +354,8 @@
 			children = (
 				B8B9905925CA74F400CF539C /* GroupCell.swift */,
 				B8B9905625CA51E900CF539C /* GroupView.swift */,
-				B8BA1BC325D17D0D008ACBA0 /* GroupViewTableView.swift */,
 				B8BA1BC625D17DF5008ACBA0 /* GroupViewDataHandlers.swift */,
+				B8BA1BC325D17D0D008ACBA0 /* GroupViewTableView.swift */,
 			);
 			path = Group;
 			sourceTree = "<group>";
@@ -581,6 +587,7 @@
 				B873508625C258BE0007A8FE /* NotionTickerCell.swift in Sources */,
 				B80E057A25C9C1AA009DBE34 /* MessageRepository.swift in Sources */,
 				B80E04C325C32A96009DBE34 /* ProfileView.swift in Sources */,
+				B8BA1C2825D33F85008ACBA0 /* MessageViewTableView.swift in Sources */,
 				B8BA188E25CDB6B5008ACBA0 /* ProfileRepository.swift in Sources */,
 				B80E057D25C9C3E7009DBE34 /* MessageCell.swift in Sources */,
 				B873508F25C258CF0007A8FE /* LocalCollection.swift in Sources */,
@@ -592,6 +599,7 @@
 				B80E057625C9BC44009DBE34 /* GroupRepository.swift in Sources */,
 				B873508725C258BE0007A8FE /* CustomProgressView.swift in Sources */,
 				B8B9905725CA51E900CF539C /* GroupView.swift in Sources */,
+				B8BA1C2B25D33FF3008ACBA0 /* MessageViewDataHandlers.swift in Sources */,
 				B8BA1BC425D17D0D008ACBA0 /* GroupViewTableView.swift in Sources */,
 				B873509725C258DA0007A8FE /* UIKitExtensions.swift in Sources */,
 			);

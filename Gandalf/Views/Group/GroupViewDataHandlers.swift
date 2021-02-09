@@ -20,7 +20,7 @@ extension GroupView: GroupRepositoryDelegate {
         // earlier than the group's last activity. Assume unread if null values.
         if let firUser = Auth.auth().currentUser {
             localUnreadGroups = groupRepo.groups.filter({
-                $0.lastViewed?[firUser.uid] ?? 0.0 < $0.lastActive ?? Date().timeIntervalSince1970
+                $0.lastViewed?[firUser.uid] ?? 0.0 <= $0.lastActive?.values.max() ?? 0.0
             })
         }
         // Get all groups not caught by the unread filter.

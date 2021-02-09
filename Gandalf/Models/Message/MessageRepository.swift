@@ -11,6 +11,7 @@ import FirebaseFunctions
 
 protocol MessageRepositoryDelegate {
     func messageDataUpdate()
+    func messageCreateError(text: String)
     func getLocalTickers() -> [Ticker]
 }
 
@@ -118,45 +119,43 @@ class MessageRepository {
     
     func createMessage(text: String, tickers: [MessageTicker]) {
         if text == "" { return }
-        guard let firUser = Auth.auth().currentUser else { return }
         
         // Convert TickerInputs to an array of dictionaries
-        var tickerDicts = [[String:String]]()
+//        var tickerDicts = [[String:String]]()
+//        for ticker in tickers {
+//            var tickerDict = [String:String]()
+//            tickerDict["ticker"] = ticker.ticker
+//            tickerDict["sentiment_indicator"] = String(ticker.sentiment.rawValue)
+//            tickerDicts.append(tickerDict)
+//        }
+        var tickerSentiment = [String:Double]()
         for ticker in tickers {
-            var tickerDict = [String:String]()
-            tickerDict["ticker"] = ticker.ticker
-            tickerDict["sentiment_indicator"] = String(ticker.sentiment.rawValue)
-            tickerDicts.append(tickerDict)
-        }
-        
-        Settings.Firebase.db().collection("group").document(groupId).collection("messages").document().setData([
-            "account": firUser.uid,
-            "status": NSNumber(value: 1),
-            "text": text,
-            "tickers": tickerDicts,
-            "timestamp": Date().timeIntervalSince1970,
-        ], merge: true) { err in
-            if let err = err {
-                print("\(self.className) - FIREBASE: ERROR creating message: \(err)")
-            } else {
-                print("\(self.className) - FIREBASE: message successfully created")
-            }
+            tickerSentiment[ticker.ticker] = Double(ticker.sentiment.rawValue)
         }
         
         Functions.functions().httpsCallable("createMessage").call([
-            "text": "test message 1"
+            "group_id": groupId!,
+            "text": text,
+            "ticker_sentiment": tickerSentiment,
+            "timestamp": Date().timeIntervalSince1970,
         ]) { (result, error) in
             if let error = error as NSError? {
+                // If the message was not created, pass the message text
+                // back to the input to save it for another attempt.
+                if let parent = self.delegate {
+                    parent.messageCreateError(text: text)
+                }
+                
                 if error.domain == FunctionsErrorDomain {
                     let code = FunctionsErrorCode(rawValue: error.code)
                     let message = error.localizedDescription
                     let details = error.userInfo[FunctionsErrorDetailsKey]
-                    print("\(self.className) - FIREBASE FUNCTION addMessage ERROR: code: \(code.debugDescription), message: \(message), details: \(details)")
+                    print("\(self.className) - FIREBASE FUNCTION createMessage ERROR: code: \(code), message: \(message), details: \(details)")
                 }
             }
-            print("addMessage RESULT: \(result.debugDescription)")
+            print("createMessage RESULT: \(result.debugDescription)")
             if let data = (result?.data as? [String: Any]) {
-                print("addMessage RESULT data: \(data)")
+                print("createMessage RESULT data: \(data)")
             }
         }
     }
@@ -182,18 +181,37 @@ class MessageRepository {
                 
                 let sData = snapshot.data()
                 guard let data = sData else { return }
-                guard let name = data["name"] as? [String: String] else { return }
-                guard let givenName = name["given"] else { return }
-                guard let familyName = name["family"] else { return }
                 if let username = data["username"] as? String {
                     self.accountNames[account] = username
-                } else {
-                    self.accountNames[account] = givenName + " " + familyName
+                } else if let name = data["name"] as? [String:String] {
+                    let given = name["given"] ?? ""
+                    let family = name["family"] ?? ""
+                    self.accountNames[account] = given + " " + family
                 }
                 
                 if let parent = self.delegate {
                     parent.messageDataUpdate()
                 }
             })
+    }
+    
+    func addView() {
+        Functions.functions().httpsCallable("addView").call([
+            "group_id": groupId!,
+            "timestamp": Date().timeIntervalSince1970,
+        ]) { (result, error) in
+            if let error = error as NSError? {
+                if error.domain == FunctionsErrorDomain {
+                    let code = FunctionsErrorCode(rawValue: error.code)
+                    let message = error.localizedDescription
+                    let details = error.userInfo[FunctionsErrorDetailsKey]
+                    print("\(self.className) - FIREBASE FUNCTION addView ERROR: code: \(code), message: \(message), details: \(details)")
+                }
+            }
+            print("addView RESULT: \(result.debugDescription)")
+            if let data = (result?.data as? [String: Any]) {
+                print("addView RESULT data: \(data)")
+            }
+        }
     }
 }

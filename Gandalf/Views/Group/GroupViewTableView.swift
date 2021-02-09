@@ -18,8 +18,8 @@ extension GroupView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDel
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: tableView.frame.width, height: 25))
-        let label = UILabel(frame: CGRect(x: 5, y: 5, width: headerView.frame.width-10, height: headerView.frame.height-10))
+        let headerView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: tableView.frame.width, height: 35))
+        let label = UILabel(frame: CGRect(x: 15, y: 10, width: headerView.frame.width-30, height: headerView.frame.height-20))
         label.backgroundColor = .clear
         label.font = UIFont(name: Assets.Fonts.Default.medium, size: 15)
         label.textColor = Settings.Theme.Color.textGrayLight

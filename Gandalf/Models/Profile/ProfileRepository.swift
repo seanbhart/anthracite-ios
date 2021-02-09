@@ -29,7 +29,7 @@ class ProfileRepository {
         Settings.Firebase.db().collection("accounts").document(accountId)
             .getDocument(completion: { (snapshot, error) in
                 if let err = error {
-                    print("\(self.className) - GET DOCUMENT ERROR: \(err)")
+                    print("\(self.className) - GET ACCOUNT ERROR: \(err)")
                 }
                 guard let snapshot = snapshot else { print("\(self.className) snapshot error: \(error!)"); return }
                 print("\(self.className) - snapshot data: \(snapshot.data())")
@@ -41,6 +41,17 @@ class ProfileRepository {
                     }
                 }
             })
+        
+//        Settings.Firebase.db().collection("accounts").document(accountId).collection("private")
+//            .getDocuments(completion: { (snapshot, error) in
+//                if let err = error {
+//                    print("\(self.className) - GET ACCOUNT PRIVATE ERROR: \(err)")
+//                }
+//                guard let snapshot = snapshot else { print("\(self.className) private snapshot error: \(error!)"); return }
+//                for d in snapshot.documents {
+//                    print("\(self.className) - private account document: \(d.documentID): \(d.data())")
+//                }
+//            })
     }
     
     func setUserName(username: String) {

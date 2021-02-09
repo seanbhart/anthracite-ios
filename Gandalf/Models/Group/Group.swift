@@ -13,7 +13,7 @@ struct Group: Identifiable, Codable {
     var status: Int
     var created: Double
     var creator: String
-    var lastActive: Double? // timestamp
+    var lastActive: [String: Double]? // [account_id: timestamp]
     var lastViewed: [String: Double]? // [account_id: timestamp]
     var members: [String]
     var title: String
