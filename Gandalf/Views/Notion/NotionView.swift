@@ -223,7 +223,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     // MARK: -ACCOUNT DELEGATE METHODS
     
     func accountDataUpdate() {
-        print("\(className) - accountDataUpdate")
+//        print("\(className) - accountDataUpdate")
         // Show the tutorial if it has not been viewed by the current user
         guard let account = accountRepository.account else { self.showTutorial(); return }
         guard let metadata = account.metadata else { self.showTutorial(); return }
@@ -233,17 +233,18 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         }
     }
     
-    func requestError(message: String) {
-        let alert = UIAlertController(title: "Oh no we couldn't access your account. Please sign in again.", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: { action in
-            // Move the user to the Account View to try logging in again
-            if let parent = self.tabBarViewDelegate {
-                parent.moveToTab(index: Settings.Tabs.accountVcIndex)
-            }
-        }))
+    func requestError(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
     
+    func notSignedIn() {
+        // Move the user to the Account View to try logging in again
+        if let parent = self.tabBarViewDelegate {
+            parent.moveToTab(index: Settings.Tabs.accountVcIndex)
+        }
+    }
     
     
     func showTutorial() {

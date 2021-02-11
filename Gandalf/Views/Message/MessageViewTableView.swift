@@ -64,7 +64,7 @@ extension MessageView: UITableViewDataSource, UITableViewDelegate, UIScrollViewD
             let message = localMessages[indexPath.row]
             cell.textView.attributedText = formatMessageText(message: message)
             
-            cell.title.text = "loading..."
+            cell.title.text = "anonymous"
             for a in accountNames {
                 if a.key == localMessages[indexPath.row].account {
                     cell.title.text = a.value

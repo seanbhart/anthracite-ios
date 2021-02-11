@@ -290,7 +290,7 @@ class MessageView: UIViewController {
         inputPlaceholder = UILabel()
         inputPlaceholder.backgroundColor = .clear
         inputPlaceholder.font = UIFont(name: Assets.Fonts.Default.medium, size: 16)
-        inputPlaceholder.textColor = Settings.Theme.Color.textGrayDark
+        inputPlaceholder.textColor = Settings.Theme.Color.textGrayMedium
         inputPlaceholder.textAlignment = NSTextAlignment.left
         inputPlaceholder.numberOfLines = 1
         inputPlaceholder.text = "New Message"
@@ -303,7 +303,7 @@ class MessageView: UIViewController {
         accessoryView.translatesAutoresizingMaskIntoConstraints = false
         
         accessoryViewBorder = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 1))
-        accessoryViewBorder.layer.borderColor = Settings.Theme.Color.textGrayDark.cgColor
+        accessoryViewBorder.layer.borderColor = Settings.Theme.Color.textGrayMedium.cgColor
         accessoryViewBorder.layer.borderWidth = 1
         accessoryViewBorder.translatesAutoresizingMaskIntoConstraints = false
 //        accessoryView.addSubview(accessoryViewBorder)
@@ -311,7 +311,7 @@ class MessageView: UIViewController {
         inputTextViewContainer = UIView()
         inputTextViewContainer.backgroundColor = .clear
         inputTextViewContainer.layer.cornerRadius = 5
-        inputTextViewContainer.layer.borderColor = Settings.Theme.Color.textGrayDark.cgColor
+        inputTextViewContainer.layer.borderColor = Settings.Theme.Color.textGrayMedium.cgColor
         inputTextViewContainer.layer.borderWidth = 1
         inputTextViewContainer.translatesAutoresizingMaskIntoConstraints = false
         inputContainer.addSubview(inputTextViewContainer)
@@ -344,7 +344,7 @@ class MessageView: UIViewController {
         
         inputTickerContainer = UIScrollView(frame: CGRect(x: 5, y: 5, width: view.frame.width - 10, height: 40))
         inputTickerContainer.layer.cornerRadius = 5
-        inputTickerContainer.layer.borderColor = Settings.Theme.Color.textGrayDark.cgColor
+        inputTickerContainer.layer.borderColor = Settings.Theme.Color.textGrayMedium.cgColor
         inputTickerContainer.layer.borderWidth = 1
         inputTickerContainer.showsHorizontalScrollIndicator = false
         inputTickerContainer.backgroundColor = .clear

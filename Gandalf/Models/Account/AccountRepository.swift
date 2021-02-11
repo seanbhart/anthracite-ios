@@ -10,7 +10,8 @@ import FirebaseFirestore
 
 protocol AccountRepositoryDelegate {
     func accountDataUpdate()
-    func requestError(message: String)
+    func requestError(title: String, message: String)
+    func notSignedIn()
 }
 
 class AccountRepository {
@@ -32,8 +33,15 @@ class AccountRepository {
             .getDocument(completion: { (snapshot, error) in
                 if let err = error {
                     print("\(self.className) - GET ACCOUNT ERROR: \(err)")
+                    if let parent = self.delegate { parent.notSignedIn() }
+                    return
                 }
-                guard let snapshot = snapshot else { print("\(self.className) snapshot error: \(error!)"); return }
+                
+                guard let snapshot = snapshot else {
+                    print("\(self.className) snapshot error: \(error!)")
+                    if let parent = self.delegate { parent.notSignedIn() }
+                    return
+                }
 //                print("\(self.className) - snapshot data: \(snapshot.data())")
                 if let account = try? snapshot.data(as: Account.self) {
                     self.account = account
@@ -73,23 +81,46 @@ class AccountRepository {
                                 }
                             }
                         })
+                } else {
+                    print("\(self.className) create Account object error")
+                    if let parent = self.delegate { parent.notSignedIn() }
                 }
             })
     }
     
     func setUserName(username: String) {
-        Settings.Firebase.db().collection("accounts").document(accountId!).setData([
-            "username": username,
-        ], merge: true) { err in
-            if let err = err {
-                print("\(self.className) - FIREBASE: ERROR updating display name: \(err)")
-                if let parent = self.delegate {
-                    parent.requestError(message: "We're sorry, there was a problem updating your name. Please try again.")
+        // Check whether the username is already in use
+        Settings.Firebase.db().collection("accounts")
+            .whereField("username", in: [username])
+            .getDocuments(completion: { (snapshot, error) in
+                if let err = error { print("\(self.className) - FIRESTORE GET ERROR: \(err)") }
+                guard let snapshot = snapshot else { print("\(self.className) snapshot error: \(error!)"); return }
+                
+                if snapshot.documents.count > 0 {
+                    // Username already used, send error
+                    if let parent = self.delegate {
+                        parent.requestError(title: "Username Taken", message: "We're sorry, that username already exists. Please try a different username.")
+                    }
+                } else {
+                    
+                    // The username does not exist, change the username
+                    Settings.Firebase.db().collection("accounts").document(self.accountId!).setData([
+                        "username": username,
+                    ], merge: true) { err in
+                        if let err = err {
+                            print("\(self.className) - FIREBASE: ERROR updating display name: \(err)")
+                            if let parent = self.delegate {
+                                parent.requestError(title: "We messed up!", message: "We're sorry, there was a problem updating your name. Please try again.")
+                            }
+                        } else {
+                            print("\(self.className) - FIREBASE: display name successfully updated")
+                            // Refresh the data
+                            self.getAccount()
+                        }
+                    }
+                    
                 }
-            } else {
-                print("\(self.className) - FIREBASE: display name successfully updated")
-            }
-        }
+            })
     }
     
     func getGroupCount() {

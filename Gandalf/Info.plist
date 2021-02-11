@@ -22,6 +22,10 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs to access your camera if you take a picture for a message attachment or your profile image.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs to access your photos when you add a message attachment or profile image.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Rubik-Black.ttf</string>
@@ -81,9 +85,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs to access your photos when you add a message attachment or profile image.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) needs to access your camera if you take a picture for a message attachment or your profile image.</string>
 </dict>
 </plist>

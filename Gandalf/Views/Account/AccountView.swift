@@ -139,7 +139,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         usernameContainer.addSubview(usernameLabel)
         
         signOutButton = UILabel()
-        signOutButton.backgroundColor = Settings.Theme.Color.grayMedium
+        signOutButton.backgroundColor = Settings.Theme.Color.grayDark
         signOutButton.font = UIFont(name: Assets.Fonts.Default.bold, size: 20)
         signOutButton.textColor = Settings.Theme.Color.textGrayUltraDark
         signOutButton.textAlignment = NSTextAlignment.center
@@ -208,10 +208,10 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         ])
         
         NSLayoutConstraint.activate([
-            signOutButton.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
+            signOutButton.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor, constant: -100),
             signOutButton.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
             signOutButton.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
-            signOutButton.heightAnchor.constraint(equalToConstant:50),
+            signOutButton.heightAnchor.constraint(equalToConstant:100),
         ])
         
         getAccountImage()
@@ -291,28 +291,12 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         // Add to the local imageview
         accountImage.image = img
         
-        // Generate a unique id for storing the image
-//        let imageId = UUID().uuidString + ".png"
-        
-        // Upload to storage for the full sized image
+        // Upload to storage for the large sized image
+        guard let imgLarge = img.resizeWithWidth(width: 500) else { self.showUploadImageErrorAlert(); return }
         let storageRef = Storage.storage().reference().child(accountRepo.accountId + ".png")
-        if let uploadData = img.pngData() {
+        if let uploadData = imgLarge.pngData() {
             storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                 if error != nil { self.showUploadImageErrorAlert(); return }
-//                storageRef.downloadURL(completion: { (url, error) in
-//                    if error != nil {
-//                        self.showUploadImageErrorAlert()
-//                        return
-//                    }
-//                    guard let imageUrl = url else {
-//                        self.showUploadImageErrorAlert()
-//                        return
-//                    }
-//                    print("image url: \(imageUrl)")
-//                    print("image url abs: \(imageUrl.absoluteString)")
-//                    guard let accountRepo = self.accountRepository else { return }
-//                    accountRepo.updateImageUrl(url: imageUrl.absoluteString)
-//                })
             }
         }
         
@@ -360,11 +344,14 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         }
     }
     
-    func requestError(message: String) {
-        self.showSignIn()
-        let alert = UIAlertController(title: "Oh no we couldn't sign you in! Please try again.", message: message, preferredStyle: .alert)
+    func requestError(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         self.present(alert, animated: true)
+    }
+    
+    func notSignedIn() {
+        showSignIn()
     }
     
     
@@ -429,10 +416,8 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         layoutSignInComponents()
         
         // Reset any components storing data
-        usernameLabel.text = ""
-        usernameLabel.sizeToFit()
-        usernameLabel.layoutIfNeeded()
-        layoutAccountComponents()
+        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.primary, renderingMode: .alwaysOriginal)
+        usernameLabel.text = "anonymous"
     }
     func hideSignIn() {
         signInContainer.removeFromSuperview()

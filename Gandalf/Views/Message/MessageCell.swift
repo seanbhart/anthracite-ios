@@ -78,7 +78,7 @@ class MessageCellGandalf: UITableViewCell {
         timeLabel = UILabel()
         timeLabel.backgroundColor = .clear
         timeLabel.font = UIFont(name: Assets.Fonts.Default.regular, size: 10)
-        timeLabel.textColor = Settings.Theme.Color.textGrayDark
+        timeLabel.textColor = Settings.Theme.Color.textGrayMedium
         timeLabel.textAlignment = NSTextAlignment.left
         timeLabel.numberOfLines = 1
         timeLabel.text = ""
