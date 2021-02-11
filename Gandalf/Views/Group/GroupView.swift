@@ -14,6 +14,7 @@ protocol GroupViewDelegate {
 class GroupView: UIViewController {
     let className = "GroupView"
     
+    var tabBarViewDelegate: TabBarViewDelegate!
     var delegate: GroupViewDelegate!
     var localUnreadGroups = [Group]()
     var localGroups = [Group]()
@@ -108,8 +109,11 @@ class GroupView: UIViewController {
             groupTableViewSpinner.centerYAnchor.constraint(equalTo:groupTableView.centerYAnchor, constant: 0),
         ])
         
-        guard let groupRepo = groupRepository else { return }
-        groupRepo.observeQuery()
+        if groupRepository == nil {
+            groupRepository = GroupRepository()
+            groupRepository.delegate = self
+        }
+        groupRepository.observeQuery()
     }
     
 //    override func viewDidAppear(_ animated: Bool) {
@@ -193,9 +197,6 @@ class GroupView: UIViewController {
         groupTableViewSpinner.startAnimating()
         groupTableView.addSubview(groupTableViewSpinner)
         groupTableViewSpinner.isHidden = false
-        
-        groupRepository = GroupRepository()
-        groupRepository.delegate = self
     }
     
     override func didReceiveMemoryWarning() {

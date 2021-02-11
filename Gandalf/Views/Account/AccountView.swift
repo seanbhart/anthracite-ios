@@ -1,5 +1,5 @@
 //
-//  LoginView.swift
+//  AccountView.swift
 //  Gandalf
 //
 //  Created by Sean Hart on 1/28/21.
@@ -11,20 +11,26 @@ import CryptoKit
 import UIKit
 //import FirebaseAnalytics
 import FirebaseAuth
+import FirebaseStorage
 
-class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding, ProfileRepositoryDelegate {
-    let className = "ProfileView"
+class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDelegate {
+    let className = "AccountView"
     
-    var profileRepository: ProfileRepository!
+    var tabBarViewDelegate: TabBarViewDelegate!
+    var accountRepository: AccountRepository!
     // Unhashed nonce - handle locally (not in Account) for security
     fileprivate var currentNonce: String?
     var controller: ASAuthorizationController!
+    var imagePicker: ImagePicker!
+    
+    var signInContainer: UIView!
+    var signInButton: ASAuthorizationAppleIDButton!
     
     var viewContainer: UIView!
+    var accountImage: UIImageView!
     var usernameContainer: UIView!
     var usernameEditIcon: UIImageView!
     var usernameLabel: UILabel!
-    var signInButton: ASAuthorizationAppleIDButton!
     var signOutButton: UILabel!
     var signOutButtonTapGestureRecognizer: UITapGestureRecognizer!
     
@@ -47,52 +53,19 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
         // Ensure the navigation bar is not hidden
 //        self.navigationController?.setNavigationBarHidden(false, animated: animated)
         
-        NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo:view.safeAreaLayoutGuide.topAnchor),
-            viewContainer.leftAnchor.constraint(equalTo:view.safeAreaLayoutGuide.leftAnchor),
-            viewContainer.rightAnchor.constraint(equalTo:view.safeAreaLayoutGuide.rightAnchor),
-            viewContainer.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
-        ])
-        NSLayoutConstraint.activate([
-            usernameContainer.centerYAnchor.constraint(equalTo:view.centerYAnchor, constant: -100),
-            usernameContainer.centerXAnchor.constraint(equalTo:view.centerXAnchor),
-            usernameContainer.widthAnchor.constraint(equalToConstant: 290),
-            usernameContainer.heightAnchor.constraint(equalToConstant:50),
-        ])
-        NSLayoutConstraint.activate([
-            usernameEditIcon.topAnchor.constraint(equalTo:usernameContainer.topAnchor),
-            usernameEditIcon.leftAnchor.constraint(equalTo:usernameContainer.leftAnchor),
-            usernameEditIcon.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor),
-            usernameEditIcon.widthAnchor.constraint(equalToConstant: 50),
-        ])
-        NSLayoutConstraint.activate([
-            usernameLabel.topAnchor.constraint(equalTo:usernameContainer.topAnchor),
-            usernameLabel.leftAnchor.constraint(equalTo:usernameEditIcon.rightAnchor, constant: 20),
-            usernameLabel.rightAnchor.constraint(equalTo:usernameContainer.rightAnchor),
-            usernameLabel.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor),
-        ])
-        NSLayoutConstraint.activate([
-            signInButton.centerYAnchor.constraint(equalTo:view.centerYAnchor),
-            signInButton.centerXAnchor.constraint(equalTo:view.centerXAnchor),
-            signInButton.widthAnchor.constraint(equalToConstant:280),
-            signInButton.heightAnchor.constraint(equalToConstant:50),
-        ])
-        NSLayoutConstraint.activate([
-            signOutButton.centerYAnchor.constraint(equalTo:view.centerYAnchor),
-            signOutButton.centerXAnchor.constraint(equalTo:view.centerXAnchor),
-            signOutButton.widthAnchor.constraint(equalToConstant:280),
-            signOutButton.heightAnchor.constraint(equalToConstant:50),
-        ])
+//        layoutSignInComponents()
+//        layoutAccountComponents()
         
-        // Show the correct button based on if the user is signed in
-        if let firUser = Auth.auth().currentUser {
-            print("firUser \(firUser.uid)")
-            self.hideSignIn()
-            profileRepository = ProfileRepository(id: firUser.uid)
-            profileRepository.delegate = self
-            profileRepository.getAccount()
+        if accountRepository == nil {
+            if let accountRepo = AccountRepository() {
+                accountRepository = accountRepo
+                accountRepository.delegate = self
+                accountRepository.getAccount()
+            } else {
+                showSignIn()
+            }
         } else {
-            self.showSignIn()
+            accountRepository.getAccount()
         }
     }
     
@@ -104,14 +77,40 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     override func loadView() {
         super.loadView()
         print("\(self.className) - loadView")
+        imagePicker = ImagePicker(presentationController: self, delegate: self)
         
         // Make the overall background black to fill any unfilled areas
         view.backgroundColor = Settings.Theme.Color.background
+        
+        signInContainer = UIView()
+        signInContainer.backgroundColor = Settings.Theme.Color.background
+        signInContainer.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(signInContainer)
+        
+        signInButton = ASAuthorizationAppleIDButton(type: .default, style: .white)
+        signInButton.cornerRadius = 2
+        signInButton.translatesAutoresizingMaskIntoConstraints = false
+        signInButton.addTarget(self, action: #selector(AccountView.signInTap(_:)), for: .touchUpInside)
+        signInContainer.addSubview(signInButton)
+        
         
         viewContainer = UIView()
         viewContainer.backgroundColor = Settings.Theme.Color.background
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(viewContainer)
+        
+        accountImage = UIImageView()
+        accountImage.layer.cornerRadius = 50
+        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.primary, renderingMode: .alwaysOriginal)
+        accountImage.contentMode = UIView.ContentMode.scaleAspectFit
+        accountImage.clipsToBounds = true
+        accountImage.isUserInteractionEnabled = true
+        accountImage.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(accountImage)
+        
+        let accountImageGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(accountImageTap))
+        accountImageGestureRecognizer.numberOfTapsRequired = 1
+        accountImage.addGestureRecognizer(accountImageGestureRecognizer)
         
         usernameContainer = UIView()
         usernameContainer.backgroundColor = Settings.Theme.Color.background
@@ -130,7 +129,7 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
         usernameContainer.addSubview(usernameEditIcon)
         
         usernameLabel = UILabel()
-        usernameLabel.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
+        usernameLabel.font = UIFont(name: Assets.Fonts.Default.light, size: 20)
         usernameLabel.textColor = Settings.Theme.Color.text
         usernameLabel.textAlignment = NSTextAlignment.left
         usernameLabel.numberOfLines = 1
@@ -139,34 +138,83 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         usernameContainer.addSubview(usernameLabel)
         
-        signInButton = ASAuthorizationAppleIDButton(type: .default, style: .white)
-        signInButton.cornerRadius = 2
-        signInButton.translatesAutoresizingMaskIntoConstraints = false
-        signInButton.addTarget(self, action: #selector(ProfileView.signInTap(_:)), for: .touchUpInside)
-        viewContainer.addSubview(signInButton)
-        
         signOutButton = UILabel()
-        signOutButton.layer.masksToBounds = true
-        signOutButton.layer.cornerRadius = 2
-        signOutButton.backgroundColor = .white
+        signOutButton.backgroundColor = Settings.Theme.Color.grayMedium
         signOutButton.font = UIFont(name: Assets.Fonts.Default.bold, size: 20)
-        signOutButton.textColor = .black
+        signOutButton.textColor = Settings.Theme.Color.textGrayUltraDark
         signOutButton.textAlignment = NSTextAlignment.center
         signOutButton.numberOfLines = 1
-        signOutButton.text = "Sign Out" //"Start your free trial"
+        signOutButton.text = "Sign Out"
         signOutButton.isUserInteractionEnabled = true
         signOutButton.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(signOutButton)
         
-        signOutButtonTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ProfileView.signOutTap(_:)))
+        signOutButtonTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(AccountView.signOutTap(_:)))
         signOutButtonTapGestureRecognizer.numberOfTapsRequired = 1  // add single tap
-        signOutButton.addGestureRecognizer(signOutButtonTapGestureRecognizer)
+        viewContainer.addGestureRecognizer(signOutButtonTapGestureRecognizer)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         print("\(className) - didReceiveMemoryWarning")
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    func layoutSignInComponents() {
+        NSLayoutConstraint.activate([
+            signInContainer.topAnchor.constraint(equalTo:view.safeAreaLayoutGuide.topAnchor),
+            signInContainer.leftAnchor.constraint(equalTo:view.safeAreaLayoutGuide.leftAnchor),
+            signInContainer.rightAnchor.constraint(equalTo:view.safeAreaLayoutGuide.rightAnchor),
+            signInContainer.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+        NSLayoutConstraint.activate([
+            signInButton.centerYAnchor.constraint(equalTo:signInContainer.centerYAnchor),
+            signInButton.centerXAnchor.constraint(equalTo:signInContainer.centerXAnchor),
+            signInButton.widthAnchor.constraint(equalToConstant:280),
+            signInButton.heightAnchor.constraint(equalToConstant:50),
+        ])
+    }
+    
+    func layoutAccountComponents() {
+        NSLayoutConstraint.activate([
+            viewContainer.topAnchor.constraint(equalTo:view.safeAreaLayoutGuide.topAnchor),
+            viewContainer.leftAnchor.constraint(equalTo:view.safeAreaLayoutGuide.leftAnchor),
+            viewContainer.rightAnchor.constraint(equalTo:view.safeAreaLayoutGuide.rightAnchor),
+            viewContainer.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+        NSLayoutConstraint.activate([
+            accountImage.topAnchor.constraint(equalTo:viewContainer.topAnchor, constant: 100),
+            accountImage.centerXAnchor.constraint(equalTo:viewContainer.centerXAnchor),
+            accountImage.heightAnchor.constraint(equalToConstant: 100),
+            accountImage.widthAnchor.constraint(equalToConstant: 100),
+        ])
+        NSLayoutConstraint.activate([
+            usernameContainer.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
+            usernameContainer.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
+            usernameContainer.topAnchor.constraint(equalTo:accountImage.bottomAnchor, constant: 20),
+            usernameContainer.heightAnchor.constraint(equalToConstant:50),
+        ])
+        NSLayoutConstraint.activate([
+            usernameLabel.centerXAnchor.constraint(equalTo:usernameContainer.centerXAnchor),
+            usernameLabel.topAnchor.constraint(equalTo:usernameContainer.topAnchor, constant: 10),
+            usernameLabel.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor, constant: -10),
+        ])
+        NSLayoutConstraint.activate([
+            usernameEditIcon.topAnchor.constraint(equalTo:usernameContainer.topAnchor, constant: 10),
+            usernameEditIcon.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor, constant: -10),
+            usernameEditIcon.rightAnchor.constraint(equalTo:usernameLabel.leftAnchor, constant: -10),
+            usernameEditIcon.widthAnchor.constraint(equalToConstant: 20),
+        ])
+        
+        NSLayoutConstraint.activate([
+            signOutButton.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
+            signOutButton.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
+            signOutButton.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
+            signOutButton.heightAnchor.constraint(equalToConstant:50),
+        ])
+        
+        getAccountImage()
     }
     
     
@@ -190,8 +238,8 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     }
     @objc func usernameContainerTap(_ sender: UITapGestureRecognizer) {
         print("\(className) - usernameContainerTap")
-        guard let profile = profileRepository.profile else { return }
-//        print("profile: \(profile.username)")
+        guard let account = accountRepository.account else { return }
+//        print("account: \(account.username)")
         
         let alert = UIAlertController(title: "Edit Username", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { action in
@@ -199,16 +247,16 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
 //            print("EDIT USERNAME TO: \(textField.text)")
             guard let username = textField.text else { return }
             if username.count > 0 {
-                if let profileRepo = self.profileRepository {
-                    profileRepo.setUserName(username: username)
-                    self.profileRepository.getAccount()
+                if let accountRepo = self.accountRepository {
+                    accountRepo.setUserName(username: username)
+                    self.accountRepository.getAccount()
                 }
             }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: { (textField: UITextField!) -> Void in
             textField.placeholder = "Username"
-            textField.text = profile.username
+            textField.text = account.username
             textField.font = UIFont(name: Assets.Fonts.Default.light, size: 14)
             textField.autocorrectionType = UITextAutocorrectionType.no
             textField.keyboardType = UIKeyboardType.default
@@ -229,36 +277,126 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
         self.present(alert, animated: true)
     }
     
-    
-    // MARK: -REPO DELEGATE
-    
-    func profileDataUpdate() {
-        print("\(className) - profileDataUpdate")
-        if let profile = profileRepository.profile {
-            // If the username is empty, use the known account name
-            if let username = profile.username {
-                usernameLabel.text = username
-            } else {
-                if let name = profile.name {
-                    let given = name["given"] ?? "anonymous"
-                    let family = name["family"] ?? ""
-                    usernameLabel.text = given + " " + family
-                } else {
-                    usernameLabel.text = "anonymous"
-                }
-            }
-        }
+    @objc func accountImageTap(_ sender: UITapGestureRecognizer) {
+        print("\(className) - accountImageTap")
+        imagePicker.present(from: accountImage)
     }
     
-    func requestError(message: String) {
-        let alert = UIAlertController(title: "Something went wrong!", message: message, preferredStyle: .alert)
+    
+    // MARK: -IMAGE PICKER METHODS
+    
+    func didSelect(image: UIImage?) {
+        guard let img = image else { self.showUploadImageErrorAlert(); return }
+        guard let accountRepo = accountRepository else { self.showUploadImageErrorAlert(); return }
+        // Add to the local imageview
+        accountImage.image = img
+        
+        // Generate a unique id for storing the image
+//        let imageId = UUID().uuidString + ".png"
+        
+        // Upload to storage for the full sized image
+        let storageRef = Storage.storage().reference().child(accountRepo.accountId + ".png")
+        if let uploadData = img.pngData() {
+            storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
+                if error != nil { self.showUploadImageErrorAlert(); return }
+//                storageRef.downloadURL(completion: { (url, error) in
+//                    if error != nil {
+//                        self.showUploadImageErrorAlert()
+//                        return
+//                    }
+//                    guard let imageUrl = url else {
+//                        self.showUploadImageErrorAlert()
+//                        return
+//                    }
+//                    print("image url: \(imageUrl)")
+//                    print("image url abs: \(imageUrl.absoluteString)")
+//                    guard let accountRepo = self.accountRepository else { return }
+//                    accountRepo.updateImageUrl(url: imageUrl.absoluteString)
+//                })
+            }
+        }
+        
+        // Reduce the image size (for messages) and upload to storage
+        guard let imgSmall = img.resizeWithWidth(width: 30) else { self.showUploadImageErrorAlert(); return }
+        let storageRefSmall = Storage.storage().reference().child(accountRepo.accountId + "-small.png")
+        if let uploadData = imgSmall.pngData() {
+            storageRefSmall.putData(uploadData, metadata: nil) { (metadata, error) in
+                if error != nil { self.showUploadImageErrorAlert(); return }
+            }
+        }
+        
+    }
+    
+    func showUploadImageErrorAlert() {
+        let alert = UIAlertController(title: "We messed up!", message: "Oh no there was a problem uploading your photo! Please try again.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
     
     
+    // MARK: -REPO METHODS
+    
+    func accountDataUpdate() {
+        print("\(className) - accountDataUpdate")
+        if let account = accountRepository.account {
+            // If the username is empty, use the known account name
+            if let username = account.username {
+                usernameLabel.text = username
+            } else {
+                if let pii = account.pii {
+                    let given = pii.name_given ?? "anonymous"
+                    let family = pii.name_family ?? ""
+                    usernameLabel.text = given + " " + family
+                } else {
+                    usernameLabel.text = "anonymous"
+                }
+            }
+            usernameLabel.sizeToFit()
+            usernameLabel.layoutIfNeeded()
+            layoutAccountComponents()
+            
+            // Show the account info if the user is signed in
+            self.hideSignIn()
+        }
+    }
+    
+    func requestError(message: String) {
+        self.showSignIn()
+        let alert = UIAlertController(title: "Oh no we couldn't sign you in! Please try again.", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
     
     // MARK: -CUSTOM FUNCTIONS
+    
+    func getAccountImage() {
+        guard let accountRepo = accountRepository else { return }
+        let imageRef = Storage.storage().reference().child(accountRepo.accountId + ".png")
+        imageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+            if error != nil { return }
+            guard let imgData = data else { return }
+            self.accountImage.image = UIImage(data: imgData)
+        }
+        
+//        imageRef.downloadURL { url, error in
+//            if error != nil { return }
+//
+//            guard let imageUrl = url else {
+//                self.showUploadImageErrorAlert()
+//                return
+//            }
+//            guard let imageURL = URL(string: imageUrl.absoluteString) else { return
+//            DispatchQueue.global().async {
+//                guard let imageData = try? Data(contentsOf: imageUrl) else { return }
+//
+//                let image = UIImage(data: imageData)
+//                DispatchQueue.main.async {
+//                    self.accountImage.image = image
+//                }
+//            }
+//        }
+    }
     
     func signOut() {
         print("\(self.className) - SIGN OUT")
@@ -285,15 +423,27 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
     }
     
     func showSignIn() {
-        self.signOutButton.isHidden = true
-        self.signInButton.isHidden = false
+        // Hide the data components and show the sign in components
+        viewContainer.removeFromSuperview()
+        view.addSubview(signInContainer)
+        layoutSignInComponents()
         
+        // Reset any components storing data
         usernameLabel.text = ""
+        usernameLabel.sizeToFit()
+        usernameLabel.layoutIfNeeded()
+        layoutAccountComponents()
     }
     func hideSignIn() {
-        self.signOutButton.isHidden = false
-        self.signInButton.isHidden = true
+        signInContainer.removeFromSuperview()
+        view.addSubview(viewContainer)
+        layoutAccountComponents()
     }
+    
+}
+
+
+extension AccountView: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
     
     // MARK: -APPLE AUTH METHODS
@@ -363,6 +513,7 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
             completion(nil,NSError(domain: "appleIDToken nil", code: NSCoderValueNotFoundError, userInfo: nil))
             return
         }
+        // TODO: MOVE SIGN IN PROCESS TO BACKEND
         // TODO: Filter appleIDCredential.realUserStatus to prevent fake users
         // https://developer.apple.com/documentation/authenticationservices/asauthorizationappleidcredential/3175418-realuserstatus?language=swift
         
@@ -418,11 +569,13 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
                         completion(nil,NSError(domain: "Firestore Account Status nil", code: NSCoderValueNotFoundError, userInfo: nil))
                         return
                     }
+                    print("\(self.className) - ACCOUNT STATUS: \(accountStatus)")
                     if accountStatus == 0 {
+                        // Account is blocked - do not sign in or create a new account
                         completion(nil,NSError(domain: "Firestore Account Status = 0", code: NSCoderValueNotFoundError, userInfo: nil))
                         return
+                        
                     }
-                    
 //                    Analytics.logEvent(AnalyticsEventLogin, parameters: [
 //                        AnalyticsParameterMethod: "apple.com"
 //                    ])
@@ -444,23 +597,56 @@ class ProfileView: UIViewController, ASAuthorizationControllerDelegate, ASAuthor
                     // Create the Account entry with needed info
                     let accountCreationTimestamp = NSNumber(value: Date().timeIntervalSince1970)
                     Settings.Firebase.db().collection("accounts").document(result.user.uid).setData([
-                        "email": email,
-                        "name": ["family": familyName, "given": givenName],
-                        "settings": ["filter": NSNumber(value: 1)],
                         "status": NSNumber(value: 1),
-                        "timestamp": accountCreationTimestamp
+                        "username": "anonymous"
                     ], merge: true) { err in
                         if let err = err {
                             print("\(self.className) - FIREBASE: ERROR creating account: \(err)")
                         } else {
-                            print("\(self.className) - FIREBASE: account successfully created")
+                            print("\(self.className) - FIREBASE: account created")
+                            
+                            Settings.Firebase.db().collection("accounts").document(result.user.uid).collection("private").document("metadata").setData([
+                                "created": accountCreationTimestamp
+                            ], merge: true) { err in
+                                if let err = err {
+                                    print("\(self.className) - FIREBASE: ERROR creating account: \(err)")
+                                } else {
+                                    print("\(self.className) - FIREBASE: metadata added")
+                                    
+                                    Settings.Firebase.db().collection("accounts").document(result.user.uid).collection("private").document("pii").setData([
+                                        "email": email,
+                                        "name_family": familyName,
+                                        "name_given": givenName,
+                                    ], merge: true) { err in
+                                        if let err = err {
+                                            print("\(self.className) - FIREBASE: ERROR creating account: \(err)")
+                                        } else {
+                                            print("\(self.className) - FIREBASE: pii added")
+                                            
+                                            Settings.Firebase.db().collection("accounts").document(result.user.uid).collection("private").document("settings").setData([
+                                                "anonymous": false,
+                                                "filter": true,
+                                            ], merge: true) { err in
+                                                if let err = err {
+                                                    print("\(self.className) - FIREBASE: ERROR creating account: \(err)")
+                                                } else {
+                                                    print("\(self.className) - FIREBASE: settings added")
+                                                    
+                                                    completion("Create Account Complete", nil)
+                                                    return
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
-                    
-                    completion("Create Account Complete", nil)
-                    return
+                    // END creating account
                 }
+                // END doc exists check
             }
+            // END request account to check for current account
         }
     }
     

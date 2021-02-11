@@ -18,17 +18,25 @@ class MessageView: UIViewController {
     var localMessages = [MessageGandalf]()
     var messageRepository: MessageRepository!
     var accountNames = [String: String]()
+    var accountImages = [String: UIImage]()
     var inputTickers = [MessageTicker]()
     var inputTickerStrings = [String]()
     
     var viewContainer: UIView!
     var headerLabel: UILabel!
     var inputContainer: UIView!
-    let inputTableCellIdentifier: String = "InputCell"
-    var inputTableView: UITableView!
-    var inputTickerContainer: UIScrollView!
+    var inputContainerHeightConstraint: NSLayoutConstraint?
+//    let inputTableCellIdentifier: String = "InputCell"
+//    var inputTableView: UITableView!
+    var inputDollarSignContainer: UIView!
+    var inputDollarSign: UILabel!
+    var inputPlaceholder: UILabel!
+    var inputTextViewContainer: UIView!
+    var inputTextView: UITextView!
+    var inputSend: UIImageView!
     var accessoryView: UIView!
     var accessoryViewBorder: UIView!
+    var inputTickerContainer: UIScrollView!
     var tickerContainer: UIView!
     var messageContainer: UIView!
     let tickerTableCellIdentifier: String = "MessageTickerCell"
@@ -115,13 +123,50 @@ class MessageView: UIViewController {
             inputContainer.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
             inputContainer.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
             inputContainer.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
-            inputContainer.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        inputContainerHeightConstraint = NSLayoutConstraint(item: inputContainer, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 50)
+        inputContainer.addConstraint(inputContainerHeightConstraint!)
+//        NSLayoutConstraint.activate([
+//            inputTableView.topAnchor.constraint(equalTo:inputContainer.topAnchor, constant: 0),
+//            inputTableView.leftAnchor.constraint(equalTo:inputContainer.leftAnchor, constant: 0),
+//            inputTableView.rightAnchor.constraint(equalTo:inputContainer.rightAnchor, constant: 0),
+//            inputTableView.bottomAnchor.constraint(equalTo:inputContainer.bottomAnchor, constant: 0),
+//        ])
+        NSLayoutConstraint.activate([
+            inputDollarSignContainer.topAnchor.constraint(equalTo:inputContainer.topAnchor),
+            inputDollarSignContainer.bottomAnchor.constraint(equalTo:inputContainer.bottomAnchor),
+            inputDollarSignContainer.leftAnchor.constraint(equalTo:inputContainer.leftAnchor),
+            inputDollarSignContainer.widthAnchor.constraint(equalToConstant: 100),
         ])
         NSLayoutConstraint.activate([
-            inputTableView.topAnchor.constraint(equalTo:inputContainer.topAnchor, constant: 0),
-            inputTableView.leftAnchor.constraint(equalTo:inputContainer.leftAnchor, constant: 0),
-            inputTableView.rightAnchor.constraint(equalTo:inputContainer.rightAnchor, constant: 0),
-            inputTableView.bottomAnchor.constraint(equalTo:inputContainer.bottomAnchor, constant: 0),
+            inputDollarSign.topAnchor.constraint(equalTo:inputDollarSignContainer.topAnchor, constant: 5),
+            inputDollarSign.bottomAnchor.constraint(equalTo:inputDollarSignContainer.bottomAnchor, constant: -5),
+            inputDollarSign.leftAnchor.constraint(equalTo:inputDollarSignContainer.leftAnchor, constant: 10),
+            inputDollarSign.rightAnchor.constraint(equalTo:inputDollarSignContainer.rightAnchor, constant: -10),
+        ])
+        NSLayoutConstraint.activate([
+            inputPlaceholder.topAnchor.constraint(equalTo:inputContainer.topAnchor, constant: 10),
+            inputPlaceholder.leftAnchor.constraint(equalTo:inputContainer.leftAnchor, constant: 105),
+            inputPlaceholder.rightAnchor.constraint(equalTo:inputContainer.rightAnchor, constant: -10),
+            inputPlaceholder.heightAnchor.constraint(equalToConstant: 20)
+        ])
+        NSLayoutConstraint.activate([
+            inputTextViewContainer.topAnchor.constraint(equalTo:inputContainer.topAnchor, constant: 5),
+            inputTextViewContainer.bottomAnchor.constraint(equalTo:inputContainer.bottomAnchor, constant: -5),
+            inputTextViewContainer.leftAnchor.constraint(equalTo:inputContainer.leftAnchor, constant: 100),
+            inputTextViewContainer.rightAnchor.constraint(equalTo:inputContainer.rightAnchor, constant: -5),
+        ])
+        NSLayoutConstraint.activate([
+            inputTextView.topAnchor.constraint(equalTo:inputTextViewContainer.topAnchor, constant: 0),
+            inputTextView.bottomAnchor.constraint(equalTo:inputTextViewContainer.bottomAnchor, constant: 0),
+            inputTextView.leftAnchor.constraint(equalTo:inputTextViewContainer.leftAnchor, constant: 0),
+            inputTextView.rightAnchor.constraint(equalTo:inputTextViewContainer.rightAnchor, constant: -50),
+        ])
+        NSLayoutConstraint.activate([
+            inputSend.bottomAnchor.constraint(equalTo:inputTextViewContainer.bottomAnchor, constant: 0),
+            inputSend.rightAnchor.constraint(equalTo:inputTextViewContainer.rightAnchor, constant: 0),
+            inputSend.widthAnchor.constraint(equalToConstant: 40),
+            inputSend.heightAnchor.constraint(equalToConstant: 40),
         ])
         NSLayoutConstraint.activate([
             tickerContainer.topAnchor.constraint(equalTo:viewContainer.topAnchor),
@@ -161,18 +206,15 @@ class MessageView: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-//        // If the tutorial has not been viewed, show it for this user
-//        if let firUser = Auth.auth().currentUser {
-//            Settings.Firebase.db().collection("accounts").document(firUser.uid)
-//                .getDocument { (document, error) in
-//                    guard let doc = document else { self.showTutorial(); return }
-//                    if !doc.exists { self.showTutorial(); return }
-//                    guard let accountData = doc.data() else { self.showTutorial(); return }
-//                    guard let tutorialsViewed = accountData["tutorials"] as? [String] else { self.showTutorial(); return }
-//                    if (tutorialsViewed.firstIndex(of: "v1.0.0") == nil) {
-//                        self.showTutorial()
-//                    }
-//                }
+        // Show the tutorial if it has not been viewed by the current user
+//        if let accountRepo = AccountRepository() {
+//            accountRepo.getAccount()
+//            guard let account = accountRepo.account else { self.showTutorial(); return }
+//            guard let metadata = account.metadata else { self.showTutorial(); return }
+//            guard let tutorials = metadata.tutorials else { self.showTutorial(); return }
+//            if (tutorials.firstIndex(of: accountRepo.currentTutorial + "-" + className) == nil) {
+//                self.showTutorial()
+//            }
 //        } else {
 //            self.showTutorial()
 //        }
@@ -224,28 +266,37 @@ class MessageView: UIViewController {
         inputContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(inputContainer)
         
-        inputTableView = UITableView()
-        inputTableView.dataSource = self
-        inputTableView.delegate = self
-        inputTableView.dragInteractionEnabled = false
-        inputTableView.register(MessageInputCell.self, forCellReuseIdentifier: inputTableCellIdentifier)
-        inputTableView.separatorStyle = .none
-        inputTableView.backgroundColor = .clear
-//        inputTableView.rowHeight = UITableView.automaticDimension
-        inputTableView.estimatedRowHeight = 0
-        inputTableView.estimatedSectionHeaderHeight = 0
-        inputTableView.estimatedSectionFooterHeight = 0
-        inputTableView.isScrollEnabled = false
-        inputTableView.bounces = false
-        inputTableView.alwaysBounceVertical = false
-        inputTableView.showsVerticalScrollIndicator = false
-        inputTableView.isUserInteractionEnabled = true
-        inputTableView.allowsSelection = false
-//        inputTableView.delaysContentTouches = false
-        inputTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-//        inputTableView.insetsContentViewsToSafeArea = true
-        inputTableView.translatesAutoresizingMaskIntoConstraints = false
-        inputContainer.addSubview(inputTableView)
+        inputDollarSignContainer = UIView()
+        inputDollarSignContainer.backgroundColor = Settings.Theme.Color.background
+        inputDollarSignContainer.translatesAutoresizingMaskIntoConstraints = false
+        inputContainer.addSubview(inputDollarSignContainer)
+        
+        let inputDollarSignGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(dollarSignTap))
+        inputDollarSignGestureRecognizer.delegate = self
+        inputDollarSignGestureRecognizer.numberOfTapsRequired = 1
+        inputDollarSignContainer.addGestureRecognizer(inputDollarSignGestureRecognizer)
+        
+        inputDollarSign = UILabel()
+        inputDollarSign.backgroundColor = Settings.Theme.Color.background
+        inputDollarSign.font = UIFont(name: Assets.Fonts.Default.bold, size: 30)
+        inputDollarSign.textColor = Settings.Theme.Color.primary
+        inputDollarSign.textAlignment = NSTextAlignment.center
+        inputDollarSign.numberOfLines = 1
+        inputDollarSign.text = "$"
+        inputDollarSign.isUserInteractionEnabled = false
+        inputDollarSign.translatesAutoresizingMaskIntoConstraints = false
+        inputDollarSignContainer.addSubview(inputDollarSign)
+        
+        inputPlaceholder = UILabel()
+        inputPlaceholder.backgroundColor = .clear
+        inputPlaceholder.font = UIFont(name: Assets.Fonts.Default.medium, size: 16)
+        inputPlaceholder.textColor = Settings.Theme.Color.textGrayDark
+        inputPlaceholder.textAlignment = NSTextAlignment.left
+        inputPlaceholder.numberOfLines = 1
+        inputPlaceholder.text = "New Message"
+        inputPlaceholder.isUserInteractionEnabled = false
+        inputPlaceholder.translatesAutoresizingMaskIntoConstraints = false
+        inputContainer.addSubview(inputPlaceholder)
         
         accessoryView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 50))
         accessoryView.backgroundColor = Settings.Theme.Color.contentBackground
@@ -255,9 +306,46 @@ class MessageView: UIViewController {
         accessoryViewBorder.layer.borderColor = Settings.Theme.Color.textGrayDark.cgColor
         accessoryViewBorder.layer.borderWidth = 1
         accessoryViewBorder.translatesAutoresizingMaskIntoConstraints = false
-        accessoryView.addSubview(accessoryViewBorder)
+//        accessoryView.addSubview(accessoryViewBorder)
         
-        inputTickerContainer = UIScrollView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 50))
+        inputTextViewContainer = UIView()
+        inputTextViewContainer.backgroundColor = .clear
+        inputTextViewContainer.layer.cornerRadius = 5
+        inputTextViewContainer.layer.borderColor = Settings.Theme.Color.textGrayDark.cgColor
+        inputTextViewContainer.layer.borderWidth = 1
+        inputTextViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        inputContainer.addSubview(inputTextViewContainer)
+        
+        inputTextView = UITextView()
+        inputTextView.delegate = self
+        inputTextView.backgroundColor = .clear
+        inputTextView.inputAccessoryView = accessoryView
+        inputTextView.font = UIFont(name: Assets.Fonts.Default.regular, size: 16)
+        inputTextView.textColor = Settings.Theme.Color.text
+        inputTextView.textAlignment = NSTextAlignment.left
+        inputTextView.text = ""
+        inputTextView.keyboardDismissMode = .none
+        inputTextView.keyboardAppearance = .dark
+//        inputTextView.keyboardType = .twitter
+        inputTextView.returnKeyType = .default
+        inputTextView.isScrollEnabled = false
+        inputTextView.isUserInteractionEnabled = true
+        inputTextView.translatesAutoresizingMaskIntoConstraints = false
+        inputTextViewContainer.addSubview(inputTextView)
+        
+        inputSend = UIImageView()
+        inputSend.backgroundColor = .clear
+        inputSend.image = UIImage(systemName: "arrow.up.square.fill")
+        inputSend.tintColor = Settings.Theme.Color.primary
+        inputSend.contentMode = UIView.ContentMode.scaleAspectFit
+        inputSend.clipsToBounds = true
+        inputSend.translatesAutoresizingMaskIntoConstraints = false
+        inputTextViewContainer.addSubview(inputSend)
+        
+        inputTickerContainer = UIScrollView(frame: CGRect(x: 5, y: 5, width: view.frame.width - 10, height: 40))
+        inputTickerContainer.layer.cornerRadius = 5
+        inputTickerContainer.layer.borderColor = Settings.Theme.Color.textGrayDark.cgColor
+        inputTickerContainer.layer.borderWidth = 1
         inputTickerContainer.showsHorizontalScrollIndicator = false
         inputTickerContainer.backgroundColor = .clear
         inputTickerContainer.translatesAutoresizingMaskIntoConstraints = false

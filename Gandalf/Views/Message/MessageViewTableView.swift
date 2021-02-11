@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseStorage
 
 extension MessageView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
     
@@ -17,10 +18,11 @@ extension MessageView: UITableViewDataSource, UITableViewDelegate, UIScrollViewD
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView == inputTableView {
-            return 1
-            
-        } else if tableView == messageTableView {
+//        if tableView == inputTableView {
+//            return 1
+//
+//        } else
+        if tableView == messageTableView {
             if localMessages.count > 0 {
                 messageTableViewSpinner.stopAnimating()
             } else if !initialLoad {
@@ -41,10 +43,11 @@ extension MessageView: UITableViewDataSource, UITableViewDelegate, UIScrollViewD
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 //        return UITableView.automaticDimension
-        if tableView == inputTableView {
-            return 50
-            
-        } else if tableView == messageTableView {
+//        if tableView == inputTableView {
+//            return 50
+//
+//        } else
+        if tableView == messageTableView {
             return UITableView.automaticDimension //messageCellHeight
             
         } else if tableView == tickerTableView {
@@ -52,17 +55,9 @@ extension MessageView: UITableViewDataSource, UITableViewDelegate, UIScrollViewD
         }
         return 50
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if tableView == inputTableView {
-            let cell = tableView.dequeueReusableCell(withIdentifier: inputTableCellIdentifier, for: indexPath) as! MessageInputCell
-            cell.selectionStyle = .none
-            cell.textView.delegate = self
-            cell.textView.inputAccessoryView = accessoryView
-            
-            return cell
-            
-        } else if tableView == messageTableView {
+        if tableView == messageTableView {
             let cell = tableView.dequeueReusableCell(withIdentifier: messageTableCellIdentifier, for: indexPath) as! MessageCellGandalf
             cell.selectionStyle = .none
 
@@ -80,6 +75,15 @@ extension MessageView: UITableViewDataSource, UITableViewDelegate, UIScrollViewD
             cell.title.layoutIfNeeded()
             
             cell.timeLabel.text = Settings.formatDateString(timestamp: localMessages[indexPath.row].timestamp)
+            
+            cell.accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.primary, renderingMode: .alwaysOriginal)
+            for a in accountImages {
+                if a.key == localMessages[indexPath.row].account {
+                    cell.accountImage.image = a.value
+                    break
+                }
+            }
+            
             return cell
             
         } else if tableView == tickerTableView {
@@ -121,11 +125,9 @@ extension MessageView: UITableViewDataSource, UITableViewDelegate, UIScrollViewD
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("didSelectRowAt")
-        if let cell = inputTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? MessageInputCell {
-            allowEndEditing = true
-            cell.textView.endEditing(true)
-            allowEndEditing = false
-        }
+        allowEndEditing = true
+        inputTextView.endEditing(true)
+        allowEndEditing = false
         
         if tableView == messageTableView {
             print("MESSAGE ROW \(indexPath.row)")
@@ -141,44 +143,8 @@ extension MessageView: UITableViewDataSource, UITableViewDelegate, UIScrollViewD
         }
     }
     
-    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if tableView != inputTableView { return nil }
-        guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? MessageInputCell else { return nil }
-        let positive = UIContextualAction(style: .normal, title: "SEND") { (action, view, completionHandler) in
-            print("SEND MESSAGE: \(indexPath.row)")
-            self.messageRepository.createMessage(text: cell.textView.text, tickers: self.inputTickers)
-            cell.textView.text = ""
-            cell.placeholder.text = "New Message"
-            cell.endEditing(true)
-            self.inputTickers.removeAll()
-            self.inputTickerContainer.subviews.forEach({ $0.removeFromSuperview() })
-            
-            if let cell = self.inputTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? MessageInputCell {
-                self.allowEndEditing = true
-                cell.textView.endEditing(true)
-                self.allowEndEditing = false
-            }
-            completionHandler(true)
-        }
-        positive.backgroundColor = Settings.Theme.Color.barText
-        return UISwipeActionsConfiguration(actions: [positive])
-    }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if tableView == inputTableView {
-            guard let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? MessageInputCell else { return nil }
-            let negative = UIContextualAction(style: .normal, title: "CLEAR") { (action, view, completionHandler) in
-                print("CLEAR MESSAGE: \(indexPath.row)")
-                cell.textView.text = ""
-                cell.placeholder.text = "New Message"
-                cell.endEditing(true)
-                self.inputTickers.removeAll()
-                self.inputTickerContainer.subviews.forEach({ $0.removeFromSuperview() })
-                completionHandler(true)
-            }
-            negative.backgroundColor = Settings.Theme.Color.negative
-            return UISwipeActionsConfiguration(actions: [negative])
-            
-        } else if tableView == messageTableView {
+        if tableView == messageTableView {
             guard let firUser = Auth.auth().currentUser else { return nil }
             if localMessages[indexPath.row].account != firUser.uid { return nil }
             let negative = UIContextualAction(style: .normal, title: "DELETE") { (action, view, completionHandler) in

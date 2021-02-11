@@ -31,6 +31,7 @@ extension Settings {
             static let text = UIColor.white
             static let textGrayLight = UIColor(red: 141/255, green: 153/255, blue: 174/255, alpha: 1.0) //#8D99AE
             static let textGrayDark = UIColor(red: 112/255, green: 122/255, blue: 139/255, alpha: 1.0) //#707A8B
+            static let textGrayUltraDark = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
             
             static let progressbar = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
 //            static let progressbar = UIColor(red: 116/255, green: 125/255, blue: 134/255, alpha: 1.0) //#747D86
@@ -42,9 +43,9 @@ extension Settings {
             static let negativeLight = UIColor(red: 252/255, green: 0/255, blue: 126/255, alpha: 1.0) //#fc0080
             
             static let grayUltraLight = UIColor(red: 200/255, green: 200/255, blue: 200/255, alpha: 1.0) //#C8C8C8
-            static let grayLight = UIColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1.0) //#646464
-            static let grayMedium = UIColor(red: 58/255, green: 58/255, blue: 58/255, alpha: 1.0) //#3A3A3A
-            static let grayDark = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1.0) //#262626
+            static let grayLight = UIColor(red: 141/255, green: 153/255, blue: 174/255, alpha: 1.0) //#8D99AE
+            static let grayMedium = UIColor(red: 112/255, green: 122/255, blue: 139/255, alpha: 1.0) //#707A8B
+            static let grayDark = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
         }
     }
     

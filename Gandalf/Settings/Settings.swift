@@ -11,6 +11,12 @@ import FirebaseFirestore
 
 struct Settings {
     
+    struct Tabs {
+        static let notionVcIndex = 0
+        static let groupVcIndex = 1
+        static let accountVcIndex = 2
+    }
+    
     static var inBackground = false
     
     static var attemptedLogin: Bool = false
@@ -22,6 +28,8 @@ struct Settings {
     static let sentimentAdjMaxActions: Int = 4 //Max adjustment actions in one direction
     
     struct Firebase {
+//        static let storageBucketAccounts = "gs://gandalf-accounts"
+        
         static let settings = { () -> FirestoreSettings in
             let settings = FirestoreSettings()
             settings.isPersistenceEnabled = true

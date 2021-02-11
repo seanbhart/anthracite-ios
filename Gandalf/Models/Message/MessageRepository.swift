@@ -8,6 +8,7 @@
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseFunctions
+import FirebaseStorage
 
 protocol MessageRepositoryDelegate {
     func messageDataUpdate()
@@ -22,6 +23,7 @@ class MessageRepository {
     var groupId: String!
     var messages = [MessageGandalf]()
     var accountNames = [String: String]()
+    var accountImages = [String: UIImage]()
     var tickers = [Ticker]()
     
     fileprivate var query: Query? {
@@ -58,9 +60,20 @@ class MessageRepository {
                 
                 // Query for the display names of all message senders
                 // and convert any embedded Tickers from dict to objects
+                // Also download the account images (saved with the account id as png)
                 for (i, m) in messages.enumerated() {
                     getAccountDisplayName(account: m.account)
                     messages[i].fillTickers()
+                    
+                    let imageRef = Storage.storage().reference().child(m.account + "-small.png")
+                    imageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
+                        if error != nil { return }
+                        guard let imgData = data else { return }
+                        self.accountImages[m.account] = UIImage(data: imgData)
+                        if let parent = delegate {
+                            parent.messageDataUpdate()
+                        }
+                    }
                 }
                 
                 // Clear the ticker list and add new ticker summary data
@@ -184,6 +197,7 @@ class MessageRepository {
                 if let username = data["username"] as? String {
                     self.accountNames[account] = username
                 } else if let name = data["name"] as? [String:String] {
+                    // This is a holdover from an earlier app version
                     let given = name["given"] ?? ""
                     let family = name["family"] ?? ""
                     self.accountNames[account] = given + " " + family
@@ -214,4 +228,10 @@ class MessageRepository {
             }
         }
     }
+    
+//    func uploadMedia() {
+//        let storage = Storage.storage()
+//        storage = Storage.storage(url:"gs://gandalf-chat")
+//
+//    }
 }

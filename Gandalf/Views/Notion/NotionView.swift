@@ -10,9 +10,10 @@ import Firebase
 //import FirebaseAnalytics
 import FirebaseAuth
 
-class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, NotionRepositoryDelegate, NotionActionRepositoryDelegate, HoleViewDelegate {
+class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, NotionRepositoryDelegate, NotionActionRepositoryDelegate, AccountRepositoryDelegate, HoleViewDelegate {
     let className = "NotionView"
     
+    var tabBarViewDelegate: TabBarViewDelegate!
     var pageTitle = "Gandalf"
     var sortByResponse = true
     var allowUpdates = true
@@ -20,6 +21,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var localNotions = [Notion]()
     var notionRepository: NotionRepository!
     var notionActionRepository: NotionActionRepository!
+    var accountRepository: AccountRepository!
     
     var viewContainer: UIView!
     var headerContainer: UIView!
@@ -189,29 +191,60 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             notionTableViewSpinner.centerYAnchor.constraint(equalTo:notionTableView.centerYAnchor, constant: -100),
         ])
         
-        guard let notionRepo = notionRepository else { return }
-        guard let notionActionRepo = notionActionRepository else { return }
-        notionRepo.observeQuery()
-        notionActionRepo.observeQuery()
+        if accountRepository == nil {
+            if let accountRepo = AccountRepository() {
+                accountRepository = accountRepo
+                accountRepository.delegate = self
+                accountRepository.getAccount()
+            } else {
+                if let parent = self.tabBarViewDelegate {
+                    parent.moveToTab(index: Settings.Tabs.accountVcIndex)
+                }
+            }
+        } else {
+            accountRepository.getAccount()
+        }
+        if notionRepository == nil {
+            notionRepository = NotionRepository(recency: 3600)
+            notionRepository.delegate = self
+        }
+        notionRepository.observeQuery()
+        if notionActionRepository == nil {
+            notionActionRepository = NotionActionRepository(recency: 3600)
+            notionActionRepository.delegate = self
+        }
+        notionActionRepository.observeQuery()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        // If the tutorial has not been viewed, show it for this user
-        if let firUser = Auth.auth().currentUser {
-            Settings.Firebase.db().collection("accounts").document(firUser.uid)
-                .getDocument { (document, error) in
-                    guard let doc = document else { self.showTutorial(); return }
-                    if !doc.exists { self.showTutorial(); return }
-                    guard let accountData = doc.data() else { self.showTutorial(); return }
-                    guard let tutorialsViewed = accountData["tutorials"] as? [String] else { self.showTutorial(); return }
-                    if (tutorialsViewed.firstIndex(of: "v1.0.0") == nil) {
-                        self.showTutorial()
-                    }
-                }
-        } else {
+//    override func viewDidAppear(_ animated: Bool) {
+//    }
+    
+    
+    // MARK: -ACCOUNT DELEGATE METHODS
+    
+    func accountDataUpdate() {
+        print("\(className) - accountDataUpdate")
+        // Show the tutorial if it has not been viewed by the current user
+        guard let account = accountRepository.account else { self.showTutorial(); return }
+        guard let metadata = account.metadata else { self.showTutorial(); return }
+        guard let tutorials = metadata.tutorials else { self.showTutorial(); return }
+        if (tutorials.firstIndex(of: accountRepository.currentTutorial + "-" + className) == nil) {
             self.showTutorial()
         }
     }
+    
+    func requestError(message: String) {
+        let alert = UIAlertController(title: "Oh no we couldn't access your account. Please sign in again.", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: { action in
+            // Move the user to the Account View to try logging in again
+            if let parent = self.tabBarViewDelegate {
+                parent.moveToTab(index: Settings.Tabs.accountVcIndex)
+            }
+        }))
+        self.present(alert, animated: true)
+    }
+    
+    
     
     func showTutorial() {
         let holeView = HoleView(holeViewPosition: 1, frame: viewContainer.bounds, circleOffsetX: 0, circleOffsetY: 0, circleRadius: 0, textOffsetX: (viewContainer.bounds.width / 2) - 160, textOffsetY: 60, textWidth: 320, textFontSize: 32, text: "Welcome to Gandalf!\n\nGandalf is an investment information app detecting public sentiment regarding tradeable assets to predict future prices.")
@@ -389,11 +422,6 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         notionTableViewSpinner.startAnimating()
         notionTableView.addSubview(notionTableViewSpinner)
         notionTableViewSpinner.isHidden = false
-        
-        notionActionRepository = NotionActionRepository(recency: 3600)
-        notionActionRepository.delegate = self
-        notionRepository = NotionRepository(recency: 3600)
-        notionRepository.delegate = self
     }
     
     override func didReceiveMemoryWarning() {
@@ -406,8 +434,8 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     // MARK: -CUSTOM DELEGATE METHODS
     
     func showLogin() {
-//        self.presentSheet(with: ProfileView())
-        // TODO: toggle the Profile tab
+//        self.presentSheet(with: AccountView())
+        // TODO: toggle the Account tab
     }
     func notionDataUpdate() {
         if allowUpdates {
@@ -434,9 +462,9 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
     // MARK: -GESTURE RECOGNIZERS
     
-//    @objc func loadProfileView(_ sender: UITapGestureRecognizer) {
-//        print("\(className) - loadProfileView")
-//        self.presentSheet(with: ProfileView())
+//    @objc func loadAccountView(_ sender: UITapGestureRecognizer) {
+//        print("\(className) - loadAccountView")
+//        self.presentSheet(with: AccountView())
 //    }
     @objc func filterToggle(_ sender: UITapGestureRecognizer) {
         print("\(className) - filterToggle")
@@ -922,20 +950,9 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             // The tutorial has ended - Record the Tutorial as viewed for this user.
             print("\(className) - TUTORIAL END")
             
-            if let firUser = Auth.auth().currentUser {
-                Settings.Firebase.db().collection("accounts").document(firUser.uid).setData([
-                    "tutorials": ["v1.0.0"]
-                ], merge: true) { err in
-                    if let err = err {
-                        print("\(self.className) - FIREBASE: ERROR saving tutorial view: \(err)")
-                    } else {
-                        print("\(self.className) - FIREBASE: tutorial view saved")
-                    }
-                }
-            } else {
-                print("\(className) - TUTORIAL END ERROR: NO USER")
+            if let accountRepo = accountRepository {
+                accountRepo.addTutorialViewFor(view: className)
             }
         }
     }
 }
-

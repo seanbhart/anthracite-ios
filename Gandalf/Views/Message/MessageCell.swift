@@ -33,8 +33,8 @@ class MessageCellGandalf: UITableViewCell {
         ])
         
         accountImage = UIImageView()
+        accountImage.layer.cornerRadius = 15
         accountImage.backgroundColor = .clear
-        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.primary, renderingMode: .alwaysOriginal)
         accountImage.contentMode = UIView.ContentMode.scaleAspectFit
         accountImage.clipsToBounds = true
         accountImage.translatesAutoresizingMaskIntoConstraints = false

@@ -10,21 +10,22 @@ import SwiftUI
 //import FirebaseAnalytics
 import FirebaseAuth
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate {
+protocol TabBarViewDelegate {
+    func moveToTab(index: Int)
+}
+
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate {
     let className = "SceneDelegate"
 
     var window: UIWindow?
-    
-    var notionVC = NotionView()
+    var tabBarController: UITabBarController!
+    var notionVC: NotionView!
     var notionVcNavController: UINavigationController!
-    let notionVcIndex = 0
-    var groupVC = GroupView()
+    var groupVC: GroupView!
     var groupVcNavController: UINavigationController!
-    let groupVcIndex = 1
-    var profileVC = ProfileView()
-    var profileVcNavController: UINavigationController!
-    let profileVcIndex = 2
-
+    var accountVC: AccountView!
+    var accountVcNavController: UINavigationController!
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
         if #available(iOS 13.0, *) {
@@ -46,6 +47,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             UINavigationBar.appearance().isTranslucent = false
         }
         
+        notionVC = NotionView()
+        notionVC.tabBarViewDelegate = self
         notionVcNavController = UINavigationController(rootViewController: notionVC)
         notionVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
         notionVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
@@ -55,6 +58,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let tabImageNotionColor = UIImage(systemName: "globe")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
         notionVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageNotionWhite, selectedImage: tabImageNotionColor)
         
+        groupVC = GroupView()
+        groupVC.tabBarViewDelegate = self
         groupVcNavController = UINavigationController(rootViewController: groupVC)
         groupVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
         groupVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
@@ -64,27 +69,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let tabImageGroupColor = UIImage(systemName: "text.bubble.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
         groupVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageGroupWhite, selectedImage: tabImageGroupColor)
         
-        profileVcNavController = UINavigationController(rootViewController: profileVC)
-        profileVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
-        profileVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
-        profileVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
-        profileVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
-        let tabImageProfileWhite = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
-        let tabImageProfileColor = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-        profileVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageProfileWhite, selectedImage: tabImageProfileColor)
+        accountVC = AccountView()
+        accountVC.tabBarViewDelegate = self
+        accountVcNavController = UINavigationController(rootViewController: accountVC)
+        accountVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
+        accountVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
+        accountVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
+        accountVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
+        let tabImageAccountWhite = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        let tabImageAccountColor = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+        accountVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageAccountWhite, selectedImage: tabImageAccountColor)
         
-        let tabBarController = UITabBarController()
+        tabBarController = UITabBarController()
         tabBarController.delegate = self
 //        tabBarController.tabBar.barStyle = .black
         tabBarController.tabBar.barTintColor = Settings.Theme.Color.background
         tabBarController.tabBar.clipsToBounds = true
-        tabBarController.viewControllers = [notionVcNavController, groupVcNavController, profileVcNavController]
-        tabBarController.selectedIndex = profileVcIndex
+        tabBarController.viewControllers = [notionVcNavController, groupVcNavController, accountVcNavController]
+        tabBarController.selectedIndex = Settings.Tabs.accountVcIndex
         
         // If a user is not logged in, display the Login screen
         if let firUser = Auth.auth().currentUser {
             print("\(className) - currentUser: \(firUser.uid)")
-            tabBarController.selectedIndex = notionVcIndex
+            tabBarController.selectedIndex = Settings.Tabs.notionVcIndex
         }
         
         // Use a UIHostingController as window root view controller.
@@ -134,10 +141,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         print("\(className) - tabBarController didSelect: \(viewController)")
         guard let _ = Auth.auth().currentUser else {
-            print("\(className) - tabBarController didSelect: No user logged in; remain in Profile view")
-            tabBarController.selectedIndex = profileVcIndex
+            print("\(className) - tabBarController didSelect: No user logged in; remain in Account view")
+            tabBarController.selectedIndex = Settings.Tabs.accountVcIndex
             return
         }
     }
 
+    
+    // MARK: -TAB BAR VIEW METHODS
+    func moveToTab(index: Int) {
+        tabBarController.selectedIndex = index
+    }
 }

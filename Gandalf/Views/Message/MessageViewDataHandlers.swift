@@ -13,11 +13,22 @@ extension MessageView: UITextViewDelegate, UIGestureRecognizerDelegate, MessageR
 
     @objc func viewContainerTap(_ sender: UITapGestureRecognizer) {
         print("\(className) - viewContainerTap")
-        if let cell = inputTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? MessageInputCell {
+        // If the tap was inside the send button, send the message and reset
+        // the input view, otherwise register a tap to close the keyboard
+        let inputSendPoint = sender.location(in: inputSend)
+        if inputSendPoint.x > 0 && inputSendPoint.y > 0 {
+            sendMessage()
+        } else {
             allowEndEditing = true
-            cell.textView.endEditing(true)
+            inputTextView.endEditing(true)
             allowEndEditing = false
         }
+    }
+    
+    @objc func dollarSignTap(_ sender: UITapGestureRecognizer) {
+        print("\(className) - dollarSignTap")
+        inputTextView.insertText("$")
+        inputText(text: inputTextView.text, newText: true)
     }
     
     // Ensure a tap to a cell falls through to the cell and not caught by the view
@@ -40,39 +51,43 @@ extension MessageView: UITextViewDelegate, UIGestureRecognizerDelegate, MessageR
         guard let viewTapped = sender.view else { return }
         if viewTapped.tag < 0 || viewTapped.tag > inputTickers.count-1 { return }
         inputTickers[viewTapped.tag].cycleSentiment()
-        processInputTickers()
+
+        // Cast the tapped view as a textfield and recolor
+        // the text to match the new sentiment. Don't re-process
+        // the entire ticker list or the scrollview will be
+        // reset to the left on the screen.
+        if let v = viewTapped as? UITextField {
+            v.textColor = inputTickers[viewTapped.tag].getSentimentColor()
+        }
+        
+        // Reprocess the text to show the sentiment colors.
+        inputText(text: inputTextView.text, newText: false)
     }
     
     
     // MARK: -TEXTVIEW METHODS
     
     func textViewDidChange(_ textView: UITextView) {
-        if let cell = inputTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? MessageInputCell {
-            if textView == cell.textView {
-                if textView.text == "" {
-                    cell.placeholder.text = "New Message"
-                } else {
-                    cell.placeholder.text = ""
-                    textView.textColor = Settings.Theme.Color.text
-                    // formatInputText returns a tuple with the formatted text and a list of found ticker strings
-                    let result = formatInputText(text: String(textView.text.prefix(200)), textColor: Settings.Theme.Color.barText)
-                    textView.attributedText = result.0
-                    inputTickerStrings.removeAll()
-                    inputTickerStrings = result.1
-                    processInputTickers()
-                }
+//        print("\(className) - textViewDidChange")
+        if textView == inputTextView {
+            if textView.text == "" {
+                inputPlaceholder.text = "New Message"
+            } else {
+                inputText(text: textView.text, newText: true)
             }
         }
     }
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
-//        print("\(className) - textViewShouldEndEditing")
-        if let cell = inputTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? MessageInputCell {
-            if textView == cell.textView {
-                return allowEndEditing
-            }
+        print("\(className) - textViewShouldEndEditing")
+        if textView == inputTextView {
+            return allowEndEditing
         }
         return true
     }
+    
+//    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+//
+//    }
     
     
     // MARK: -REPO METHODS
@@ -81,8 +96,7 @@ extension MessageView: UITextViewDelegate, UIGestureRecognizerDelegate, MessageR
         return localTickers
     }
     func messageCreateError(text: String) {
-        guard let cell = inputTableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? MessageInputCell else { return }
-        cell.textView.text = text
+        inputTextView.text = text
     }
     func messageDataUpdate() {
         guard let messageRepo = messageRepository else { return }
@@ -107,6 +121,7 @@ extension MessageView: UITextViewDelegate, UIGestureRecognizerDelegate, MessageR
         
         fillLocalMessages()
         accountNames = messageRepo.accountNames
+        accountImages = messageRepo.accountImages
         
         let bottomDist = messageTableView.contentSize.height - messageTableView.contentOffset.y - messageTableView.frame.height
         if initialLoad || bottomDist < messageCellHeight * 2 {
@@ -122,6 +137,65 @@ extension MessageView: UITextViewDelegate, UIGestureRecognizerDelegate, MessageR
     
     
     // MARK: -CUSTOM FUNCTIONS
+    
+    private func sendMessage() {
+        print("\(className) - sendMessage")
+        guard let messageRepo = messageRepository else { return }
+        messageRepo.createMessage(text: inputTextView.text, tickers: inputTickers)
+        inputTextView.endEditing(true)
+        inputTextView.text = ""
+        inputText(text: "", newText: true)
+        inputPlaceholder.text = "New Message"
+        inputTickers.removeAll()
+        inputTickerContainer.subviews.forEach({ $0.removeFromSuperview() })
+    }
+    
+    func inputText(text: String, newText: Bool) {
+        inputTextView.becomeFirstResponder()
+        inputPlaceholder.text = ""
+        inputTextView.textColor = Settings.Theme.Color.text
+        
+        // Increase the height of the textview to 100 if the text spans multiple lines
+        let oldHeight = inputTextView.frame.height
+        let maxHeight: CGFloat = 100.0 //beyond this value the textView will scroll
+        var newHeight = min(inputTextView.sizeThatFits(CGSize(width: inputTextView.frame.width, height: CGFloat.greatestFiniteMagnitude)).height, maxHeight)
+        newHeight = ceil(newHeight)
+//                print("\(className) - newHeight: \(newHeight)")
+        if newHeight != oldHeight && newHeight > 50 {
+            inputContainerHeightConstraint?.constant = 100
+            inputContainer.layoutIfNeeded()
+            inputTextView.isScrollEnabled = true
+        } else if inputContainerHeightConstraint != nil && inputContainerHeightConstraint!.constant > 50 {
+            inputContainerHeightConstraint?.constant = 50
+            inputContainer.layoutIfNeeded()
+            inputTextView.isScrollEnabled = false
+        }
+        
+        // formatInputText returns a tuple with the formatted text and a list of found ticker strings
+        let result = formatInputText(text: String(text.prefix(200)), textColor: Settings.Theme.Color.barText)
+        
+        // Before replacing the textview text, capture the location of the cursor
+        // and insert it back in the same place after converting the text. If the
+        // cursor location cannot be determined, put the cursor at the end of the text.
+        if let selectedRange = inputTextView.selectedTextRange {
+            if let cursorPosition = inputTextView.position(from: selectedRange.start, offset: 0) {
+                inputTextView.attributedText = result.0
+                inputTextView.selectedTextRange = inputTextView.textRange(from: cursorPosition, to: cursorPosition)
+            }
+        } else {
+            inputTextView.attributedText = result.0
+            inputTextView.selectedTextRange = inputTextView.textRange(from: inputTextView.endOfDocument, to: inputTextView.endOfDocument)
+        }
+        
+        // Reset the found tickers with the updated search
+        // if indicated that new text was passed (could just
+        // be a re-processing of the textview for sentiment change).
+        if newText {
+            inputTickerStrings.removeAll()
+            inputTickerStrings = result.1
+            processInputTickers()
+        }
+    }
     
     func clearTickerFilter() {
         // Set all tickers to not selected
@@ -158,22 +232,39 @@ extension MessageView: UITextViewDelegate, UIGestureRecognizerDelegate, MessageR
     
     func formatInputText(text: String, textColor: UIColor) -> (NSMutableAttributedString, [String]) {
         let style = NSMutableParagraphStyle()
-        style.minimumLineHeight = 30
+        style.minimumLineHeight = 20
         let string: NSMutableAttributedString = NSMutableAttributedString(string: String(text.prefix(200)), attributes: [ //String(text.prefix(140))
-            NSAttributedString.Key.foregroundColor: UIColor.white,
+            NSAttributedString.Key.foregroundColor: Settings.Theme.Color.text,
             NSAttributedString.Key.font: UIFont(name: Assets.Fonts.Default.regular, size: 16) ?? UIFont.boldSystemFont(ofSize: 16),
             NSAttributedString.Key.paragraphStyle : style
         ])
-        var words: [String] = text.components(separatedBy: " ")
+        let split = text.split { [" ", "\n"].contains(String($0)) }
+        var words = split.map { String($0).trimmingCharacters(in: .whitespaces) }
+//        var words: [String] = text.components(separatedBy: " ")
         var tickers = [String]()
         for i in words.indices {
             words[i] = words[i].trimmingCharacters(in: .punctuationCharacters)
+            // Search for the dollar sign at the beginning of a word
             if words[i].hasPrefix("$") {
-                tickers.append(String(words[i].dropFirst().uppercased()))
-                let range: NSRange = (string.string as NSString).range(of: words[i])
-                string.addAttribute(NSAttributedString.Key.foregroundColor, value: textColor, range: range)
-                string.addAttribute(NSAttributedString.Key.font, value: UIFont(name: Assets.Fonts.Default.bold, size: 16) ?? UIFont.boldSystemFont(ofSize: 22), range: range)
-                string.replaceCharacters(in: range, with: words[i].uppercased())
+                // If the dollar sign is followed by a number or decimal point,
+                // don't capture it (likely currency)
+                if words[i].prefix(2).rangeOfCharacter(from: .decimalDigits) == nil && words[i].prefix(2).range(of: ".") == nil {
+                    let tickerStringToAdd = String(words[i].dropFirst().uppercased())
+                    tickers.append(tickerStringToAdd)
+                    
+                    // Check if the ticker is already in the ticker list with a sentiment value
+                    // if so, use the current sentiment setting to color the text.
+                    var textColorToUse = textColor
+                    let foundTickers = inputTickers.filter({ $0.ticker == tickerStringToAdd })
+                    if foundTickers.count > 0 {
+                        textColorToUse = foundTickers[0].getSentimentColor()
+                    }
+                    
+                    let range: NSRange = (string.string as NSString).range(of: words[i])
+                    string.addAttribute(NSAttributedString.Key.foregroundColor, value: textColorToUse, range: range)
+                    string.addAttribute(NSAttributedString.Key.font, value: UIFont(name: Assets.Fonts.Default.bold, size: 16) ?? UIFont.boldSystemFont(ofSize: 22), range: range)
+                    string.replaceCharacters(in: range, with: words[i].uppercased())
+                }
             }
         }
         return (string, tickers)
@@ -183,7 +274,7 @@ extension MessageView: UITextViewDelegate, UIGestureRecognizerDelegate, MessageR
         let style = NSMutableParagraphStyle()
         style.minimumLineHeight = 20
         let string: NSMutableAttributedString = NSMutableAttributedString(string: message.text, attributes: [
-            NSAttributedString.Key.foregroundColor: UIColor.white,
+            NSAttributedString.Key.foregroundColor: Settings.Theme.Color.text,
             NSAttributedString.Key.font: UIFont(name: Assets.Fonts.Default.regular, size: 16) ?? UIFont.boldSystemFont(ofSize: 16),
             NSAttributedString.Key.paragraphStyle : style
         ])
@@ -218,7 +309,7 @@ extension MessageView: UITextViewDelegate, UIGestureRecognizerDelegate, MessageR
         var contentWidth = 0
         for (i, iTicker) in inputTickers.enumerated() {
             let fieldWidth = iTicker.ticker.count*20+30
-            let textField = UITextField(frame: CGRect(x: contentWidth, y: 5, width: fieldWidth, height: 40))
+            let textField = UITextField(frame: CGRect(x: contentWidth, y: 5, width: fieldWidth, height: 30))
             textField.tag = i
             textField.text = "$" + iTicker.ticker
             textField.textAlignment = .center
@@ -232,7 +323,7 @@ extension MessageView: UITextViewDelegate, UIGestureRecognizerDelegate, MessageR
             
             inputTickerContainer.addSubview(textField)
             contentWidth += fieldWidth
-            inputTickerContainer.contentSize = CGSize(width: contentWidth, height: 50)
+            inputTickerContainer.contentSize = CGSize(width: contentWidth, height: 40)
         }
     }
     
