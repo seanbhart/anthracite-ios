@@ -12,13 +12,13 @@ extension GroupView: GroupRepositoryDelegate {
     
     // MARK: -REPOSITORY METHODS
     
-    func groupDataUpdate() {
+    func groupDataUpdate(loadGroupId: String?) {
         guard let groupRepo = groupRepository else { return }
         localUnreadGroups.removeAll()
         localGroups.removeAll()
         // Find all groups where the current user's last activity was
         // earlier than the group's last activity. Assume unread if null values.
-        if let firUser = Auth.auth().currentUser {
+        if let firUser = Settings.Firebase.auth().currentUser {
             localUnreadGroups = groupRepo.groups.filter({
                 $0.lastViewed?[firUser.uid] ?? 0.0 <= $0.lastActive?.values.max() ?? 0.0
             })
@@ -30,6 +30,15 @@ extension GroupView: GroupRepositoryDelegate {
         })
         groupTableView.reloadData()
         groupTableViewSpinner.stopAnimating()
+        
+        // If a groupId was passed with the updated data protocol,
+        // then the group needs to be opened upon data update.
+        if let groupId = loadGroupId {
+            let foundGroups = localGroups.filter({ $0.id == groupId })
+            if foundGroups.count > 0 {
+                self.navigationController?.pushViewController(MessageView(group: foundGroups[0]), animated: true)
+            }
+        }
     }
     
     func requestError(message: String) {

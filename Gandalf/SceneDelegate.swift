@@ -89,7 +89,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         tabBarController.selectedIndex = Settings.Tabs.accountVcIndex
         
         // If a user is not logged in, display the Login screen
-        if let firUser = Auth.auth().currentUser {
+        if let firUser = Settings.Firebase.auth().currentUser {
             print("\(className) - currentUser: \(firUser.uid)")
             tabBarController.selectedIndex = Settings.Tabs.notionVcIndex
         }
@@ -140,7 +140,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     // MARK: -TABBARCONTROLLER METHODS
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         print("\(className) - tabBarController didSelect: \(viewController)")
-        guard let _ = Auth.auth().currentUser else {
+        guard let _ = Settings.Firebase.auth().currentUser else {
             print("\(className) - tabBarController didSelect: No user logged in; remain in Account view")
             tabBarController.selectedIndex = Settings.Tabs.accountVcIndex
             return

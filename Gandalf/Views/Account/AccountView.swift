@@ -390,20 +390,28 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         // First request verification
         let signOutAlert = UIAlertController(title: "Sign Out", message: "Are you sure you want to sign out?", preferredStyle: .alert)
         signOutAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
-            let firebaseAuth = Auth.auth()
+            let firebaseAuth = Settings.Firebase.auth()
             do {
                 try firebaseAuth.signOut()
             } catch let signOutError as NSError {
+                self.requestError(title: "We messed up!", message: "There was a problem logging you out! Please try again.")
+                
 //                Analytics.logEvent("gandalf_error", parameters: [
 //                    "class": "Account" as NSObject,
 //                    "function": "signOut" as NSObject,
 //                    "description": signOutError.localizedDescription as NSObject
 //                ])
                 print ("ACCOUNT - Error signing out: %@", signOutError)
+                return
             }
             // Load LoginView
             print("\(self.className) - LOGGED OUT - NOW SHOW LOGIN VIEW")
             self.showSignIn()
+            
+            // Take background steps for signing out
+            if let accountRepo = self.accountRepository {
+                accountRepo.signOut()
+            }
         }))
         signOutAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
         self.present(signOutAlert, animated: true)
@@ -518,7 +526,7 @@ extension AccountView: ASAuthorizationControllerDelegate, ASAuthorizationControl
         let credential = OAuthProvider.credential(withProviderID: "apple.com",
                                                 idToken: idTokenString,
                                                 rawNonce: nonce)
-        Auth.auth().signIn(with: credential) { (authResult, error) in
+        Settings.Firebase.auth().signIn(with: credential) { (authResult, error) in
             if let err = error {
                 // Error. If error.code == .MissingOrInvalidNonce, make sure
                 // you're sending the SHA256-hashed nonce as a hex string with
@@ -571,7 +579,7 @@ extension AccountView: ASAuthorizationControllerDelegate, ASAuthorizationControl
                 } else {
                     // 5b: The Account does not exist, so add data for the new Account
                     // Update the Firebase User to store the desired displayName for the Account (given name only)
-                    let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+                    let changeRequest = Settings.Firebase.auth().currentUser?.createProfileChangeRequest()
                     changeRequest?.displayName = givenName
                     changeRequest?.commitChanges { (error) in
                         if let err = error {

@@ -228,7 +228,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
         guard let account = accountRepository.account else { self.showTutorial(); return }
         guard let metadata = account.metadata else { self.showTutorial(); return }
         guard let tutorials = metadata.tutorials else { self.showTutorial(); return }
-        if (tutorials.firstIndex(of: accountRepository.currentTutorial + "-" + className) == nil) {
+        if (tutorials.firstIndex(of: Settings.currentTutorial + "-" + className) == nil) {
             self.showTutorial()
         }
     }
@@ -501,7 +501,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             if localNotions.count > 0 {
 //                notionTableViewEmptyNote.isHidden = true
                 notionTableViewSpinner.stopAnimating()
-            } else if Auth.auth().currentUser == nil {
+            } else if Settings.Firebase.auth().currentUser == nil {
 //                notionTableViewEmptyNote.isHidden = false
                 notionTableViewSpinner.stopAnimating()
                 tickerTableViewSpinner.stopAnimating()

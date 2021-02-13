@@ -145,7 +145,7 @@ extension MessageView: UITableViewDataSource, UITableViewDelegate, UIScrollViewD
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         if tableView == messageTableView {
-            guard let firUser = Auth.auth().currentUser else { return nil }
+            guard let firUser = Settings.Firebase.auth().currentUser else { return nil }
             if localMessages[indexPath.row].account != firUser.uid { return nil }
             let negative = UIContextualAction(style: .normal, title: "DELETE") { (action, view, completionHandler) in
                 print("DELETE MESSAGE: \(indexPath.row)")

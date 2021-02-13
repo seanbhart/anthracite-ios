@@ -9,7 +9,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 protocol GroupRepositoryDelegate {
-    func groupDataUpdate()
+    func groupDataUpdate(loadGroupId: String?)
     func requestError(message: String)
 }
 
@@ -18,9 +18,11 @@ class GroupRepository {
     
     var delegate: GroupRepositoryDelegate?
     var groups = [Group]()
+    var loadGroup: String?
     
     fileprivate var query: Query? {
         didSet {
+            print("\(className) - query didSet: \(listener)")
             if let listener = listener {
                 listener.remove()
                 observeQuery()
@@ -29,13 +31,19 @@ class GroupRepository {
     }
     
     init() {
+        print("\(className) - init")
         query = Settings.Firebase.db().collection("group")
+    }
+    convenience init(withGroup: String) {
+        self.init()
+        print("\(className) - init withGroup: \(withGroup)")
+        loadGroup = withGroup
     }
 
     private var listener: ListenerRegistration?
 
     func observeQuery() {
-        guard let firUser = Auth.auth().currentUser else { return }
+        guard let firUser = Settings.Firebase.auth().currentUser else { return }
         guard let query = query else { return }
         stopObserving()
         
@@ -51,8 +59,17 @@ class GroupRepository {
                     return try? queryDocumentSnapshot.data(as: Group.self)
                 }
                 
+                print("\(className) - parent: \(delegate)")
                 if let parent = delegate {
-                    parent.groupDataUpdate()
+                    print("\(className) - will groupDataUpdate: \(loadGroup)")
+                    if loadGroup != nil {
+                        parent.groupDataUpdate(loadGroupId: loadGroup)
+                        // IMPORTANT: remove the loadGroupId or GroupView
+                        // will continuously attempt to reload this Group
+                        loadGroup = nil
+                    } else {
+                        parent.groupDataUpdate(loadGroupId: nil)
+                    }
                 }
             }
     }
@@ -63,7 +80,7 @@ class GroupRepository {
     }
     
     func createGroup(title: String) {
-        guard let firUser = Auth.auth().currentUser else { return }
+        guard let firUser = Settings.Firebase.auth().currentUser else { return }
         
         Settings.Firebase.db().collection("group").document().setData([
             "created": Date().timeIntervalSince1970,
@@ -84,7 +101,7 @@ class GroupRepository {
     }
     
     func joinGroup(code: String) {
-        guard let firUser = Auth.auth().currentUser else { return }
+        guard let firUser = Settings.Firebase.auth().currentUser else { return }
         
         // Ensure the group already exists first
         Settings.Firebase.db().collection("group").document(code)
@@ -129,7 +146,7 @@ class GroupRepository {
     }
     
     func removeCurrentAccount(groupId: String) {
-        guard let firUser = Auth.auth().currentUser else { return }
+        guard let firUser = Settings.Firebase.auth().currentUser else { return }
         
         Settings.Firebase.db().collection("group").document(groupId).setData([
             "members": FieldValue.arrayRemove([firUser.uid])

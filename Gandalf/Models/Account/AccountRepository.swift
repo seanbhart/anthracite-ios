@@ -16,14 +16,13 @@ protocol AccountRepositoryDelegate {
 
 class AccountRepository {
     var className = "AccountRepository"
-    let currentTutorial = "v1.0.0"
     
     var delegate: AccountRepositoryDelegate?
     var accountId: String!
     var account: Account?
     
     init?() {
-        guard let firUser = Auth.auth().currentUser else { return nil }
+        guard let firUser = Settings.Firebase.auth().currentUser else { return nil }
         accountId = firUser.uid
     }
     
@@ -88,6 +87,26 @@ class AccountRepository {
             })
     }
     
+    // All necessary auth steps when signing out
+    func signOut() {
+        
+        // Remove the messaging cert to prevent messages being sent to this device
+        Settings.Firebase.db().collection("accounts").document(accountId!).collection("private").document("metadata").setData([
+            "messaging_token": "",
+            "messaging_token_updated": Date().timeIntervalSince1970,
+        ], merge: true) { err in
+            if let err = err {
+                print("\(self.className) - FIREBASE: ERROR updating token: \(err)")
+            } else {
+                print("\(self.className) - FIREBASE: updated token")
+            }
+        }
+        
+        // Clear local data
+        accountId = ""
+        account = nil
+    }
+    
     func setUserName(username: String) {
         // Check whether the username is already in use
         Settings.Firebase.db().collection("accounts")
@@ -141,7 +160,7 @@ class AccountRepository {
     
     func addTutorialViewFor(view: String) {
         Settings.Firebase.db().collection("accounts").document(accountId!).collection("private").document("metadata").setData([
-            "tutorials": FieldValue.arrayUnion([currentTutorial + "-" + view]),
+            "tutorials": FieldValue.arrayUnion([Settings.currentTutorial + "-" + view]),
         ], merge: true) { err in
             if let err = err {
                 print("\(self.className) - FIREBASE: ERROR adding tutorial view: \(err)")

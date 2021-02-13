@@ -7,11 +7,12 @@
 
 import UIKit
 import Firebase
+import FirebaseAuth
 import FirebaseMessaging
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    
+    let className = "AppDelegate"
     let gcmMessageIDKey = "gcm.message_id"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -49,20 +50,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-      // If you are receiving a notification message while your app is in the background,
-      // this callback will not be fired till the user taps on the notification launching the application.
-      // TODO: Handle data of notification
-      // With swizzling disabled you must let Messaging know about the message, for Analytics
-      // Messaging.messaging().appDidReceiveMessage(userInfo)
-      // Print message ID.
-      if let messageID = userInfo[gcmMessageIDKey] {
-        print("Message ID: \(messageID)")
-      }
-
-      // Print full message.
-      print(userInfo)
-
-      completionHandler(UIBackgroundFetchResult.newData)
+        // If you are receiving a notification message while your app is in the background,
+        // this callback will not be fired till the user taps on the notification launching the application.
+        // With swizzling disabled you must let Messaging know about the message, for Analytics
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        if let messageID = userInfo[gcmMessageIDKey] {
+            print("Message ID: \(messageID)")
+        }
+        print("\(className) - didReceiveRemoteNotification: \(userInfo)")
+//        application.applicationIconBadgeNumber = 10
+        completionHandler(UIBackgroundFetchResult.newData)
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -73,30 +70,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // If swizzling is disabled then this function must be implemented so that the APNs token can be paired to
     // the FCM registration token.
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("APNs token retrieved: \(deviceToken)")
+        print("APNs token retrieved: \(deviceToken.base64EncodedData())")
 
         // With swizzling disabled you must set the APNs token here.
-        // Messaging.messaging().apnsToken = deviceToken
+        Messaging.messaging().apnsToken = deviceToken
     }
 }
 
-extension AppDelegate : UNUserNotificationCenterDelegate {
+extension AppDelegate: UNUserNotificationCenterDelegate {
     
     // Receive displayed notifications for iOS 10 devices.
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                           willPresent notification: UNNotification,
     withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo
-
         // With swizzling disabled you must let Messaging know about the message, for Analytics
-        // Messaging.messaging().appDidReceiveMessage(userInfo)
-        // Print message ID.
+        Messaging.messaging().appDidReceiveMessage(userInfo)
         if let messageID = userInfo[gcmMessageIDKey] {
             print("Message ID: \(messageID)")
         }
-
-        // Print full message.
-        print(userInfo)
+        print("\(className) - userNotificationCenter willPresent: \(userInfo)")
 
         // Change this to your preferred presentation option
         completionHandler([[.badge, .banner, .sound]])
@@ -106,21 +99,42 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
                           didReceive response: UNNotificationResponse,
                           withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
-        // Print message ID.
         if let messageID = userInfo[gcmMessageIDKey] {
             print("Message ID: \(messageID)")
         }
-
         // With swizzling disabled you must let Messaging know about the message, for Analytics
-        // Messaging.messaging().appDidReceiveMessage(userInfo)
-        // Print full message.
-        print(userInfo)
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        print("\(className) - userNotificationCenter didReceive: \(userInfo)")
+        
+        if let aps = userInfo["aps"] as? [String:Any] {
+            if let groupId = aps["group_id"] as? String {
+                // Get the TabBarController and set the selectedVC to the GroupView
+                if let tabBarController = (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?.rootViewController as? UITabBarController {
+                    tabBarController.selectedIndex = Settings.Tabs.groupVcIndex
+                    // Now access the selected tab NavController and push the MessageView
+                    // for the GroupId in the notification.
+                    if let navController = tabBarController.selectedViewController as? UINavigationController {
+                        if let groupView = navController.viewControllers.first as? GroupView {
+                            // Tell the View data handler to update the data and load the needed
+                            // view when ready.
+                            if let existingRepo = groupView.groupRepository {
+                                existingRepo.stopObserving()
+                            }
+                            groupView.groupRepository = GroupRepository(withGroup: groupId)
+                            groupView.groupRepository.delegate = groupView
+                            groupView.groupRepository.observeQuery()
+                        }
+                        
+                    }
+                }
+            }
+        }
 
         completionHandler()
     }
 }
 
-extension AppDelegate : MessagingDelegate {
+extension AppDelegate: MessagingDelegate {
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("Firebase registration token: \(String(describing: fcmToken))")
@@ -129,5 +143,20 @@ extension AppDelegate : MessagingDelegate {
         NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
         // TODO: If necessary send token to application server.
         // Note: This callback is fired at each app startup and whenever a new token is generated.
+        
+        // Because this method is fired whenever a token is generated,
+        // once the user is logged in update the token tied to their account
+        if let firUser = Settings.Firebase.auth().currentUser {
+            Settings.Firebase.db().collection("accounts").document(firUser.uid).collection("private").document("metadata").setData([
+                "messaging_token": fcmToken ?? "",
+                "messaging_token_updated": Date().timeIntervalSince1970,
+            ], merge: true) { err in
+                if let err = err {
+                    print("\(self.className) - FIREBASE: ERROR updating token: \(err)")
+                } else {
+                    print("\(self.className) - FIREBASE: updated token")
+                }
+            }
+        }
     }
 }

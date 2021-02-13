@@ -212,7 +212,7 @@ class MessageView: UIViewController {
 //            guard let account = accountRepo.account else { self.showTutorial(); return }
 //            guard let metadata = account.metadata else { self.showTutorial(); return }
 //            guard let tutorials = metadata.tutorials else { self.showTutorial(); return }
-//            if (tutorials.firstIndex(of: accountRepo.currentTutorial + "-" + className) == nil) {
+//            if (tutorials.firstIndex(of: Settings.currentTutorial + "-" + className) == nil) {
 //                self.showTutorial()
 //            }
 //        } else {

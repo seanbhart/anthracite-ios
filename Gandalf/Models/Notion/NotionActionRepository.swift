@@ -37,7 +37,7 @@ class NotionActionRepository {
 
     func observeQuery() {
         guard let query = query else { return }
-        guard let firUser = Auth.auth().currentUser else { return }
+        guard let firUser = Settings.Firebase.auth().currentUser else { return }
         stopObserving()
         
         // Listen for NotionAction for the signed in account in the same time period
@@ -68,7 +68,7 @@ class NotionActionRepository {
     
     // Create or update an action on a specific notion
     func addSentimentAction(notion: String, quantity: Int) {
-        guard let firUser = Auth.auth().currentUser else { return }
+        guard let firUser = Settings.Firebase.auth().currentUser else { return }
         
         // First query for any existing actions on this Notion for this Account
         Settings.Firebase.db().collection("notion_action")

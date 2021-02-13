@@ -7,9 +7,13 @@
 //
 
 import Foundation
+import FirebaseAuth
 import FirebaseFirestore
 
 struct Settings {
+    
+    static let debug = false
+    static let currentTutorial = "v1.0.0"
     
     struct Tabs {
         static let notionVcIndex = 0
@@ -30,19 +34,29 @@ struct Settings {
     struct Firebase {
 //        static let storageBucketAccounts = "gs://gandalf-accounts"
         
-        static let settings = { () -> FirestoreSettings in
-            let settings = FirestoreSettings()
-            settings.isPersistenceEnabled = true
-            settings.isSSLEnabled = true
-            return settings
-        }
+//        static let settings = { () -> FirestoreSettings in
+//            let settings = FirestoreSettings()
+//            settings.isPersistenceEnabled = true
+//            settings.isSSLEnabled = true
+//            return settings
+//        }
         static let db = { () -> Firestore in
             let settings = FirestoreSettings()
+            if Settings.debug {
+                settings.host = "localhost:8080"
+            }
             settings.isPersistenceEnabled = true
             settings.isSSLEnabled = true
             let db = Firestore.firestore()
             db.settings = settings
             return db
+        }
+        static let auth = { () -> Auth in
+            let auth = Auth.auth()
+            if Settings.debug {
+                auth.useEmulator(withHost: "localhost", port: 9099)
+            }
+            return auth
         }
     }
     
