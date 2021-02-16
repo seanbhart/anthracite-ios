@@ -66,6 +66,8 @@
 		B87350B825C2A2D00007A8FE /* Ticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350B725C2A2D00007A8FE /* Ticker.swift */; };
 		B87350C025C322FE0007A8FE /* STARS-WHITE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BE25C322FE0007A8FE /* STARS-WHITE-LG.png */; };
 		B87350C125C322FE0007A8FE /* STARS-BLUE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BF25C322FE0007A8FE /* STARS-BLUE-LG.png */; };
+		B88BE59325DB4A2D00AA1B75 /* Trade.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88BE59225DB4A2D00AA1B75 /* Trade.swift */; };
+		B88BE59625DB4B1E00AA1B75 /* TradeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88BE59525DB4B1E00AA1B75 /* TradeRepository.swift */; };
 		B89B79F525CB9F4F00531E9E /* LOGOTYPE.png in Resources */ = {isa = PBXBuildFile; fileRef = B89B79F325CB9F4F00531E9E /* LOGOTYPE.png */; };
 		B89B79F625CB9F4F00531E9E /* LOGOTYPE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */; };
 		B8B9905725CA51E900CF539C /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B9905625CA51E900CF539C /* GroupView.swift */; };
@@ -77,6 +79,7 @@
 		B8BA1C2825D33F85008ACBA0 /* MessageViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C2725D33F85008ACBA0 /* MessageViewTableView.swift */; };
 		B8BA1C2B25D33FF3008ACBA0 /* MessageViewDataHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C2A25D33FF3008ACBA0 /* MessageViewDataHandlers.swift */; };
 		B8BA1C5125D48CBC008ACBA0 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C5025D48CBC008ACBA0 /* ImagePicker.swift */; };
+		B8BA1C7525DAD632008ACBA0 /* TradeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C7425DAD632008ACBA0 /* TradeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -143,6 +146,8 @@
 		B87350B725C2A2D00007A8FE /* Ticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticker.swift; sourceTree = "<group>"; };
 		B87350BE25C322FE0007A8FE /* STARS-WHITE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STARS-WHITE-LG.png"; sourceTree = "<group>"; };
 		B87350BF25C322FE0007A8FE /* STARS-BLUE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STARS-BLUE-LG.png"; sourceTree = "<group>"; };
+		B88BE59225DB4A2D00AA1B75 /* Trade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trade.swift; sourceTree = "<group>"; };
+		B88BE59525DB4B1E00AA1B75 /* TradeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeRepository.swift; sourceTree = "<group>"; };
 		B89B79F325CB9F4F00531E9E /* LOGOTYPE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LOGOTYPE.png; sourceTree = "<group>"; };
 		B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LOGOTYPE-LG.png"; sourceTree = "<group>"; };
 		B8B9905625CA51E900CF539C /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
@@ -154,6 +159,7 @@
 		B8BA1C2725D33F85008ACBA0 /* MessageViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewTableView.swift; sourceTree = "<group>"; };
 		B8BA1C2A25D33FF3008ACBA0 /* MessageViewDataHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewDataHandlers.swift; sourceTree = "<group>"; };
 		B8BA1C5025D48CBC008ACBA0 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		B8BA1C7425DAD632008ACBA0 /* TradeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeView.swift; sourceTree = "<group>"; };
 		C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Gandalf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -272,6 +278,7 @@
 				B8BA1B5525D061D5008ACBA0 /* Message */,
 				B8BA1B5625D061DE008ACBA0 /* Notion */,
 				B8BA1B5825D061F2008ACBA0 /* Ticker */,
+				B88BE59125DB49F300AA1B75 /* Trade */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -292,6 +299,7 @@
 				B8BA1B4D25D0576F008ACBA0 /* Group */,
 				B8BA1B4C25D0575A008ACBA0 /* Message */,
 				B8BA1B4B25D05747008ACBA0 /* Notion */,
+				B8BA1C7325DAD616008ACBA0 /* Trade */,
 				B873507D25C258BC0007A8FE /* ViewExtensions.swift */,
 			);
 			path = Views;
@@ -327,6 +335,15 @@
 				B87350AC25C284C30007A8FE /* Rubik-SemiBold.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		B88BE59125DB49F300AA1B75 /* Trade */ = {
+			isa = PBXGroup;
+			children = (
+				B88BE59225DB4A2D00AA1B75 /* Trade.swift */,
+				B88BE59525DB4B1E00AA1B75 /* TradeRepository.swift */,
+			);
+			path = Trade;
 			sourceTree = "<group>";
 		};
 		B8BA1B4B25D05747008ACBA0 /* Notion */ = {
@@ -424,6 +441,14 @@
 				B80E053325C76D08009DBE34 /* HoleView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		B8BA1C7325DAD616008ACBA0 /* Trade */ = {
+			isa = PBXGroup;
+			children = (
+				B8BA1C7425DAD632008ACBA0 /* TradeView.swift */,
+			);
+			path = Trade;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -582,6 +607,7 @@
 				B873503B25C256320007A8FE /* AppDelegate.swift in Sources */,
 				B80E053725C83DFE009DBE34 /* NotionAction.swift in Sources */,
 				B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */,
+				B88BE59325DB4A2D00AA1B75 /* Trade.swift in Sources */,
 				B873508425C258BE0007A8FE /* NotionView.swift in Sources */,
 				B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */,
 				B87350A525C2812C0007A8FE /* Assets.swift in Sources */,
@@ -594,6 +620,7 @@
 				B8BA1C5125D48CBC008ACBA0 /* ImagePicker.swift in Sources */,
 				B8BA188E25CDB6B5008ACBA0 /* AccountRepository.swift in Sources */,
 				B80E057D25C9C3E7009DBE34 /* MessageCell.swift in Sources */,
+				B8BA1C7525DAD632008ACBA0 /* TradeView.swift in Sources */,
 				B873508F25C258CF0007A8FE /* LocalCollection.swift in Sources */,
 				B80E057025C9B96C009DBE34 /* Message.swift in Sources */,
 				B873509325C258D60007A8FE /* Theme.swift in Sources */,
@@ -603,6 +630,7 @@
 				B80E057625C9BC44009DBE34 /* GroupRepository.swift in Sources */,
 				B873508725C258BE0007A8FE /* CustomProgressView.swift in Sources */,
 				B8B9905725CA51E900CF539C /* GroupView.swift in Sources */,
+				B88BE59625DB4B1E00AA1B75 /* TradeRepository.swift in Sources */,
 				B8BA1C2B25D33FF3008ACBA0 /* MessageViewDataHandlers.swift in Sources */,
 				B8BA1BC425D17D0D008ACBA0 /* GroupViewTableView.swift in Sources */,
 				B873509725C258DA0007A8FE /* UIKitExtensions.swift in Sources */,

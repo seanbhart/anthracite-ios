@@ -21,7 +21,7 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var localNotions = [Notion]()
     var notionRepository: NotionRepository!
     var notionActionRepository: NotionActionRepository!
-    var accountRepository: AccountRepository!
+    var accountRepository: AccountRepository?
     
     var viewContainer: UIView!
     var headerContainer: UIView!
@@ -191,18 +191,23 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
             notionTableViewSpinner.centerYAnchor.constraint(equalTo:notionTableView.centerYAnchor, constant: -100),
         ])
         
-        if accountRepository == nil {
+        // Get the Account via the AccountRepo
+        if let accountRepo = accountRepository {
+            accountRepo.getAccount()
+        } else {
+            // If the AccountRepo is null, create a new one
+            // be sure to assign the delegate to receive callbacks
             if let accountRepo = AccountRepository() {
                 accountRepository = accountRepo
-                accountRepository.delegate = self
-                accountRepository.getAccount()
+                accountRepository!.delegate = self
+                accountRepository!.getAccount()
             } else {
+                // If getting the account failed, the user
+                // is not logged in - show the login view
                 if let parent = self.tabBarViewDelegate {
                     parent.moveToTab(index: Settings.Tabs.accountVcIndex)
                 }
             }
-        } else {
-            accountRepository.getAccount()
         }
         if notionRepository == nil {
             notionRepository = NotionRepository(recency: 3600)
@@ -225,7 +230,13 @@ class NotionView: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     func accountDataUpdate() {
 //        print("\(className) - accountDataUpdate")
         // Show the tutorial if it has not been viewed by the current user
-        guard let account = accountRepository.account else { self.showTutorial(); return }
+        guard let accountRepo = accountRepository else {
+            if let parent = self.tabBarViewDelegate {
+                parent.moveToTab(index: Settings.Tabs.accountVcIndex)
+            }
+            return
+        }
+        guard let account = accountRepo.account else { self.showTutorial(); return }
         guard let metadata = account.metadata else { self.showTutorial(); return }
         guard let tutorials = metadata.tutorials else { self.showTutorial(); return }
         if (tutorials.firstIndex(of: Settings.currentTutorial + "-" + className) == nil) {

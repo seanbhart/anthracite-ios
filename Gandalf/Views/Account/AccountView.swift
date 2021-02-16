@@ -17,7 +17,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     let className = "AccountView"
     
     var tabBarViewDelegate: TabBarViewDelegate!
-    var accountRepository: AccountRepository!
+    var accountRepository: AccountRepository?
     // Unhashed nonce - handle locally (not in Account) for security
     fileprivate var currentNonce: String?
     var controller: ASAuthorizationController!
@@ -56,16 +56,21 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
 //        layoutSignInComponents()
 //        layoutAccountComponents()
         
-        if accountRepository == nil {
+        // Get the Account via the AccountRepo
+        if let accountRepo = accountRepository {
+            accountRepo.getAccount()
+        } else {
+            // If the AccountRepo is null, create a new one
+            // be sure to assign the delegate to receive callbacks
             if let accountRepo = AccountRepository() {
                 accountRepository = accountRepo
-                accountRepository.delegate = self
-                accountRepository.getAccount()
+                accountRepository!.delegate = self
+                accountRepository!.getAccount()
             } else {
+                // If getting the account failed, the user
+                // is not logged in - show the login view
                 showSignIn()
             }
-        } else {
-            accountRepository.getAccount()
         }
     }
     
@@ -238,7 +243,8 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     }
     @objc func usernameContainerTap(_ sender: UITapGestureRecognizer) {
         print("\(className) - usernameContainerTap")
-        guard let account = accountRepository.account else { return }
+        guard let accountRepo = accountRepository else { return }
+        guard let account = accountRepo.account else { return }
 //        print("account: \(account.username)")
         
         let alert = UIAlertController(title: "Edit Username", message: "", preferredStyle: .alert)
@@ -247,10 +253,8 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
 //            print("EDIT USERNAME TO: \(textField.text)")
             guard let username = textField.text else { return }
             if username.count > 0 {
-                if let accountRepo = self.accountRepository {
-                    accountRepo.setUserName(username: username)
-                    self.accountRepository.getAccount()
-                }
+                accountRepo.setUserName(username: username)
+                accountRepo.getAccount()
             }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -322,7 +326,8 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     
     func accountDataUpdate() {
         print("\(className) - accountDataUpdate")
-        if let account = accountRepository.account {
+        guard let accountRepo = accountRepository else { return }
+        if let account = accountRepo.account {
             // If the username is empty, use the known account name
             if let username = account.username {
                 usernameLabel.text = username

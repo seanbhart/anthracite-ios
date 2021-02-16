@@ -14,8 +14,12 @@ protocol TabBarViewDelegate {
     func moveToTab(index: Int)
 }
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate, AccountRepositoryDelegate {
     let className = "SceneDelegate"
+    
+    // Create a local AccountRepository to access the account
+    // receive callback results if needed
+    var accountRepository: AccountRepository?
 
     var window: UIWindow?
     var tabBarController: UITabBarController!
@@ -127,6 +131,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         print("\(className) - sceneWillEnterForeground")
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
+        
+        // Get the Account via the AccountRepo
+        if let accountRepo = accountRepository {
+            accountRepo.getAccount()
+        } else {
+            // If the AccountRepo is null, create a new one
+            // be sure to assign the delegate to receive callbacks
+            if let accountRepo = AccountRepository() {
+                accountRepository = accountRepo
+                accountRepository!.delegate = self
+                accountRepository!.getAccount()
+            } else {
+                // If getting the account failed, the user
+                // is not logged in - show the login view
+                moveToTab(index: Settings.Tabs.accountVcIndex)
+            }
+        }
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -134,6 +155,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+        
+        
     }
     
     
@@ -151,5 +174,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     // MARK: -TAB BAR VIEW METHODS
     func moveToTab(index: Int) {
         tabBarController.selectedIndex = index
+    }
+    
+    
+    // MARK: -ACCOUNT REPO METHODS
+    
+    func accountDataUpdate() {
+        print("\(className) - Account Data update")
+    }
+    
+    func requestError(title: String, message: String) {
+        print("\(className) - Account Repo error: \(title): \(message)")
+    }
+    
+    func notSignedIn() {
+        moveToTab(index: Settings.Tabs.accountVcIndex)
     }
 }

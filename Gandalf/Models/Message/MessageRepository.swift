@@ -234,4 +234,44 @@ class MessageRepository {
 //        storage = Storage.storage(url:"gs://gandalf-chat")
 //
 //    }
+    
+    func enteredGroup(groupId: String) {
+        Functions.functions().httpsCallable("addGroupEnter").call([
+            "group_id": groupId,
+            "timestamp": Date().timeIntervalSince1970,
+        ]) { (result, error) in
+            if let error = error as NSError? {
+                if error.domain == FunctionsErrorDomain {
+                    let code = FunctionsErrorCode(rawValue: error.code)
+                    let message = error.localizedDescription
+                    let details = error.userInfo[FunctionsErrorDetailsKey]
+                    print("\(self.className) - FIREBASE FUNCTION enteredGroup ERROR: code: \(code), message: \(message), details: \(details)")
+                }
+            }
+            print("enteredGroup RESULT: \(result.debugDescription)")
+            if let data = (result?.data as? [String: Any]) {
+                print("enteredGroup RESULT data: \(data)")
+            }
+        }
+    }
+    
+    func exitedGroup(groupId: String) {
+        Functions.functions().httpsCallable("addGroupExit").call([
+            "group_id": groupId,
+            "timestamp": Date().timeIntervalSince1970,
+        ]) { (result, error) in
+            if let error = error as NSError? {
+                if error.domain == FunctionsErrorDomain {
+                    let code = FunctionsErrorCode(rawValue: error.code)
+                    let message = error.localizedDescription
+                    let details = error.userInfo[FunctionsErrorDetailsKey]
+                    print("\(self.className) - FIREBASE FUNCTION exitedGroup ERROR: code: \(code), message: \(message), details: \(details)")
+                }
+            }
+            print("exitedGroup RESULT: \(result.debugDescription)")
+            if let data = (result?.data as? [String: Any]) {
+                print("exitedGroup RESULT data: \(data)")
+            }
+        }
+    }
 }

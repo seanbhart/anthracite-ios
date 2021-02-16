@@ -73,11 +73,15 @@ class MessageView: UIViewController {
             print("\(className) - willEnterForegroundNotification")
             guard let messageRepo = messageRepository else { return }
             messageRepo.observeQuery()
+            guard let groupId = currentGroup.id else { return }
+            messageRepo.enteredGroup(groupId: groupId)
         }
         observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - didEnterBackgroundNotification")
             guard let messageRepo = messageRepository else { return }
             messageRepo.stopObserving()
+            guard let groupId = currentGroup.id else { return }
+            messageRepo.exitedGroup(groupId: groupId)
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -203,6 +207,8 @@ class MessageView: UIViewController {
         
         guard let messageRepo = messageRepository else { return }
         messageRepo.observeQuery()
+        guard let groupId = currentGroup.id else { return }
+        messageRepo.enteredGroup(groupId: groupId)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -232,6 +238,8 @@ class MessageView: UIViewController {
         guard let messageRepo = messageRepository else { return }
         messageRepo.addView()
         messageRepo.stopObserving()
+        guard let groupId = currentGroup.id else { return }
+        messageRepo.exitedGroup(groupId: groupId)
     }
 
     override func loadView() {
