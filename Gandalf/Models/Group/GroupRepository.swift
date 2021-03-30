@@ -32,7 +32,7 @@ class GroupRepository {
     
     init() {
         print("\(className) - init")
-        query = Settings.Firebase.db().collection("group")
+        query = Settings.Firebase.db().collection("groups")
     }
     convenience init(withGroup: String) {
         self.init()

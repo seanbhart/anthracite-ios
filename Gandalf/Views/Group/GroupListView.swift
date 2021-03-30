@@ -7,16 +7,15 @@
 
 import UIKit
 
-protocol GroupViewDelegate {
+protocol GroupListViewDelegate {
     func loadGroup(group: String)
 }
 
-class GroupView: UIViewController {
-    let className = "GroupView"
+class GroupListView: UIViewController {
+    let className = "GroupListView"
     
     var tabBarViewDelegate: TabBarViewDelegate!
-    var delegate: GroupViewDelegate!
-    var localUnreadGroups = [Group]()
+    var delegate: GroupListViewDelegate!
     var localGroups = [Group]()
     var groupRepository: GroupRepository!
     
@@ -24,10 +23,6 @@ class GroupView: UIViewController {
     var groupTableView: UITableView!
     let groupTableCellIdentifier: String = "GroupCell"
     var groupTableViewSpinner = UIActivityIndicatorView(style: .medium)
-    var addContainer: UIView!
-    var addIcon: UIImageView!
-    var codeContainer: UIView!
-    var codeIcon: UIImageView!
     
     private var observer: NSObjectProtocol?
     
@@ -75,34 +70,10 @@ class GroupView: UIViewController {
             viewContainer.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
         ])
         NSLayoutConstraint.activate([
-            addContainer.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor, constant: -5),
-            addContainer.leftAnchor.constraint(equalTo:viewContainer.leftAnchor, constant: 5),
-            addContainer.rightAnchor.constraint(equalTo:viewContainer.centerXAnchor, constant: -5),
-            addContainer.heightAnchor.constraint(equalToConstant: 100),
-        ])
-        NSLayoutConstraint.activate([
-            addIcon.centerXAnchor.constraint(equalTo:addContainer.centerXAnchor),
-            addIcon.centerYAnchor.constraint(equalTo:addContainer.centerYAnchor),
-            addIcon.widthAnchor.constraint(equalToConstant: 50),
-            addIcon.heightAnchor.constraint(equalToConstant: 50),
-        ])
-        NSLayoutConstraint.activate([
-            codeContainer.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor, constant: -5),
-            codeContainer.leftAnchor.constraint(equalTo:viewContainer.centerXAnchor, constant: 5),
-            codeContainer.rightAnchor.constraint(equalTo:viewContainer.rightAnchor, constant: -5),
-            codeContainer.heightAnchor.constraint(equalToConstant: 100),
-        ])
-        NSLayoutConstraint.activate([
-            codeIcon.centerXAnchor.constraint(equalTo:codeContainer.centerXAnchor),
-            codeIcon.centerYAnchor.constraint(equalTo:codeContainer.centerYAnchor),
-            codeIcon.widthAnchor.constraint(equalToConstant: 50),
-            codeIcon.heightAnchor.constraint(equalToConstant: 50),
-        ])
-        NSLayoutConstraint.activate([
             groupTableView.topAnchor.constraint(equalTo:viewContainer.topAnchor),
             groupTableView.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
             groupTableView.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
-            groupTableView.bottomAnchor.constraint(equalTo:addContainer.topAnchor, constant: -5),
+            groupTableView.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor),
         ])
         NSLayoutConstraint.activate([
             groupTableViewSpinner.centerXAnchor.constraint(equalTo:groupTableView.centerXAnchor, constant: 0),
@@ -137,38 +108,6 @@ class GroupView: UIViewController {
         viewContainer.backgroundColor = Settings.Theme.Color.background
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(viewContainer)
-        
-        addContainer = UIView()
-        addContainer.backgroundColor = Settings.Theme.Color.contentBackground
-        addContainer.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(addContainer)
-        
-        let addContainerGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(addGroup))
-        addContainerGestureRecognizer.numberOfTapsRequired = 1
-        addContainer.addGestureRecognizer(addContainerGestureRecognizer)
-        
-        addIcon = UIImageView()
-        addIcon.image = UIImage(systemName: "plus.square.fill")
-        addIcon.contentMode = UIView.ContentMode.scaleAspectFit
-        addIcon.clipsToBounds = true
-        addIcon.translatesAutoresizingMaskIntoConstraints = false
-        addContainer.addSubview(addIcon)
-        
-        codeContainer = UIView()
-        codeContainer.backgroundColor = Settings.Theme.Color.contentBackground
-        codeContainer.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(codeContainer)
-        
-        let codeContainerGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(joinGroup))
-        codeContainerGestureRecognizer.numberOfTapsRequired = 1
-        codeContainer.addGestureRecognizer(codeContainerGestureRecognizer)
-        
-        codeIcon = UIImageView()
-        codeIcon.image = UIImage(systemName: "plus.magnifyingglass")
-        codeIcon.contentMode = UIView.ContentMode.scaleAspectFit
-        codeIcon.clipsToBounds = true
-        codeIcon.translatesAutoresizingMaskIntoConstraints = false
-        codeContainer.addSubview(codeIcon)
         
         groupTableView = UITableView()
         groupTableView.dataSource = self

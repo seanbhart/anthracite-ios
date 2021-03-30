@@ -8,13 +8,12 @@
 import UIKit
 import FirebaseAuth
 
-extension GroupView: GroupRepositoryDelegate {
+extension GroupListView: GroupRepositoryDelegate {
     
     // MARK: -REPOSITORY METHODS
     
     func groupDataUpdate(loadGroupId: String?) {
         guard let groupRepo = groupRepository else { return }
-        localUnreadGroups.removeAll()
         localGroups.removeAll()
         // Find all groups where the current user's last activity was
         // earlier than the group's last activity. Assume unread if null values.
