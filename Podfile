@@ -15,6 +15,7 @@ target 'Gandalf' do
   pod 'Firebase/Messaging'
   pod 'FirebaseFirestoreSwift', '7.4-beta'
   
+  pod 'Charts'
 #  pod 'SideMenu'
 #  pod 'SideMenuSwift'
 

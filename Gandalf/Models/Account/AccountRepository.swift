@@ -11,105 +11,98 @@ import FirebaseFirestore
 protocol AccountRepositoryDelegate {
     func accountDataUpdate()
     func requestError(title: String, message: String)
-    func notSignedIn()
+    func showLogin()
 }
 
 class AccountRepository {
     var className = "AccountRepository"
     
     var delegate: AccountRepositoryDelegate?
-    var accountId: String!
     var account: Account?
+    
+    fileprivate var docRef: DocumentReference? {
+        didSet {
+            if let listener = listener {
+                listener.remove()
+                observeDoc()
+            }
+        }
+    }
     
     init?() {
         guard let firUser = Settings.Firebase.auth().currentUser else { return nil }
-        accountId = firUser.uid
+        docRef = Settings.Firebase.db()
+            .collection("accounts")
+            .document(firUser.uid)
     }
     
-    func getAccount() {
-        print("\(self.className) - getAccount: \(accountId)")
-        Settings.Firebase.db().collection("accounts").document(accountId)
-            .getDocument(completion: { (snapshot, error) in
-                if let err = error {
-                    print("\(self.className) - GET ACCOUNT ERROR: \(err)")
-                    if let parent = self.delegate { parent.notSignedIn() }
-                    return
-                }
-                
-                guard let snapshot = snapshot else {
-                    print("\(self.className) snapshot error: \(error!)")
-                    if let parent = self.delegate { parent.notSignedIn() }
-                    return
-                }
-//                print("\(self.className) - snapshot data: \(snapshot.data())")
-                if let account = try? snapshot.data(as: Account.self) {
-                    self.account = account
-                    
-                    // Now get the private subcollections for this account
-                    Settings.Firebase.db().collection("accounts").document(self.accountId).collection("private")
-                        .getDocuments(completion: { (pSnapshot, error) in
-                            if let err = error {
-                                print("\(self.className) - GET ACCOUNT PRIVATE ERROR: \(err)")
-                                if let parent = self.delegate {
-                                    parent.accountDataUpdate()
-                                }
-                            } else {
-                                guard let pSnapshot = pSnapshot else { print("\(self.className) private snapshot error: \(error!)"); return }
-                                for p in pSnapshot.documents {
-//                                    print("\(self.className) - private account document: \(p.documentID): \(p.data())")
-                                    switch p.documentID {
-                                    case "metadata":
-                                        if let metadata = try? p.data(as: AccountMetadata.self) {
-                                            self.account?.metadata = metadata
-                                        }
-                                    case "pii":
-                                        if let pii = try? p.data(as: AccountPii.self) {
-                                            self.account?.pii = pii
-                                        }
-                                    case "settings":
-                                        if let settings = try? p.data(as: AccountSettings.self) {
-                                            self.account?.settings = settings
-                                        }
-                                    default:
-                                        print("\(self.className) - ERROR unknown private account document: \(p.documentID)")
-                                    }
-                                }
-                                
-                                if let parent = self.delegate {
-                                    parent.accountDataUpdate()
-                                }
-                            }
-                        })
-                } else {
-                    print("\(self.className) create Account object error")
-                    if let parent = self.delegate { parent.notSignedIn() }
-                }
-            })
+    private var listener: ListenerRegistration?
+    
+    func observeDoc() {
+        guard let docRef = docRef else { return }
+        stopObserving()
+        
+        listener = docRef.addSnapshotListener { [unowned self] (snapshot, error) in
+            if let err = error {
+                print("\(self.className) - LISTENER ERROR: \(err)")
+                if let parent = self.delegate { parent.showLogin() }
+                return
+            }
+            
+            guard let snapshot = snapshot else {
+                print("\(self.className) snapshot error: \(error!)")
+                if let parent = self.delegate { parent.showLogin() }
+                return
+            }
+            
+            print("\(self.className) - snapshot data: \(snapshot.data())")
+            if let account = try? snapshot.data(as: Account.self) {
+                self.account = account
+            } else {
+                print("\(self.className) create Account object error")
+                if let parent = self.delegate { parent.showLogin() }
+            }
+        }
+    }
+    
+    func stopObserving() {
+        print("\(className): stopObserving")
+        listener?.remove()
     }
     
     // All necessary auth steps when signing out
     func signOut() {
+//        guard let acct = account else { return }
+//        guard let accountId = acct.id else { return }
         
-        // Remove the messaging cert to prevent messages being sent to this device
-        Settings.Firebase.db().collection("accounts").document(accountId!).collection("private").document("metadata").setData([
-            "messaging_token": "",
-            "messaging_token_updated": Date().timeIntervalSince1970,
-        ], merge: true) { err in
-            if let err = err {
-                print("\(self.className) - FIREBASE: ERROR updating token: \(err)")
-            } else {
-                print("\(self.className) - FIREBASE: updated token")
-            }
-        }
+//        // Remove the messaging cert to prevent messages being sent to this device
+//        Settings.Firebase.db()
+//            .collection("tokens")
+//            .document()
+//            .setData([
+//                "account": accountId,
+//                "type": "messaging",
+//                "token": "",
+//                "updated": Date().timeIntervalSince1970,
+//            ]) { err in
+//                if let err = err {
+//                    print("\(self.className) - FIREBASE: ERROR updating token: \(err)")
+//                } else {
+//                    print("\(self.className) - FIREBASE: updated token")
+//                }
+//            }
         
         // Clear local data
-        accountId = ""
         account = nil
     }
     
     func setUserName(username: String) {
+        guard let acct = account else { return }
+        guard let accountId = acct.id else { return }
+        
         // Check whether the username is already in use
-        Settings.Firebase.db().collection("accounts")
+        Settings.Firebase.db()
+            .collection("usernames")
             .whereField("username", in: [username])
             .getDocuments(completion: { (snapshot, error) in
                 if let err = error { print("\(self.className) - FIRESTORE GET ERROR: \(err)") }
@@ -123,29 +116,32 @@ class AccountRepository {
                 } else {
                     
                     // The username does not exist, change the username
-                    Settings.Firebase.db().collection("accounts").document(self.accountId!).setData([
-                        "username": username,
-                    ], merge: true) { err in
-                        if let err = err {
-                            print("\(self.className) - FIREBASE: ERROR updating display name: \(err)")
-                            if let parent = self.delegate {
-                                parent.requestError(title: "We messed up!", message: "We're sorry, there was a problem updating your name. Please try again.")
+                    Settings.Firebase.db()
+                        .collection("usernames")
+                        .document(accountId).setData([
+                            "username": username,
+                        ], merge: true) { err in
+                            if let err = err {
+                                print("\(self.className) - FIREBASE: ERROR updating display name: \(err)")
+                                if let parent = self.delegate {
+                                    parent.requestError(title: "We messed up!", message: "We're sorry, there was a problem updating your name. Please try again.")
+                                }
+                            } else {
+                                print("\(self.className) - FIREBASE: display name successfully updated")
                             }
-                        } else {
-                            print("\(self.className) - FIREBASE: display name successfully updated")
-                            // Refresh the data
-                            self.getAccount()
                         }
-                    }
                     
                 }
             })
     }
     
     func getGroupCount() {
+        guard let acct = account else { return }
+        guard let accountId = acct.id else { return }
+        
         Settings.Firebase.db().collection("group")
             .whereField("status", isEqualTo: 1)
-            .whereField("members", arrayContains: accountId!)
+            .whereField("members", arrayContains: accountId)
             .getDocuments(completion: { (snapshot, error) in
                 if let err = error { print("\(self.className) - FIRESTORE GET ERROR: \(err)") }
                 guard let snapshot = snapshot else { print("\(self.className) snapshot error: \(error!)"); return }
@@ -159,15 +155,21 @@ class AccountRepository {
     }
     
     func addTutorialViewFor(view: String) {
-        Settings.Firebase.db().collection("accounts").document(accountId!).collection("private").document("metadata").setData([
-            "tutorials": FieldValue.arrayUnion([Settings.currentTutorial + "-" + view]),
-        ], merge: true) { err in
-            if let err = err {
-                print("\(self.className) - FIREBASE: ERROR adding tutorial view: \(err)")
-            } else {
-                print("\(self.className) - FIREBASE: added tutorial view")
+        guard let acct = account else { return }
+        guard let accountId = acct.id else { return }
+        
+        Settings.Firebase.db()
+            .collection("accounts")
+            .document(accountId)
+            .setData([
+                "tutorials": FieldValue.arrayUnion([Settings.currentTutorial + "-" + view]),
+            ], merge: true) { err in
+                if let err = err {
+                    print("\(self.className) - FIREBASE: ERROR adding tutorial view: \(err)")
+                } else {
+                    print("\(self.className) - FIREBASE: added tutorial view")
+                }
             }
-        }
     }
     
 //    func updateImageUrl(url: String) {

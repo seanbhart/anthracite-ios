@@ -12,12 +12,17 @@ import UIKit
 //import FirebaseAnalytics
 import FirebaseAuth
 import FirebaseStorage
+import Charts
 
-class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDelegate {
+class AccountView: UIViewController, ImagePickerDelegate, ChartViewDelegate, AccountRepositoryDelegate, ShadowRepositoryDelegate, ShadowPositionRepositoryDelegate {
     let className = "AccountView"
     
     var tabBarViewDelegate: TabBarViewDelegate!
     var accountRepository: AccountRepository?
+    
+    var shadows = [Shadow]()
+    var shadowRepository: ShadowRepository?
+    var shadowPositionRepository: ShadowPositionRepository?
     // Unhashed nonce - handle locally (not in Account) for security
     fileprivate var currentNonce: String?
     var controller: ASAuthorizationController!
@@ -31,8 +36,17 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     var usernameContainer: UIView!
     var usernameEditIcon: UIImageView!
     var usernameLabel: UILabel!
+    var chartView: PieChartView!
+    
     var signOutButton: UILabel!
     var signOutButtonTapGestureRecognizer: UITapGestureRecognizer!
+    
+    private var observer: NSObjectProtocol?
+    deinit {
+        if let observer = observer {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,13 +54,28 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         self.navigationItem.title = ""
         self.navigationItem.hidesBackButton = true
         
-        let barItemLogo = UIButton(type: .custom)
-        barItemLogo.setImage(UIImage(named: Assets.Images.logotypeLg), for: .normal)
-        NSLayoutConstraint.activate([
-            barItemLogo.widthAnchor.constraint(equalToConstant:110),
-            barItemLogo.heightAnchor.constraint(equalToConstant:20),
-        ])
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
+//        let barItemLogo = UIButton(type: .custom)
+//        barItemLogo.setImage(UIImage(named: Assets.Images.logotypeLg), for: .normal)
+//        NSLayoutConstraint.activate([
+//            barItemLogo.widthAnchor.constraint(equalToConstant:110),
+//            barItemLogo.heightAnchor.constraint(equalToConstant:20),
+//        ])
+//        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
+        
+        observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
+            print("\(className) - willEnterForegroundNotification")
+            guard let shadowRepo = shadowRepository else { return }
+            guard let shadowPositionRepo = shadowPositionRepository else { return }
+            shadowRepo.observeQuery()
+            shadowPositionRepo.observeQuery()
+        }
+        observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
+            print("\(className) - didEnterBackgroundNotification")
+            guard let shadowRepo = shadowRepository else { return }
+            guard let shadowPositionRepo = shadowPositionRepository else { return }
+            shadowRepo.stopObserving()
+            shadowPositionRepo.stopObserving()
+        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -57,21 +86,29 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
 //        layoutAccountComponents()
         
         // Get the Account via the AccountRepo
-        if let accountRepo = accountRepository {
-            accountRepo.getAccount()
-        } else {
-            // If the AccountRepo is null, create a new one
-            // be sure to assign the delegate to receive callbacks
+        if accountRepository == nil {
             if let accountRepo = AccountRepository() {
                 accountRepository = accountRepo
                 accountRepository!.delegate = self
-                accountRepository!.getAccount()
             } else {
                 // If getting the account failed, the user
                 // is not logged in - show the login view
                 showSignIn()
             }
         }
+        accountRepository!.observeDoc()
+        
+        if shadowRepository == nil {
+            shadowRepository = ShadowRepository()
+            shadowRepository!.delegate = self
+        }
+        shadowRepository!.observeQuery()
+        
+        if shadowPositionRepository == nil {
+            shadowPositionRepository = ShadowPositionRepository()
+            shadowPositionRepository!.delegate = self
+        }
+        shadowPositionRepository!.observeQuery()
     }
     
 //    override func viewWillDisappear(_ animated: Bool) {
@@ -134,7 +171,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         usernameContainer.addSubview(usernameEditIcon)
         
         usernameLabel = UILabel()
-        usernameLabel.font = UIFont(name: Assets.Fonts.Default.light, size: 20)
+        usernameLabel.font = UIFont(name: Assets.Fonts.Default.light, size: 30)
         usernameLabel.textColor = Settings.Theme.Color.text
         usernameLabel.textAlignment = NSTextAlignment.left
         usernameLabel.numberOfLines = 1
@@ -144,9 +181,8 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         usernameContainer.addSubview(usernameLabel)
         
         signOutButton = UILabel()
-        signOutButton.backgroundColor = Settings.Theme.Color.grayDark
-        signOutButton.font = UIFont(name: Assets.Fonts.Default.bold, size: 20)
-        signOutButton.textColor = Settings.Theme.Color.textGrayUltraDark
+        signOutButton.font = UIFont(name: Assets.Fonts.Default.regular, size: 14)
+        signOutButton.textColor = Settings.Theme.Color.textGrayMedium
         signOutButton.textAlignment = NSTextAlignment.center
         signOutButton.numberOfLines = 1
         signOutButton.text = "Sign Out"
@@ -156,7 +192,15 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         
         signOutButtonTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(AccountView.signOutTap(_:)))
         signOutButtonTapGestureRecognizer.numberOfTapsRequired = 1  // add single tap
-        viewContainer.addGestureRecognizer(signOutButtonTapGestureRecognizer)
+        signOutButton.addGestureRecognizer(signOutButtonTapGestureRecognizer)
+        
+        chartView = PieChartView()
+        chartView.delegate = self
+//        chartView.backgroundColor = Settings.Theme.Color.grayLight
+        chartView.legend.textColor = Settings.Theme.Color.textGrayUltraDark
+        chartView.isUserInteractionEnabled = true
+        chartView.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(chartView)
     }
     
     override func didReceiveMemoryWarning() {
@@ -189,7 +233,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
             viewContainer.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
         ])
         NSLayoutConstraint.activate([
-            accountImage.topAnchor.constraint(equalTo:viewContainer.topAnchor, constant: 100),
+            accountImage.topAnchor.constraint(equalTo:viewContainer.topAnchor, constant: 20),
             accountImage.centerXAnchor.constraint(equalTo:viewContainer.centerXAnchor),
             accountImage.heightAnchor.constraint(equalToConstant: 100),
             accountImage.widthAnchor.constraint(equalToConstant: 100),
@@ -198,7 +242,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
             usernameContainer.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
             usernameContainer.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
             usernameContainer.topAnchor.constraint(equalTo:accountImage.bottomAnchor, constant: 20),
-            usernameContainer.heightAnchor.constraint(equalToConstant:50),
+            usernameContainer.heightAnchor.constraint(equalToConstant:60),
         ])
         NSLayoutConstraint.activate([
             usernameLabel.centerXAnchor.constraint(equalTo:usernameContainer.centerXAnchor),
@@ -206,17 +250,24 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
             usernameLabel.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor, constant: -10),
         ])
         NSLayoutConstraint.activate([
-            usernameEditIcon.topAnchor.constraint(equalTo:usernameContainer.topAnchor, constant: 10),
-            usernameEditIcon.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor, constant: -10),
+            usernameEditIcon.topAnchor.constraint(equalTo:usernameContainer.topAnchor, constant: 15),
+            usernameEditIcon.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor, constant: -15),
             usernameEditIcon.rightAnchor.constraint(equalTo:usernameLabel.leftAnchor, constant: -10),
-            usernameEditIcon.widthAnchor.constraint(equalToConstant: 20),
+            usernameEditIcon.widthAnchor.constraint(equalToConstant: 30),
         ])
-        
         NSLayoutConstraint.activate([
-            signOutButton.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor, constant: -100),
+            signOutButton.topAnchor.constraint(equalTo:usernameContainer.bottomAnchor, constant: 10),
             signOutButton.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
             signOutButton.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
-            signOutButton.heightAnchor.constraint(equalToConstant:100),
+            signOutButton.heightAnchor.constraint(equalToConstant:40),
+        ])
+        
+        let chartSize = viewContainer.frame.width > 400 ? 380 : viewContainer.frame.width > 20 ? viewContainer.frame.width - 20 : 300
+        NSLayoutConstraint.activate([
+            chartView.topAnchor.constraint(equalTo: signOutButton.bottomAnchor, constant: 30),
+            chartView.centerXAnchor.constraint(equalTo: viewContainer.centerXAnchor),
+            chartView.widthAnchor.constraint(equalToConstant: chartSize),
+            chartView.heightAnchor.constraint(equalToConstant: chartSize),
         ])
         
         getAccountImage()
@@ -254,7 +305,6 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
             guard let username = textField.text else { return }
             if username.count > 0 {
                 accountRepo.setUserName(username: username)
-                accountRepo.getAccount()
             }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -287,17 +337,59 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     }
     
     
+    // MARK: -CHARTS
+    
+    func updateChartData(shadow: Shadow) {
+        print("\(className) - updateChartData")
+        var cumulativePerc = 0.0
+        var entries = shadow.positions.map { position -> PieChartDataEntry in
+            cumulativePerc += position.perc ?? 0.0
+            return PieChartDataEntry(value: (position.perc ?? 0.0) * 100,
+                                     label: position.symbol ?? "",
+                                     icon: nil)
+        }
+        if cumulativePerc < 1 {
+            let otherEntry = PieChartDataEntry(value: (1 - cumulativePerc) * 100,
+                                               label: "other",
+                                               icon: nil)
+            entries.append(otherEntry)
+        }
+        
+        let set = PieChartDataSet(entries: entries, label: shadow.target)
+        set.drawIconsEnabled = false
+        set.sliceSpace = 2
+        
+        set.colors = ChartColorTemplates.material()
+        let data = PieChartData(dataSet: set)
+        
+        let pFormatter = NumberFormatter()
+        pFormatter.numberStyle = .percent
+        pFormatter.maximumFractionDigits = 1
+        pFormatter.multiplier = 1
+        pFormatter.percentSymbol = " %"
+        data.setValueFormatter(DefaultValueFormatter(formatter: pFormatter))
+        
+        data.setValueFont(.systemFont(ofSize: 11, weight: .light))
+        data.setValueTextColor(.black)
+        
+        chartView.data = data
+        chartView.notifyDataSetChanged()
+    }
+    
+    
     // MARK: -IMAGE PICKER METHODS
     
     func didSelect(image: UIImage?) {
         guard let img = image else { self.showUploadImageErrorAlert(); return }
         guard let accountRepo = accountRepository else { self.showUploadImageErrorAlert(); return }
+        guard let account = accountRepo.account else {  self.showUploadImageErrorAlert(); return }
+        guard let accountId = account.id else {  self.showUploadImageErrorAlert(); return }
         // Add to the local imageview
         accountImage.image = img
         
         // Upload to storage for the large sized image
         guard let imgLarge = img.resizeWithWidth(width: 500) else { self.showUploadImageErrorAlert(); return }
-        let storageRef = Storage.storage().reference().child(accountRepo.accountId + ".png")
+        let storageRef = Storage.storage().reference().child(accountId + ".png")
         if let uploadData = imgLarge.pngData() {
             storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                 if error != nil { self.showUploadImageErrorAlert(); return }
@@ -306,7 +398,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         
         // Reduce the image size (for messages) and upload to storage
         guard let imgSmall = img.resizeWithWidth(width: 30) else { self.showUploadImageErrorAlert(); return }
-        let storageRefSmall = Storage.storage().reference().child(accountRepo.accountId + "-small.png")
+        let storageRefSmall = Storage.storage().reference().child(accountId + "-small.png")
         if let uploadData = imgSmall.pngData() {
             storageRefSmall.putData(uploadData, metadata: nil) { (metadata, error) in
                 if error != nil { self.showUploadImageErrorAlert(); return }
@@ -326,27 +418,21 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     
     func accountDataUpdate() {
         print("\(className) - accountDataUpdate")
-        guard let accountRepo = accountRepository else { return }
-        if let account = accountRepo.account {
-            // If the username is empty, use the known account name
-            if let username = account.username {
-                usernameLabel.text = username
-            } else {
-                if let pii = account.pii {
-                    let given = pii.name_given ?? "anonymous"
-                    let family = pii.name_family ?? ""
-                    usernameLabel.text = given + " " + family
-                } else {
-                    usernameLabel.text = "anonymous"
-                }
-            }
-            usernameLabel.sizeToFit()
-            usernameLabel.layoutIfNeeded()
-            layoutAccountComponents()
-            
-            // Show the account info if the user is signed in
-            self.hideSignIn()
+        guard let accountRepo = accountRepository else { self.showUploadImageErrorAlert(); return }
+        guard let account = accountRepo.account else {  self.showUploadImageErrorAlert(); return }
+        
+        // If the username is empty, use the known account name
+        if let username = account.username {
+            usernameLabel.text = username
+        } else {
+            usernameLabel.text = account.name ?? "anonymous"
         }
+        usernameLabel.sizeToFit()
+        usernameLabel.layoutIfNeeded()
+        layoutAccountComponents()
+        
+        // Show the account info if the user is signed in
+        self.hideSignIn()
     }
     
     func requestError(title: String, message: String) {
@@ -355,8 +441,41 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         self.present(alert, animated: true)
     }
     
-    func notSignedIn() {
+    func showLogin() {
         showSignIn()
+    }
+    
+    func shadowsDataUpdate() {
+        print("\(className) - shadowsDataUpdate")
+        updateShadowPositions()
+    }
+    
+    func shadowPositionsDataUpdate() {
+        print("\(className) - shadowPositionsDataUpdate")
+        updateShadowPositions()
+    }
+    
+    func updateShadowPositions() {
+        if shadowPositionRepository?.shadowPositions.count == 0 { return }
+        
+        // Fill the shadow position array with shadow positions.
+        let newShadows = shadowRepository?.shadows.map { shadow -> Shadow in
+            var newShadow = shadow
+            newShadow.positions = shadowPositionRepository?.shadowPositions.compactMap { shadowPosition -> ShadowPosition? in
+                if shadowPosition.shadow == shadow.id { return shadowPosition }
+                return nil
+            } ?? []
+            return newShadow
+        } ?? []
+        
+        if newShadows.count > 0 {
+            shadows.removeAll()
+            shadows = newShadows
+        }
+        
+        if shadows.count > 0 {
+            updateChartData(shadow: shadows[0])
+        }
     }
     
     
@@ -364,7 +483,10 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     
     func getAccountImage() {
         guard let accountRepo = accountRepository else { return }
-        let imageRef = Storage.storage().reference().child(accountRepo.accountId + ".png")
+        guard let account = accountRepo.account else { return }
+        guard let accountId = account.id else { return }
+        
+        let imageRef = Storage.storage().reference().child(accountId + ".png")
         imageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
             if error != nil { return }
             guard let imgData = data else { return }
@@ -551,98 +673,73 @@ extension AccountView: ASAuthorizationControllerDelegate, ASAuthorizationControl
 //            self.id = result.user.uid
             
             // 4: Check whether the Account already exists
-            Settings.Firebase.db().collection("accounts").document(result.user.uid).getDocument { (document, error) in
-//                guard error != nil else {
-//                    completion(nil,error)
-//                    return
-//                }
+            Settings.Firebase.db()
+                .collection("accounts")
+                .document(result.user.uid)
+                .getDocument { (document, error) in
+                    if let err = error {
+                        completion(nil,err)
+                        return
+                    }
                 
-                if let document = document, document.exists {
-                    guard let data = document.data() as NSDictionary? else {
-                        completion(nil,NSError(domain: "Firestore Result nil", code: NSCoderValueNotFoundError, userInfo: nil))
-                        return
-                    }
-                    // 5a: If the Account status is 0, it is blocked, otherwise, allow access
-                    guard let accountStatus = data["status"] as? Int else {
-                        completion(nil,NSError(domain: "Firestore Account Status nil", code: NSCoderValueNotFoundError, userInfo: nil))
-                        return
-                    }
-                    print("\(self.className) - ACCOUNT STATUS: \(accountStatus)")
-                    if accountStatus == 0 {
-                        // Account is blocked - do not sign in or create a new account
-                        completion(nil,NSError(domain: "Firestore Account Status = 0", code: NSCoderValueNotFoundError, userInfo: nil))
+                    if let document = document, document.exists {
+                        guard let data = document.data() as NSDictionary? else {
+                            completion(nil,NSError(domain: "Firestore Result nil", code: NSCoderValueNotFoundError, userInfo: nil))
+                            return
+                        }
+                        // 5a: If the Account status is 0, it is blocked, otherwise, allow access
+                        guard let accountStatus = data["status"] as? Int else {
+                            completion(nil,NSError(domain: "Firestore Account Status nil", code: NSCoderValueNotFoundError, userInfo: nil))
+                            return
+                        }
+                        print("\(self.className) - ACCOUNT STATUS: \(accountStatus)")
+                        if accountStatus == 0 {
+                            // Account is blocked - do not sign in or create a new account
+                            completion(nil,NSError(domain: "Firestore Account Status = 0", code: NSCoderValueNotFoundError, userInfo: nil))
+                            return
+                            
+                        }
+    //                    Analytics.logEvent(AnalyticsEventLogin, parameters: [
+    //                        AnalyticsParameterMethod: "apple.com"
+    //                    ])
+                        // The Account already exists, so no need to add data
+                        completion("Sign In Complete", nil)
                         return
                         
-                    }
-//                    Analytics.logEvent(AnalyticsEventLogin, parameters: [
-//                        AnalyticsParameterMethod: "apple.com"
-//                    ])
-                    // The Account already exists, so no need to add data
-                    completion("Sign In Complete", nil)
-                    return
-                    
-                } else {
-                    // 5b: The Account does not exist, so add data for the new Account
-                    // Update the Firebase User to store the desired displayName for the Account (given name only)
-                    let changeRequest = Settings.Firebase.auth().currentUser?.createProfileChangeRequest()
-                    changeRequest?.displayName = givenName
-                    changeRequest?.commitChanges { (error) in
-                        if let err = error {
-                            print("\(self.className) - FIREBASE changeRequest ERROR: \(String(describing: err.localizedDescription))")
+                    } else {
+                        // 5b: The Account does not exist, so add data for the new Account
+                        // Update the Firebase User to store the desired displayName for the Account (given name only)
+                        let changeRequest = Settings.Firebase.auth().currentUser?.createProfileChangeRequest()
+                        changeRequest?.displayName = givenName
+                        changeRequest?.commitChanges { (error) in
+                            if let err = error {
+                                print("\(self.className) - FIREBASE changeRequest ERROR: \(String(describing: err.localizedDescription))")
+                            }
                         }
-                    }
 
-                    // Create the Account entry with needed info
-                    let accountCreationTimestamp = NSNumber(value: Date().timeIntervalSince1970)
-                    Settings.Firebase.db().collection("accounts").document(result.user.uid).setData([
-                        "status": NSNumber(value: 1),
-                        "username": "anonymous"
-                    ], merge: true) { err in
-                        if let err = err {
-                            print("\(self.className) - FIREBASE: ERROR creating account: \(err)")
-                        } else {
-                            print("\(self.className) - FIREBASE: account created")
-                            
-                            Settings.Firebase.db().collection("accounts").document(result.user.uid).collection("private").document("metadata").setData([
-                                "created": accountCreationTimestamp
+                        // Create the Account entry with needed info
+                        let accountCreationTimestamp = NSNumber(value: Date().timeIntervalSince1970)
+                        Settings.Firebase.db()
+                            .collection("accounts")
+                            .document(result.user.uid)
+                            .setData([
+                                "status": NSNumber(value: 1),
+                                "username": "anonymous",
+                                "created": accountCreationTimestamp,
+                                "email": email,
+                                "name": givenName + " " + familyName,
+                                "name_family": familyName,
+                                "name_given": givenName,
                             ], merge: true) { err in
                                 if let err = err {
                                     print("\(self.className) - FIREBASE: ERROR creating account: \(err)")
                                 } else {
-                                    print("\(self.className) - FIREBASE: metadata added")
-                                    
-                                    Settings.Firebase.db().collection("accounts").document(result.user.uid).collection("private").document("pii").setData([
-                                        "email": email,
-                                        "name_family": familyName,
-                                        "name_given": givenName,
-                                    ], merge: true) { err in
-                                        if let err = err {
-                                            print("\(self.className) - FIREBASE: ERROR creating account: \(err)")
-                                        } else {
-                                            print("\(self.className) - FIREBASE: pii added")
-                                            
-                                            Settings.Firebase.db().collection("accounts").document(result.user.uid).collection("private").document("settings").setData([
-                                                "anonymous": false,
-                                                "filter": true,
-                                            ], merge: true) { err in
-                                                if let err = err {
-                                                    print("\(self.className) - FIREBASE: ERROR creating account: \(err)")
-                                                } else {
-                                                    print("\(self.className) - FIREBASE: settings added")
-                                                    
-                                                    completion("Create Account Complete", nil)
-                                                    return
-                                                }
-                                            }
-                                        }
-                                    }
+                                    print("\(self.className) - FIREBASE: account created")
                                 }
                             }
-                        }
+                            // END creating account
                     }
-                    // END creating account
-                }
-                // END doc exists check
+                    // END doc exists check
             }
             // END request account to check for current account
         }

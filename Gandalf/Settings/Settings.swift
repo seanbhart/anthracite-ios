@@ -16,9 +16,8 @@ struct Settings {
     static let currentTutorial = "v1.0.0"
     
     struct Tabs {
-        static let notionVcIndex = 0
-        static let groupVcIndex = 1
-        static let accountVcIndex = 2
+        static let portfolioVcIndex = 0
+        static let accountVcIndex = 1
     }
     
     static var inBackground = false

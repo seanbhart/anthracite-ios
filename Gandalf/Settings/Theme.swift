@@ -17,18 +17,21 @@ extension Settings {
 //    Light Pink - #fc0080 = 252, 0, 126
     
     struct Theme {
-        static let barStyle: UIBarStyle = .black
+        static let barStyle: UIBarStyle = .default
         
         struct Color {
             static let primary = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
-            static let barColor = UIColor.black
+            static let barColor = UIColor.white
+//            static let barText = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
             static let barText = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
-            static let header = UIColor.black
-            static let background = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
-            static let contentBackground = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
-            static let contentBackgroundLight = UIColor(red: 67/255, green: 75/255, blue: 83/255, alpha: 1.0) //#434B53
+            static let header = UIColor.white
+            static let background =  UIColor.white
+            static let contentBackground =  UIColor.white
+//            static let background = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
+//            static let contentBackground = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
+//            static let contentBackgroundLight = UIColor(red: 67/255, green: 75/255, blue: 83/255, alpha: 1.0) //#434B53
             static let selected = UIColor(red: 58/255, green: 58/255, blue: 58/255, alpha: 1.0) //#3A3A3A
-            static let text = UIColor.white
+            static let text = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
             static let textGrayLight = UIColor(red: 141/255, green: 153/255, blue: 174/255, alpha: 1.0) //#8D99AE
             static let textGrayMedium = UIColor(red: 112/255, green: 122/255, blue: 139/255, alpha: 1.0) //#707A8B
             static let textGrayDark = UIColor(red: 55/255, green: 58/255, blue: 62/255, alpha: 1.0) //#373A3E

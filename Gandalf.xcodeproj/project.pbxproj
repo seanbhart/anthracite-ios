@@ -25,28 +25,13 @@
 		B80E051325C742FD009DBE34 /* STARS-PURPLE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B80E051225C742FD009DBE34 /* STARS-PURPLE-LG.png */; };
 		B80E051725C7499C009DBE34 /* HAT-PURPLE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B80E051625C7499C009DBE34 /* HAT-PURPLE-LG.png */; };
 		B80E053425C76D08009DBE34 /* HoleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E053325C76D08009DBE34 /* HoleView.swift */; };
-		B80E053725C83DFE009DBE34 /* NotionAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E053625C83DFE009DBE34 /* NotionAction.swift */; };
-		B80E053A25C8403B009DBE34 /* NotionActionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E053925C8403B009DBE34 /* NotionActionRepository.swift */; };
-		B80E056925C8C508009DBE34 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E056825C8C507009DBE34 /* MessageView.swift */; };
-		B80E056D25C9A207009DBE34 /* MessageInputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E056C25C9A207009DBE34 /* MessageInputCell.swift */; };
-		B80E057025C9B96C009DBE34 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E056F25C9B96C009DBE34 /* Message.swift */; };
-		B80E057325C9BC10009DBE34 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E057225C9BC10009DBE34 /* Group.swift */; };
-		B80E057625C9BC44009DBE34 /* GroupRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E057525C9BC44009DBE34 /* GroupRepository.swift */; };
-		B80E057A25C9C1AA009DBE34 /* MessageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E057925C9C1AA009DBE34 /* MessageRepository.swift */; };
-		B80E057D25C9C3E7009DBE34 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E057C25C9C3E7009DBE34 /* MessageCell.swift */; };
-		B85BC62825CA18F7003FCA6C /* MessageTickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85BC62725CA18F7003FCA6C /* MessageTickerCell.swift */; };
 		B873503B25C256320007A8FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503A25C256320007A8FE /* AppDelegate.swift */; };
 		B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503C25C256320007A8FE /* SceneDelegate.swift */; };
 		B873504125C256330007A8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504025C256330007A8FE /* Assets.xcassets */; };
 		B873504425C256330007A8FE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504325C256330007A8FE /* Preview Assets.xcassets */; };
 		B873504725C256330007A8FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B873504525C256330007A8FE /* LaunchScreen.storyboard */; };
 		B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507D25C258BC0007A8FE /* ViewExtensions.swift */; };
-		B873508425C258BE0007A8FE /* NotionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507E25C258BD0007A8FE /* NotionView.swift */; };
-		B873508525C258BE0007A8FE /* NotionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873507F25C258BD0007A8FE /* NotionCell.swift */; };
-		B873508625C258BE0007A8FE /* NotionTickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873508025C258BD0007A8FE /* NotionTickerCell.swift */; };
 		B873508725C258BE0007A8FE /* CustomProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873508125C258BE0007A8FE /* CustomProgressView.swift */; };
-		B873508B25C258C50007A8FE /* NotionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873508925C258C50007A8FE /* NotionRepository.swift */; };
-		B873508C25C258C50007A8FE /* Notion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873508A25C258C50007A8FE /* Notion.swift */; };
 		B873508F25C258CF0007A8FE /* LocalCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873508E25C258CF0007A8FE /* LocalCollection.swift */; };
 		B873509325C258D60007A8FE /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873509125C258D60007A8FE /* Theme.swift */; };
 		B873509425C258D60007A8FE /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873509225C258D60007A8FE /* Settings.swift */; };
@@ -66,20 +51,21 @@
 		B87350B825C2A2D00007A8FE /* Ticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87350B725C2A2D00007A8FE /* Ticker.swift */; };
 		B87350C025C322FE0007A8FE /* STARS-WHITE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BE25C322FE0007A8FE /* STARS-WHITE-LG.png */; };
 		B87350C125C322FE0007A8FE /* STARS-BLUE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B87350BF25C322FE0007A8FE /* STARS-BLUE-LG.png */; };
-		B88BE59325DB4A2D00AA1B75 /* Trade.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88BE59225DB4A2D00AA1B75 /* Trade.swift */; };
-		B88BE59625DB4B1E00AA1B75 /* TradeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88BE59525DB4B1E00AA1B75 /* TradeRepository.swift */; };
 		B89B79F525CB9F4F00531E9E /* LOGOTYPE.png in Resources */ = {isa = PBXBuildFile; fileRef = B89B79F325CB9F4F00531E9E /* LOGOTYPE.png */; };
 		B89B79F625CB9F4F00531E9E /* LOGOTYPE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */; };
-		B8B9905725CA51E900CF539C /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B9905625CA51E900CF539C /* GroupView.swift */; };
-		B8B9905A25CA74F400CF539C /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B9905925CA74F400CF539C /* GroupCell.swift */; };
+		B8B5D9372618A96B00784D3D /* PortfolioName.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5D9362618A96B00784D3D /* PortfolioName.swift */; };
+		B8B5D93A2618A98A00784D3D /* AccountSummaryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5D9392618A98A00784D3D /* AccountSummaryRepository.swift */; };
+		B8B5D93F2618AC1100784D3D /* Portfolio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5D93E2618AC1100784D3D /* Portfolio.swift */; };
+		B8B5D9422618AC7700784D3D /* PortfolioPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5D9412618AC7700784D3D /* PortfolioPosition.swift */; };
+		B8B5D9452618B3D100784D3D /* AccountShadowing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5D9442618B3D100784D3D /* AccountShadowing.swift */; };
+		B8B5D94C2618DE8D00784D3D /* Shadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5D94B2618DE8D00784D3D /* Shadow.swift */; };
+		B8B5D94F2618DF2D00784D3D /* ShadowPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5D94E2618DF2D00784D3D /* ShadowPosition.swift */; };
+		B8B5D9522618E2D300784D3D /* ShadowRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5D9512618E2D300784D3D /* ShadowRepository.swift */; };
+		B8B5D9552618E5BE00784D3D /* ShadowPositionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8B5D9542618E5BE00784D3D /* ShadowPositionRepository.swift */; };
 		B8BA188B25CDB694008ACBA0 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA188A25CDB694008ACBA0 /* Account.swift */; };
 		B8BA188E25CDB6B5008ACBA0 /* AccountRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA188D25CDB6B5008ACBA0 /* AccountRepository.swift */; };
-		B8BA1BC425D17D0D008ACBA0 /* GroupViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1BC325D17D0D008ACBA0 /* GroupViewTableView.swift */; };
-		B8BA1BC725D17DF5008ACBA0 /* GroupViewDataHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1BC625D17DF5008ACBA0 /* GroupViewDataHandlers.swift */; };
-		B8BA1C2825D33F85008ACBA0 /* MessageViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C2725D33F85008ACBA0 /* MessageViewTableView.swift */; };
-		B8BA1C2B25D33FF3008ACBA0 /* MessageViewDataHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C2A25D33FF3008ACBA0 /* MessageViewDataHandlers.swift */; };
 		B8BA1C5125D48CBC008ACBA0 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C5025D48CBC008ACBA0 /* ImagePicker.swift */; };
-		B8BA1C7525DAD632008ACBA0 /* TradeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C7425DAD632008ACBA0 /* TradeView.swift */; };
+		B8BA1C7525DAD632008ACBA0 /* PortfoliosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C7425DAD632008ACBA0 /* PortfoliosView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,16 +88,6 @@
 		B80E051225C742FD009DBE34 /* STARS-PURPLE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STARS-PURPLE-LG.png"; sourceTree = "<group>"; };
 		B80E051625C7499C009DBE34 /* HAT-PURPLE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "HAT-PURPLE-LG.png"; sourceTree = "<group>"; };
 		B80E053325C76D08009DBE34 /* HoleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoleView.swift; sourceTree = "<group>"; };
-		B80E053625C83DFE009DBE34 /* NotionAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotionAction.swift; sourceTree = "<group>"; };
-		B80E053925C8403B009DBE34 /* NotionActionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotionActionRepository.swift; sourceTree = "<group>"; };
-		B80E056825C8C507009DBE34 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
-		B80E056C25C9A207009DBE34 /* MessageInputCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputCell.swift; sourceTree = "<group>"; };
-		B80E056F25C9B96C009DBE34 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		B80E057225C9BC10009DBE34 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
-		B80E057525C9BC44009DBE34 /* GroupRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupRepository.swift; sourceTree = "<group>"; };
-		B80E057925C9C1AA009DBE34 /* MessageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository.swift; sourceTree = "<group>"; };
-		B80E057C25C9C3E7009DBE34 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
-		B85BC62725CA18F7003FCA6C /* MessageTickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTickerCell.swift; sourceTree = "<group>"; };
 		B873503725C256320007A8FE /* Gandalf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gandalf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B873503A25C256320007A8FE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B873503C25C256320007A8FE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -121,12 +97,7 @@
 		B873504825C256330007A8FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B873505025C2565F0007A8FE /* Gandalf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Gandalf.entitlements; sourceTree = "<group>"; };
 		B873507D25C258BC0007A8FE /* ViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
-		B873507E25C258BD0007A8FE /* NotionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotionView.swift; sourceTree = "<group>"; };
-		B873507F25C258BD0007A8FE /* NotionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotionCell.swift; sourceTree = "<group>"; };
-		B873508025C258BD0007A8FE /* NotionTickerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotionTickerCell.swift; sourceTree = "<group>"; };
 		B873508125C258BE0007A8FE /* CustomProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomProgressView.swift; sourceTree = "<group>"; };
-		B873508925C258C50007A8FE /* NotionRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotionRepository.swift; sourceTree = "<group>"; };
-		B873508A25C258C50007A8FE /* Notion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notion.swift; sourceTree = "<group>"; };
 		B873508E25C258CF0007A8FE /* LocalCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalCollection.swift; sourceTree = "<group>"; };
 		B873509125C258D60007A8FE /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		B873509225C258D60007A8FE /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -146,20 +117,21 @@
 		B87350B725C2A2D00007A8FE /* Ticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticker.swift; sourceTree = "<group>"; };
 		B87350BE25C322FE0007A8FE /* STARS-WHITE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STARS-WHITE-LG.png"; sourceTree = "<group>"; };
 		B87350BF25C322FE0007A8FE /* STARS-BLUE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STARS-BLUE-LG.png"; sourceTree = "<group>"; };
-		B88BE59225DB4A2D00AA1B75 /* Trade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trade.swift; sourceTree = "<group>"; };
-		B88BE59525DB4B1E00AA1B75 /* TradeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeRepository.swift; sourceTree = "<group>"; };
 		B89B79F325CB9F4F00531E9E /* LOGOTYPE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LOGOTYPE.png; sourceTree = "<group>"; };
 		B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LOGOTYPE-LG.png"; sourceTree = "<group>"; };
-		B8B9905625CA51E900CF539C /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
-		B8B9905925CA74F400CF539C /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
+		B8B5D9362618A96B00784D3D /* PortfolioName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioName.swift; sourceTree = "<group>"; };
+		B8B5D9392618A98A00784D3D /* AccountSummaryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSummaryRepository.swift; sourceTree = "<group>"; };
+		B8B5D93E2618AC1100784D3D /* Portfolio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Portfolio.swift; sourceTree = "<group>"; };
+		B8B5D9412618AC7700784D3D /* PortfolioPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioPosition.swift; sourceTree = "<group>"; };
+		B8B5D9442618B3D100784D3D /* AccountShadowing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountShadowing.swift; sourceTree = "<group>"; };
+		B8B5D94B2618DE8D00784D3D /* Shadow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shadow.swift; sourceTree = "<group>"; };
+		B8B5D94E2618DF2D00784D3D /* ShadowPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowPosition.swift; sourceTree = "<group>"; };
+		B8B5D9512618E2D300784D3D /* ShadowRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowRepository.swift; sourceTree = "<group>"; };
+		B8B5D9542618E5BE00784D3D /* ShadowPositionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowPositionRepository.swift; sourceTree = "<group>"; };
 		B8BA188A25CDB694008ACBA0 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		B8BA188D25CDB6B5008ACBA0 /* AccountRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRepository.swift; sourceTree = "<group>"; };
-		B8BA1BC325D17D0D008ACBA0 /* GroupViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupViewTableView.swift; sourceTree = "<group>"; };
-		B8BA1BC625D17DF5008ACBA0 /* GroupViewDataHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupViewDataHandlers.swift; sourceTree = "<group>"; };
-		B8BA1C2725D33F85008ACBA0 /* MessageViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewTableView.swift; sourceTree = "<group>"; };
-		B8BA1C2A25D33FF3008ACBA0 /* MessageViewDataHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewDataHandlers.swift; sourceTree = "<group>"; };
 		B8BA1C5025D48CBC008ACBA0 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
-		B8BA1C7425DAD632008ACBA0 /* TradeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeView.swift; sourceTree = "<group>"; };
+		B8BA1C7425DAD632008ACBA0 /* PortfoliosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfoliosView.swift; sourceTree = "<group>"; };
 		C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Gandalf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -273,12 +245,10 @@
 		B873507725C258750007A8FE /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B8B5D94A2618DD5400784D3D /* Shadow */,
 				B8BA1B5725D061E9008ACBA0 /* Account */,
-				B8BA1B5325D061CD008ACBA0 /* Group */,
-				B8BA1B5525D061D5008ACBA0 /* Message */,
-				B8BA1B5625D061DE008ACBA0 /* Notion */,
+				B8B5D93D2618ABFC00784D3D /* Portfolio */,
 				B8BA1B5825D061F2008ACBA0 /* Ticker */,
-				B88BE59125DB49F300AA1B75 /* Trade */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -296,10 +266,7 @@
 			children = (
 				B8BA1B4F25D0618D008ACBA0 /* Account */,
 				B8BA1B5925D06218008ACBA0 /* Components */,
-				B8BA1B4D25D0576F008ACBA0 /* Group */,
-				B8BA1B4C25D0575A008ACBA0 /* Message */,
-				B8BA1B4B25D05747008ACBA0 /* Notion */,
-				B8BA1C7325DAD616008ACBA0 /* Trade */,
+				B8BA1C7325DAD616008ACBA0 /* Portfolio */,
 				B873507D25C258BC0007A8FE /* ViewExtensions.swift */,
 			);
 			path = Views;
@@ -337,47 +304,26 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
-		B88BE59125DB49F300AA1B75 /* Trade */ = {
+		B8B5D93D2618ABFC00784D3D /* Portfolio */ = {
 			isa = PBXGroup;
 			children = (
-				B88BE59225DB4A2D00AA1B75 /* Trade.swift */,
-				B88BE59525DB4B1E00AA1B75 /* TradeRepository.swift */,
+				B8B5D93E2618AC1100784D3D /* Portfolio.swift */,
+				B8B5D9412618AC7700784D3D /* PortfolioPosition.swift */,
+				B8B5D9362618A96B00784D3D /* PortfolioName.swift */,
+				B8B5D9392618A98A00784D3D /* AccountSummaryRepository.swift */,
 			);
-			path = Trade;
+			path = Portfolio;
 			sourceTree = "<group>";
 		};
-		B8BA1B4B25D05747008ACBA0 /* Notion */ = {
+		B8B5D94A2618DD5400784D3D /* Shadow */ = {
 			isa = PBXGroup;
 			children = (
-				B873507F25C258BD0007A8FE /* NotionCell.swift */,
-				B873508025C258BD0007A8FE /* NotionTickerCell.swift */,
-				B873507E25C258BD0007A8FE /* NotionView.swift */,
+				B8B5D94B2618DE8D00784D3D /* Shadow.swift */,
+				B8B5D94E2618DF2D00784D3D /* ShadowPosition.swift */,
+				B8B5D9512618E2D300784D3D /* ShadowRepository.swift */,
+				B8B5D9542618E5BE00784D3D /* ShadowPositionRepository.swift */,
 			);
-			path = Notion;
-			sourceTree = "<group>";
-		};
-		B8BA1B4C25D0575A008ACBA0 /* Message */ = {
-			isa = PBXGroup;
-			children = (
-				B80E057C25C9C3E7009DBE34 /* MessageCell.swift */,
-				B80E056C25C9A207009DBE34 /* MessageInputCell.swift */,
-				B85BC62725CA18F7003FCA6C /* MessageTickerCell.swift */,
-				B80E056825C8C507009DBE34 /* MessageView.swift */,
-				B8BA1C2A25D33FF3008ACBA0 /* MessageViewDataHandlers.swift */,
-				B8BA1C2725D33F85008ACBA0 /* MessageViewTableView.swift */,
-			);
-			path = Message;
-			sourceTree = "<group>";
-		};
-		B8BA1B4D25D0576F008ACBA0 /* Group */ = {
-			isa = PBXGroup;
-			children = (
-				B8B9905925CA74F400CF539C /* GroupCell.swift */,
-				B8B9905625CA51E900CF539C /* GroupView.swift */,
-				B8BA1BC625D17DF5008ACBA0 /* GroupViewDataHandlers.swift */,
-				B8BA1BC325D17D0D008ACBA0 /* GroupViewTableView.swift */,
-			);
-			path = Group;
+			path = Shadow;
 			sourceTree = "<group>";
 		};
 		B8BA1B4F25D0618D008ACBA0 /* Account */ = {
@@ -388,40 +334,12 @@
 			path = Account;
 			sourceTree = "<group>";
 		};
-		B8BA1B5325D061CD008ACBA0 /* Group */ = {
-			isa = PBXGroup;
-			children = (
-				B80E057225C9BC10009DBE34 /* Group.swift */,
-				B80E057525C9BC44009DBE34 /* GroupRepository.swift */,
-			);
-			path = Group;
-			sourceTree = "<group>";
-		};
-		B8BA1B5525D061D5008ACBA0 /* Message */ = {
-			isa = PBXGroup;
-			children = (
-				B80E056F25C9B96C009DBE34 /* Message.swift */,
-				B80E057925C9C1AA009DBE34 /* MessageRepository.swift */,
-			);
-			path = Message;
-			sourceTree = "<group>";
-		};
-		B8BA1B5625D061DE008ACBA0 /* Notion */ = {
-			isa = PBXGroup;
-			children = (
-				B873508A25C258C50007A8FE /* Notion.swift */,
-				B873508925C258C50007A8FE /* NotionRepository.swift */,
-				B80E053625C83DFE009DBE34 /* NotionAction.swift */,
-				B80E053925C8403B009DBE34 /* NotionActionRepository.swift */,
-			);
-			path = Notion;
-			sourceTree = "<group>";
-		};
 		B8BA1B5725D061E9008ACBA0 /* Account */ = {
 			isa = PBXGroup;
 			children = (
 				B8BA188A25CDB694008ACBA0 /* Account.swift */,
 				B8BA188D25CDB6B5008ACBA0 /* AccountRepository.swift */,
+				B8B5D9442618B3D100784D3D /* AccountShadowing.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -443,12 +361,12 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		B8BA1C7325DAD616008ACBA0 /* Trade */ = {
+		B8BA1C7325DAD616008ACBA0 /* Portfolio */ = {
 			isa = PBXGroup;
 			children = (
-				B8BA1C7425DAD632008ACBA0 /* TradeView.swift */,
+				B8BA1C7425DAD632008ACBA0 /* PortfoliosView.swift */,
 			);
-			path = Trade;
+			path = Portfolio;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -595,45 +513,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B80E056D25C9A207009DBE34 /* MessageInputCell.swift in Sources */,
 				B8BA188B25CDB694008ACBA0 /* Account.swift in Sources */,
-				B873508525C258BE0007A8FE /* NotionCell.swift in Sources */,
-				B873508B25C258C50007A8FE /* NotionRepository.swift in Sources */,
-				B80E056925C8C508009DBE34 /* MessageView.swift in Sources */,
+				B8B5D93F2618AC1100784D3D /* Portfolio.swift in Sources */,
 				B873509425C258D60007A8FE /* Settings.swift in Sources */,
-				B85BC62825CA18F7003FCA6C /* MessageTickerCell.swift in Sources */,
-				B873508C25C258C50007A8FE /* Notion.swift in Sources */,
 				B80E053425C76D08009DBE34 /* HoleView.swift in Sources */,
 				B873503B25C256320007A8FE /* AppDelegate.swift in Sources */,
-				B80E053725C83DFE009DBE34 /* NotionAction.swift in Sources */,
 				B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */,
-				B88BE59325DB4A2D00AA1B75 /* Trade.swift in Sources */,
-				B873508425C258BE0007A8FE /* NotionView.swift in Sources */,
+				B8B5D9452618B3D100784D3D /* AccountShadowing.swift in Sources */,
+				B8B5D9372618A96B00784D3D /* PortfolioName.swift in Sources */,
 				B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */,
+				B8B5D94C2618DE8D00784D3D /* Shadow.swift in Sources */,
 				B87350A525C2812C0007A8FE /* Assets.swift in Sources */,
-				B8B9905A25CA74F400CF539C /* GroupCell.swift in Sources */,
 				B87350B825C2A2D00007A8FE /* Ticker.swift in Sources */,
-				B873508625C258BE0007A8FE /* NotionTickerCell.swift in Sources */,
-				B80E057A25C9C1AA009DBE34 /* MessageRepository.swift in Sources */,
 				B80E04C325C32A96009DBE34 /* AccountView.swift in Sources */,
-				B8BA1C2825D33F85008ACBA0 /* MessageViewTableView.swift in Sources */,
 				B8BA1C5125D48CBC008ACBA0 /* ImagePicker.swift in Sources */,
 				B8BA188E25CDB6B5008ACBA0 /* AccountRepository.swift in Sources */,
-				B80E057D25C9C3E7009DBE34 /* MessageCell.swift in Sources */,
-				B8BA1C7525DAD632008ACBA0 /* TradeView.swift in Sources */,
+				B8BA1C7525DAD632008ACBA0 /* PortfoliosView.swift in Sources */,
+				B8B5D9422618AC7700784D3D /* PortfolioPosition.swift in Sources */,
 				B873508F25C258CF0007A8FE /* LocalCollection.swift in Sources */,
-				B80E057025C9B96C009DBE34 /* Message.swift in Sources */,
 				B873509325C258D60007A8FE /* Theme.swift in Sources */,
-				B80E057325C9BC10009DBE34 /* Group.swift in Sources */,
-				B80E053A25C8403B009DBE34 /* NotionActionRepository.swift in Sources */,
-				B8BA1BC725D17DF5008ACBA0 /* GroupViewDataHandlers.swift in Sources */,
-				B80E057625C9BC44009DBE34 /* GroupRepository.swift in Sources */,
+				B8B5D93A2618A98A00784D3D /* AccountSummaryRepository.swift in Sources */,
 				B873508725C258BE0007A8FE /* CustomProgressView.swift in Sources */,
-				B8B9905725CA51E900CF539C /* GroupView.swift in Sources */,
-				B88BE59625DB4B1E00AA1B75 /* TradeRepository.swift in Sources */,
-				B8BA1C2B25D33FF3008ACBA0 /* MessageViewDataHandlers.swift in Sources */,
-				B8BA1BC425D17D0D008ACBA0 /* GroupViewTableView.swift in Sources */,
 				B873509725C258DA0007A8FE /* UIKitExtensions.swift in Sources */,
+				B8B5D94F2618DF2D00784D3D /* ShadowPosition.swift in Sources */,
+				B8B5D9552618E5BE00784D3D /* ShadowPositionRepository.swift in Sources */,
+				B8B5D9522618E2D300784D3D /* ShadowRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
