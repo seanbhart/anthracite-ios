@@ -13,12 +13,11 @@ import FirebaseFirestore
 struct Settings {
     
     static let debug = false
-    static let currentTutorial = "v1.0.0"
+    static let currentTutorial = "v3.0.0"
     
     struct Tabs {
-        static let notionVcIndex = 0
-        static let groupVcIndex = 1
-        static let accountVcIndex = 2
+        static let strategyVcIndex = 0
+        static let accountVcIndex = 1
     }
     
     static var inBackground = false

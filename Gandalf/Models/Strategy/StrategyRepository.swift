@@ -1,23 +1,22 @@
 //
-//  TradeRepository.swift
+//  StrategyRepository.swift
 //  Gandalf
 //
-//  Created by Sean Hart on 2/15/21.
+//  Created by Sean Hart on 4/30/21.
 //
 
 import FirebaseFirestore
 
-protocol TradeRepositoryDelegate {
-    func tradeDataUpdate()
+protocol StrategyRepositoryDelegate {
+    func strategyDataUpdate()
     func showLogin()
 }
 
-class TradeRepository {
-    var className = "TradeRepository"
+class StrategyRepository {
+    var className = "StrategyRepository"
     
-    var delegate: TradeRepositoryDelegate?
-    var groupId: String!
-    var trades = [Trade]()
+    var delegate: StrategyRepositoryDelegate?
+    var strategies = [Strategy]()
     
     fileprivate var query: Query? {
         didSet {
@@ -28,9 +27,8 @@ class TradeRepository {
         }
     }
     
-    init(groupId: String) {
-        self.groupId = groupId
-        query = Settings.Firebase.db().collection("group").document(groupId).collection("trades")
+    init() {
+        query = Settings.Firebase.db().collection("strategies")
     }
 
     private var listener: ListenerRegistration?
@@ -45,13 +43,14 @@ class TradeRepository {
                 if let err = error { print("\(className) - LISTENER ERROR: \(err)") }
                 guard let snapshot = snapshot else { print("\(className) snapshot error: \(error!)"); return }
                 
-                trades.removeAll()
-                trades = snapshot.documents.compactMap { queryDocumentSnapshot -> Trade? in
-                    return try? queryDocumentSnapshot.data(as: Trade.self)
+                strategies.removeAll()
+                strategies = snapshot.documents.compactMap { queryDocumentSnapshot -> Strategy? in
+//                    print("\(className) - strategy: \(queryDocumentSnapshot.data())")
+                    return try? queryDocumentSnapshot.data(as: Strategy.self)
                 }
                 
                 if let parent = self.delegate {
-                    parent.tradeDataUpdate()
+                    parent.strategyDataUpdate()
                 }
         }
     }

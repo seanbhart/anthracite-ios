@@ -12,18 +12,18 @@ struct Account: Identifiable, Codable {
     @DocumentID var id: String?
     var status: Int // 0=blocked, 1=active
     var username: String?
+    var name: String?
     // Local
     var metadata: AccountMetadata?
-    var pii: AccountPii?
-    var settings: AccountSettings?
-    var groupCount: Int = 0
-    var messageCount: Int = 0
-    var notionCount: Int = 0
+//    var pii: AccountPii?
+//    var settings: AccountSettings?
+    var image: UIImage?
 
     enum CodingKeys: String, CodingKey {
         case id
         case status
         case username
+        case name = "display_name"
     }
 }
 
@@ -33,15 +33,15 @@ struct AccountMetadata: Identifiable, Codable {
     var tutorials: [String]?
 }
 
-struct AccountPii: Identifiable, Codable {
-    @DocumentID var id: String?
-    var email: String?
-    var name_given: String?
-    var name_family: String?
-}
-
-struct AccountSettings: Identifiable, Codable {
-    @DocumentID var id: String?
-    var anonymous: Bool?
-    var filter: Bool?
-}
+//struct AccountPii: Identifiable, Codable {
+//    @DocumentID var id: String?
+//    var email: String?
+//    var name_given: String?
+//    var name_family: String?
+//}
+//
+//struct AccountSettings: Identifiable, Codable {
+//    @DocumentID var id: String?
+//    var anonymous: Bool?
+//    var filter: Bool?
+//}

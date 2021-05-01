@@ -30,13 +30,11 @@
 	<string>$(PRODUCT_NAME) needs to access your photos when you add a message attachment or profile image.</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Rubik-Black.ttf</string>
-		<string>Rubik-Bold.ttf</string>
-		<string>Rubik-ExtraBold.ttf</string>
-		<string>Rubik-Light.ttf</string>
-		<string>Rubik-Medium.ttf</string>
-		<string>Rubik-Regular.ttf</string>
-		<string>Rubik-SemiBold.ttf</string>
+		<string>SourceSansPro-Black.ttf</string>
+		<string>SourceSansPro-Bold.ttf</string>
+		<string>SourceSansPro-Light.ttf</string>
+		<string>SourceSansPro-Regular.ttf</string>
+		<string>SourceSansPro-SemiBold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

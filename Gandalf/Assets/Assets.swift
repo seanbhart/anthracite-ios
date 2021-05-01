@@ -35,13 +35,12 @@ struct Assets {
     struct Fonts {
         
         struct Default {
-            static let black = "Rubik-Black"
-            static let bold = "Rubik-Bold"
-            static let extraBold = "Rubik-ExtraBold"
-            static let light = "Rubik-Light"
-            static let medium = "Rubik-Medium"
-            static let regular = "Rubik-Regular"
-            static let semiBold = "Rubik-SemiBold"
+            static let black = "SourceSansPro-Black"
+            static let bold = "SourceSansPro-Bold"
+            static let semiBold = "SourceSansPro-SemiBold"
+//            static let medium = "Exo-Medium"
+            static let regular = "SourceSansPro-Regular"
+            static let light = "SourceSansPro-Light"
         }
     }
 }

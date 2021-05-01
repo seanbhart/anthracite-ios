@@ -13,7 +13,7 @@ import UIKit
 import FirebaseAuth
 import FirebaseStorage
 
-class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDelegate {
+class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewDelegate {
     let className = "AccountView"
     
     var tabBarViewDelegate: TabBarViewDelegate!
@@ -21,30 +21,31 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     // Unhashed nonce - handle locally (not in Account) for security
     fileprivate var currentNonce: String?
     var controller: ASAuthorizationController!
-    var imagePicker: ImagePicker!
     
     var signInContainer: UIView!
     var signInButton: ASAuthorizationAppleIDButton!
     
     var viewContainer: UIView!
+    var settingsButtonContainer: UIView!
+    var settingsButtonContainerGestureRecognizer: UITapGestureRecognizer!
+    var settingsButtonLabel: UILabel!
+    var accountImageContainer: UIView!
     var accountImage: UIImageView!
-    var usernameContainer: UIView!
-    var usernameEditIcon: UIImageView!
-    var usernameLabel: UILabel!
-    var signOutButton: UILabel!
-    var signOutButtonTapGestureRecognizer: UITapGestureRecognizer!
+    var nameLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(className) - viewDidLoad")
         self.navigationItem.title = ""
         self.navigationItem.hidesBackButton = true
+        let attributes = [NSAttributedString.Key.font: UIFont(name: Assets.Fonts.Default.semiBold, size: 14)]
+        self.navigationController?.navigationBar.titleTextAttributes = attributes as [NSAttributedString.Key : Any]
         
         let barItemLogo = UIButton(type: .custom)
-        barItemLogo.setImage(UIImage(named: Assets.Images.logotypeLg), for: .normal)
+        barItemLogo.setImage(UIImage(named: Assets.Images.hatIconPurpleLg), for: .normal)
         NSLayoutConstraint.activate([
-            barItemLogo.widthAnchor.constraint(equalToConstant:110),
-            barItemLogo.heightAnchor.constraint(equalToConstant:20),
+            barItemLogo.widthAnchor.constraint(equalToConstant: 30),
+            barItemLogo.heightAnchor.constraint(equalToConstant: 30),
         ])
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
     }
@@ -82,7 +83,6 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     override func loadView() {
         super.loadView()
         print("\(self.className) - loadView")
-        imagePicker = ImagePicker(presentationController: self, delegate: self)
         
         // Make the overall background black to fill any unfilled areas
         view.backgroundColor = Settings.Theme.Color.background
@@ -104,59 +104,52 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(viewContainer)
         
+        accountImageContainer = UIView()
+        accountImageContainer.layer.cornerRadius = 60
+        accountImageContainer.backgroundColor = Settings.Theme.Color.outline
+        accountImageContainer.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(accountImageContainer)
+        
         accountImage = UIImageView()
-        accountImage.layer.cornerRadius = 50
-        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.primary, renderingMode: .alwaysOriginal)
+        accountImage.layer.cornerRadius = 58
+        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.background, renderingMode: .alwaysOriginal)
         accountImage.contentMode = UIView.ContentMode.scaleAspectFit
         accountImage.clipsToBounds = true
         accountImage.isUserInteractionEnabled = true
         accountImage.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(accountImage)
+        accountImageContainer.addSubview(accountImage)
         
-        let accountImageGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(accountImageTap))
-        accountImageGestureRecognizer.numberOfTapsRequired = 1
-        accountImage.addGestureRecognizer(accountImageGestureRecognizer)
+        nameLabel = UILabel()
+//        nameLabel.backgroundColor = .blue
+        nameLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 21)
+        nameLabel.textColor = Settings.Theme.Color.textGrayLight
+        nameLabel.textAlignment = NSTextAlignment.left
+        nameLabel.numberOfLines = 1
+        nameLabel.text = ""
+        nameLabel.isUserInteractionEnabled = false
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(nameLabel)
         
-        usernameContainer = UIView()
-        usernameContainer.backgroundColor = Settings.Theme.Color.background
-        usernameContainer.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(usernameContainer)
+        settingsButtonContainer = UIView()
+        settingsButtonContainer.layer.borderWidth = 1
+        settingsButtonContainer.layer.cornerRadius = 5
+        settingsButtonContainer.layer.borderColor = Settings.Theme.Color.grayUltraDark.cgColor
+        settingsButtonContainer.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(settingsButtonContainer)
         
-        let usernameContainerGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(usernameContainerTap))
-        usernameContainerGestureRecognizer.numberOfTapsRequired = 1
-        usernameContainer.addGestureRecognizer(usernameContainerGestureRecognizer)
+        let settingsIconContainerGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(settingsIconContainerTap))
+        settingsIconContainerGestureRecognizer.numberOfTapsRequired = 1
+        settingsButtonContainer.addGestureRecognizer(settingsIconContainerGestureRecognizer)
         
-        usernameEditIcon = UIImageView()
-        usernameEditIcon.image = UIImage(systemName: "square.and.pencil")
-        usernameEditIcon.contentMode = UIView.ContentMode.scaleAspectFit
-        usernameEditIcon.clipsToBounds = true
-        usernameEditIcon.translatesAutoresizingMaskIntoConstraints = false
-        usernameContainer.addSubview(usernameEditIcon)
-        
-        usernameLabel = UILabel()
-        usernameLabel.font = UIFont(name: Assets.Fonts.Default.light, size: 20)
-        usernameLabel.textColor = Settings.Theme.Color.text
-        usernameLabel.textAlignment = NSTextAlignment.left
-        usernameLabel.numberOfLines = 1
-        usernameLabel.text = ""
-        usernameLabel.isUserInteractionEnabled = false
-        usernameLabel.translatesAutoresizingMaskIntoConstraints = false
-        usernameContainer.addSubview(usernameLabel)
-        
-        signOutButton = UILabel()
-        signOutButton.backgroundColor = Settings.Theme.Color.grayDark
-        signOutButton.font = UIFont(name: Assets.Fonts.Default.bold, size: 20)
-        signOutButton.textColor = Settings.Theme.Color.textGrayUltraDark
-        signOutButton.textAlignment = NSTextAlignment.center
-        signOutButton.numberOfLines = 1
-        signOutButton.text = "Sign Out"
-        signOutButton.isUserInteractionEnabled = true
-        signOutButton.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(signOutButton)
-        
-        signOutButtonTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(AccountView.signOutTap(_:)))
-        signOutButtonTapGestureRecognizer.numberOfTapsRequired = 1  // add single tap
-        viewContainer.addGestureRecognizer(signOutButtonTapGestureRecognizer)
+        settingsButtonLabel = UILabel()
+        settingsButtonLabel.font = UIFont(name: Assets.Fonts.Default.regular, size: 12)
+        settingsButtonLabel.textColor = Settings.Theme.Color.primaryLight
+        settingsButtonLabel.textAlignment = NSTextAlignment.center
+        settingsButtonLabel.numberOfLines = 1
+        settingsButtonLabel.text = "EDIT PROFILE"
+        settingsButtonLabel.isUserInteractionEnabled = false
+        settingsButtonLabel.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(settingsButtonLabel)
     }
     
     override func didReceiveMemoryWarning() {
@@ -168,55 +161,55 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
     
     func layoutSignInComponents() {
         NSLayoutConstraint.activate([
-            signInContainer.topAnchor.constraint(equalTo:view.safeAreaLayoutGuide.topAnchor),
-            signInContainer.leftAnchor.constraint(equalTo:view.safeAreaLayoutGuide.leftAnchor),
-            signInContainer.rightAnchor.constraint(equalTo:view.safeAreaLayoutGuide.rightAnchor),
-            signInContainer.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
+            signInContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            signInContainer.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            signInContainer.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            signInContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
         NSLayoutConstraint.activate([
-            signInButton.centerYAnchor.constraint(equalTo:signInContainer.centerYAnchor),
-            signInButton.centerXAnchor.constraint(equalTo:signInContainer.centerXAnchor),
-            signInButton.widthAnchor.constraint(equalToConstant:280),
-            signInButton.heightAnchor.constraint(equalToConstant:50),
+            signInButton.centerYAnchor.constraint(equalTo: signInContainer.centerYAnchor),
+            signInButton.centerXAnchor.constraint(equalTo: signInContainer.centerXAnchor),
+            signInButton.widthAnchor.constraint(equalToConstant: 280),
+            signInButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
     
     func layoutAccountComponents() {
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo:view.safeAreaLayoutGuide.topAnchor),
-            viewContainer.leftAnchor.constraint(equalTo:view.safeAreaLayoutGuide.leftAnchor),
-            viewContainer.rightAnchor.constraint(equalTo:view.safeAreaLayoutGuide.rightAnchor),
-            viewContainer.bottomAnchor.constraint(equalTo:view.safeAreaLayoutGuide.bottomAnchor),
+            viewContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            viewContainer.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            viewContainer.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            viewContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
         NSLayoutConstraint.activate([
-            accountImage.topAnchor.constraint(equalTo:viewContainer.topAnchor, constant: 100),
-            accountImage.centerXAnchor.constraint(equalTo:viewContainer.centerXAnchor),
-            accountImage.heightAnchor.constraint(equalToConstant: 100),
-            accountImage.widthAnchor.constraint(equalToConstant: 100),
+            accountImageContainer.topAnchor.constraint(equalTo: viewContainer.topAnchor, constant: 20),
+            accountImageContainer.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 20),
+            accountImageContainer.heightAnchor.constraint(equalToConstant: 120),
+            accountImageContainer.widthAnchor.constraint(equalToConstant: 120),
         ])
         NSLayoutConstraint.activate([
-            usernameContainer.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
-            usernameContainer.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
-            usernameContainer.topAnchor.constraint(equalTo:accountImage.bottomAnchor, constant: 20),
-            usernameContainer.heightAnchor.constraint(equalToConstant:50),
+            accountImage.centerYAnchor.constraint(equalTo: accountImageContainer.centerYAnchor),
+            accountImage.centerXAnchor.constraint(equalTo: accountImageContainer.centerXAnchor),
+            accountImage.heightAnchor.constraint(equalToConstant: 116),
+            accountImage.widthAnchor.constraint(equalToConstant: 116),
         ])
         NSLayoutConstraint.activate([
-            usernameLabel.centerXAnchor.constraint(equalTo:usernameContainer.centerXAnchor),
-            usernameLabel.topAnchor.constraint(equalTo:usernameContainer.topAnchor, constant: 10),
-            usernameLabel.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor, constant: -10),
+            nameLabel.topAnchor.constraint(equalTo: viewContainer.topAnchor, constant: 10),
+            nameLabel.leftAnchor.constraint(equalTo: accountImageContainer.rightAnchor, constant: 20),
+            nameLabel.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -10),
+            nameLabel.heightAnchor.constraint(equalToConstant: 30),
         ])
         NSLayoutConstraint.activate([
-            usernameEditIcon.topAnchor.constraint(equalTo:usernameContainer.topAnchor, constant: 10),
-            usernameEditIcon.bottomAnchor.constraint(equalTo:usernameContainer.bottomAnchor, constant: -10),
-            usernameEditIcon.rightAnchor.constraint(equalTo:usernameLabel.leftAnchor, constant: -10),
-            usernameEditIcon.widthAnchor.constraint(equalToConstant: 20),
+            settingsButtonContainer.topAnchor.constraint(equalTo: accountImageContainer.bottomAnchor, constant: 20),
+            settingsButtonContainer.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 20),
+            settingsButtonContainer.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -20),
+            settingsButtonContainer.heightAnchor.constraint(equalToConstant: 20),
         ])
-        
         NSLayoutConstraint.activate([
-            signOutButton.bottomAnchor.constraint(equalTo:viewContainer.bottomAnchor, constant: -100),
-            signOutButton.leftAnchor.constraint(equalTo:viewContainer.leftAnchor),
-            signOutButton.rightAnchor.constraint(equalTo:viewContainer.rightAnchor),
-            signOutButton.heightAnchor.constraint(equalToConstant:100),
+            settingsButtonLabel.topAnchor.constraint(equalTo: settingsButtonContainer.topAnchor),
+            settingsButtonLabel.leftAnchor.constraint(equalTo: settingsButtonContainer.leftAnchor),
+            settingsButtonLabel.rightAnchor.constraint(equalTo: settingsButtonContainer.rightAnchor),
+            settingsButtonLabel.bottomAnchor.constraint(equalTo: settingsButtonContainer.bottomAnchor),
         ])
         
         getAccountImage()
@@ -238,52 +231,14 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         controller.presentationContextProvider = self
         controller.performRequests()
     }
-    @objc func signOutTap(_ sender: UITapGestureRecognizer) {
-        signOut()
-    }
-    @objc func usernameContainerTap(_ sender: UITapGestureRecognizer) {
-        print("\(className) - usernameContainerTap")
+    @objc func settingsIconContainerTap(_ sender: UITapGestureRecognizer) {
+        print("\(className) - settingsIconContainerTap")
         guard let accountRepo = accountRepository else { return }
-        guard let account = accountRepo.account else { return }
-//        print("account: \(account.username)")
         
-        let alert = UIAlertController(title: "Edit Username", message: "", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { action in
-            let textField = alert.textFields![0] as UITextField
-//            print("EDIT USERNAME TO: \(textField.text)")
-            guard let username = textField.text else { return }
-            if username.count > 0 {
-                accountRepo.setUserName(username: username)
-                accountRepo.getAccount()
-            }
-        }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addTextField(configurationHandler: { (textField: UITextField!) -> Void in
-            textField.placeholder = "Username"
-            textField.text = account.username
-            textField.font = UIFont(name: Assets.Fonts.Default.light, size: 14)
-            textField.autocorrectionType = UITextAutocorrectionType.no
-            textField.keyboardType = UIKeyboardType.default
-            textField.returnKeyType = UIReturnKeyType.done
-            textField.clearButtonMode = UITextField.ViewMode.whileEditing
-            textField.contentVerticalAlignment = UIControl.ContentVerticalAlignment.center
-            NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: textField, queue: OperationQueue.main, using: { (notification) in
-                    if let tf = notification.object as? UITextField {
-                        let maxLength = 20
-                        if let text = tf.text {
-                            if text.count > maxLength {
-                                tf.text = String(text.prefix(maxLength))
-                            }
-                        }
-                    }
-                })
-        })
-        self.present(alert, animated: true)
-    }
-    
-    @objc func accountImageTap(_ sender: UITapGestureRecognizer) {
-        print("\(className) - accountImageTap")
-        imagePicker.present(from: accountImage)
+        // Present the account edit sheet via a modal view
+        let accountEditView: AccountEditView = AccountEditView(accountRepo: accountRepo)
+        accountEditView.delegate = self
+        self.presentSheet(with: accountEditView)
     }
     
     
@@ -330,20 +285,21 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         if let account = accountRepo.account {
             // If the username is empty, use the known account name
             if let username = account.username {
-                usernameLabel.text = username
-            } else {
-                if let pii = account.pii {
-                    let given = pii.name_given ?? "anonymous"
-                    let family = pii.name_family ?? ""
-                    usernameLabel.text = given + " " + family
-                } else {
-                    usernameLabel.text = "anonymous"
-                }
+                self.navigationItem.title = "@" + username
             }
-            usernameLabel.sizeToFit()
-            usernameLabel.layoutIfNeeded()
-            layoutAccountComponents()
             
+            if let name = account.name {
+                nameLabel.text = name
+            } else if let username = account.username {
+                nameLabel.text = username
+            } else {
+                nameLabel.text = "anonymous"
+            }
+//            nameLabel.sizeToFit()
+            nameLabel.layoutIfNeeded()
+            
+            layoutAccountComponents()
+
             // Show the account info if the user is signed in
             self.hideSignIn()
         }
@@ -369,6 +325,9 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
             if error != nil { return }
             guard let imgData = data else { return }
             self.accountImage.image = UIImage(data: imgData)
+            
+            if accountRepo.account == nil { return }
+            accountRepo.account!.image = UIImage(data: imgData)
         }
         
 //        imageRef.downloadURL { url, error in
@@ -390,38 +349,6 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
 //        }
     }
     
-    func signOut() {
-        print("\(self.className) - SIGN OUT")
-        // First request verification
-        let signOutAlert = UIAlertController(title: "Sign Out", message: "Are you sure you want to sign out?", preferredStyle: .alert)
-        signOutAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
-            let firebaseAuth = Settings.Firebase.auth()
-            do {
-                try firebaseAuth.signOut()
-            } catch let signOutError as NSError {
-                self.requestError(title: "We messed up!", message: "There was a problem logging you out! Please try again.")
-                
-//                Analytics.logEvent("gandalf_error", parameters: [
-//                    "class": "Account" as NSObject,
-//                    "function": "signOut" as NSObject,
-//                    "description": signOutError.localizedDescription as NSObject
-//                ])
-                print ("ACCOUNT - Error signing out: %@", signOutError)
-                return
-            }
-            // Load LoginView
-            print("\(self.className) - LOGGED OUT - NOW SHOW LOGIN VIEW")
-            self.showSignIn()
-            
-            // Take background steps for signing out
-            if let accountRepo = self.accountRepository {
-                accountRepo.signOut()
-            }
-        }))
-        signOutAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-        self.present(signOutAlert, animated: true)
-    }
-    
     func showSignIn() {
         // Hide the data components and show the sign in components
         viewContainer.removeFromSuperview()
@@ -429,8 +356,8 @@ class AccountView: UIViewController, AccountRepositoryDelegate, ImagePickerDeleg
         layoutSignInComponents()
         
         // Reset any components storing data
-        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.primary, renderingMode: .alwaysOriginal)
-        usernameLabel.text = "anonymous"
+        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.background, renderingMode: .alwaysOriginal)
+        nameLabel.text = "Anonymous"
     }
     func hideSignIn() {
         signInContainer.removeFromSuperview()

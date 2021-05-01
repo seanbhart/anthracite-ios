@@ -62,14 +62,14 @@ class AccountRepository {
                                         if let metadata = try? p.data(as: AccountMetadata.self) {
                                             self.account?.metadata = metadata
                                         }
-                                    case "pii":
-                                        if let pii = try? p.data(as: AccountPii.self) {
-                                            self.account?.pii = pii
-                                        }
-                                    case "settings":
-                                        if let settings = try? p.data(as: AccountSettings.self) {
-                                            self.account?.settings = settings
-                                        }
+//                                    case "pii":
+//                                        if let pii = try? p.data(as: AccountPii.self) {
+//                                            self.account?.pii = pii
+//                                        }
+//                                    case "settings":
+//                                        if let settings = try? p.data(as: AccountSettings.self) {
+//                                            self.account?.settings = settings
+//                                        }
                                     default:
                                         print("\(self.className) - ERROR unknown private account document: \(p.documentID)")
                                     }
@@ -142,21 +142,21 @@ class AccountRepository {
             })
     }
     
-    func getGroupCount() {
-        Settings.Firebase.db().collection("group")
-            .whereField("status", isEqualTo: 1)
-            .whereField("members", arrayContains: accountId!)
-            .getDocuments(completion: { (snapshot, error) in
-                if let err = error { print("\(self.className) - FIRESTORE GET ERROR: \(err)") }
-                guard let snapshot = snapshot else { print("\(self.className) snapshot error: \(error!)"); return }
-                
-                self.account?.groupCount = snapshot.documents.count
-                
-                if let parent = self.delegate {
-                    parent.accountDataUpdate()
-                }
-            })
-    }
+//    func getGroupCount() {
+//        Settings.Firebase.db().collection("group")
+//            .whereField("status", isEqualTo: 1)
+//            .whereField("members", arrayContains: accountId!)
+//            .getDocuments(completion: { (snapshot, error) in
+//                if let err = error { print("\(self.className) - FIRESTORE GET ERROR: \(err)") }
+//                guard let snapshot = snapshot else { print("\(self.className) snapshot error: \(error!)"); return }
+//
+//                self.account?.groupCount = snapshot.documents.count
+//
+//                if let parent = self.delegate {
+//                    parent.accountDataUpdate()
+//                }
+//            })
+//    }
     
     func addTutorialViewFor(view: String) {
         Settings.Firebase.db().collection("accounts").document(accountId!).collection("private").document("metadata").setData([
