@@ -28,7 +28,7 @@ class StrategyRepository {
     }
     
     init() {
-        query = Settings.Firebase.db().collection("strategies")
+        query = Settings.Firebase.db().collection("strategies").order(by: "created", descending: true)
     }
 
     private var listener: ListenerRegistration?

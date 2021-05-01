@@ -48,6 +48,8 @@
 		B88BE59625DB4B1E00AA1B75 /* StrategyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88BE59525DB4B1E00AA1B75 /* StrategyRepository.swift */; };
 		B89B79F525CB9F4F00531E9E /* LOGOTYPE.png in Resources */ = {isa = PBXBuildFile; fileRef = B89B79F325CB9F4F00531E9E /* LOGOTYPE.png */; };
 		B89B79F625CB9F4F00531E9E /* LOGOTYPE-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */; };
+		B8A9A12A263DBC2C00B87495 /* Numbers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A9A129263DBC2C00B87495 /* Numbers.swift */; };
+		B8A9A12C263DE8AB00B87495 /* StrategyCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A9A12B263DE8AB00B87495 /* StrategyCreateView.swift */; };
 		B8BA188B25CDB694008ACBA0 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA188A25CDB694008ACBA0 /* Account.swift */; };
 		B8BA188E25CDB6B5008ACBA0 /* AccountRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA188D25CDB6B5008ACBA0 /* AccountRepository.swift */; };
 		B8BA1C5125D48CBC008ACBA0 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C5025D48CBC008ACBA0 /* ImagePicker.swift */; };
@@ -116,6 +118,8 @@
 		B88BE59525DB4B1E00AA1B75 /* StrategyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyRepository.swift; sourceTree = "<group>"; };
 		B89B79F325CB9F4F00531E9E /* LOGOTYPE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LOGOTYPE.png; sourceTree = "<group>"; };
 		B89B79F425CB9F4F00531E9E /* LOGOTYPE-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LOGOTYPE-LG.png"; sourceTree = "<group>"; };
+		B8A9A129263DBC2C00B87495 /* Numbers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Numbers.swift; sourceTree = "<group>"; };
+		B8A9A12B263DE8AB00B87495 /* StrategyCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyCreateView.swift; sourceTree = "<group>"; };
 		B8BA188A25CDB694008ACBA0 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		B8BA188D25CDB6B5008ACBA0 /* AccountRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRepository.swift; sourceTree = "<group>"; };
 		B8BA1C5025D48CBC008ACBA0 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
@@ -280,6 +284,7 @@
 			children = (
 				B873509625C258DA0007A8FE /* UIKitExtensions.swift */,
 				B8BA1C5025D48CBC008ACBA0 /* ImagePicker.swift */,
+				B8A9A129263DBC2C00B87495 /* Numbers.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -363,6 +368,7 @@
 				B8BA1C7425DAD632008ACBA0 /* StrategyView.swift */,
 				B8D3AF612634695C00821E22 /* StrategyViewDataHandler.swift */,
 				B8D3AF5726332B6000821E22 /* StrategyViewTableView.swift */,
+				B8A9A12B263DE8AB00B87495 /* StrategyCreateView.swift */,
 			);
 			path = Strategy;
 			sourceTree = "<group>";
@@ -522,6 +528,7 @@
 				B873503B25C256320007A8FE /* AppDelegate.swift in Sources */,
 				B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */,
 				B8D3AF822637309300821E22 /* AccountEditView.swift in Sources */,
+				B8A9A12A263DBC2C00B87495 /* Numbers.swift in Sources */,
 				B8D3AF5826332B6000821E22 /* StrategyViewTableView.swift in Sources */,
 				B88BE59325DB4A2D00AA1B75 /* Strategy.swift in Sources */,
 				B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */,
@@ -536,6 +543,7 @@
 				B873508F25C258CF0007A8FE /* LocalCollection.swift in Sources */,
 				B873509325C258D60007A8FE /* Theme.swift in Sources */,
 				B873508725C258BE0007A8FE /* CustomProgressView.swift in Sources */,
+				B8A9A12C263DE8AB00B87495 /* StrategyCreateView.swift in Sources */,
 				B88BE59625DB4B1E00AA1B75 /* StrategyRepository.swift in Sources */,
 				B873509725C258DA0007A8FE /* UIKitExtensions.swift in Sources */,
 			);

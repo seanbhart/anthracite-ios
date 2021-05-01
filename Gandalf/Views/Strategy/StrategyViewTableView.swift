@@ -21,17 +21,88 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
         return localStrategies.count
     }
     
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return UITableView.automaticDimension
-//    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: strategyTableCellIdentifier, for: indexPath) as! StrategyCell
         cell.selectionStyle = .none
+        cell.ordersContainer.subviews.forEach { subview in
+            subview.removeFromSuperview()
+        }
         
-//        cell.title.font = UIFont(name: Assets.Fonts.Default.regular, size: 20)
-//        cell.title.text = "@" + localStrategies[indexPath.row].creator
+        cell.ageLabel.text = Strategy.ageString(timestamp: localStrategies[indexPath.row].created)
+        cell.windowLabel.text = Strategy.windowMinsString(windowMins: localStrategies[indexPath.row].windowMins)
+        
+        cell.reactionOrderingLabel.text = "\(localStrategies[indexPath.row].reactions.ordering)"
+        cell.reactionLikeLabel.text = "\(localStrategies[indexPath.row].reactions.like)"
+        cell.reactionDislikeLabel.text = "\(localStrategies[indexPath.row].reactions.dislike)"
+        
+        var orderIndex = 0
+        let orderCount = localStrategies[indexPath.row].orders.count
+        localStrategies[indexPath.row].orders.forEach { order in
+            let order = createCellOrderElement(order: order)
+            cell.ordersContainer.addSubview(order)
+            NSLayoutConstraint.activate([
+                order.topAnchor.constraint(equalTo: cell.ordersContainer.topAnchor, constant: CGFloat(5 + (65 * orderIndex))),
+                order.leftAnchor.constraint(equalTo: cell.ordersContainer.leftAnchor, constant: 0),
+                order.rightAnchor.constraint(equalTo: cell.ordersContainer.rightAnchor, constant: 0),
+                order.bottomAnchor.constraint(equalTo: cell.ordersContainer.bottomAnchor, constant: CGFloat(-5 + (-65 * (orderCount - 1 - orderIndex)))),
+            ])
+            orderIndex += 1
+        }
+        
         return cell
+    }
+    
+    func createCellOrderElement(order: StrategyOrder) -> UIView {
+        let orderContainer = UIView()
+        orderContainer.backgroundColor = Settings.Theme.Color.contentBackground
+        orderContainer.layer.cornerRadius = 10
+        orderContainer.translatesAutoresizingMaskIntoConstraints = false
+        
+        let symbolLabel = UILabel()
+        symbolLabel.backgroundColor = .clear
+        symbolLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 40)
+        symbolLabel.textColor = order.predictPriceDirection > 0 ? Settings.Theme.Color.positive : Settings.Theme.Color.negative
+        symbolLabel.textAlignment = NSTextAlignment.left
+        symbolLabel.numberOfLines = 1
+        symbolLabel.text = order.symbol
+        symbolLabel.isUserInteractionEnabled = false
+        symbolLabel.translatesAutoresizingMaskIntoConstraints = false
+        orderContainer.addSubview(symbolLabel)
+        NSLayoutConstraint.activate([
+            symbolLabel.topAnchor.constraint(equalTo: orderContainer.topAnchor, constant: 5),
+            symbolLabel.leftAnchor.constraint(equalTo: orderContainer.leftAnchor, constant: 10),
+            symbolLabel.widthAnchor.constraint(equalToConstant: 100),
+//            symbolLabel.heightAnchor.constraint(equalToConstant: 40),
+            symbolLabel.bottomAnchor.constraint(equalTo: orderContainer.bottomAnchor, constant: -5),
+        ])
+        
+        let priceText = dollarString(order.price)
+        let orderDirectionText = Order.directionToString(direction: order.direction)
+        let orderTypeText = Order.typeToString(type: order.type)
+        let summaryText = (order.type > 0) ? "\(orderTypeText) \(orderDirectionText) @ \(priceText)" : "\(orderTypeText) \(orderDirectionText)"
+        
+        let summaryLabel = UILabel()
+        summaryLabel.backgroundColor = .clear
+        summaryLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 18)
+        summaryLabel.textColor = Settings.Theme.Color.textGrayMedium
+        summaryLabel.textAlignment = NSTextAlignment.left
+        summaryLabel.numberOfLines = (order.expiration != nil) ? 2 : 1
+        summaryLabel.text = (order.expiration != nil) ? "\(summaryText)\n\(timestampToDateEST(timestamp: order.expiration!))" : summaryText
+        summaryLabel.isUserInteractionEnabled = false
+        summaryLabel.translatesAutoresizingMaskIntoConstraints = false
+        orderContainer.addSubview(summaryLabel)
+        NSLayoutConstraint.activate([
+            summaryLabel.topAnchor.constraint(equalTo: orderContainer.topAnchor, constant: 5),
+            summaryLabel.leftAnchor.constraint(equalTo: symbolLabel.rightAnchor, constant: 2),
+            summaryLabel.rightAnchor.constraint(equalTo: orderContainer.rightAnchor, constant: -2),
+            summaryLabel.bottomAnchor.constraint(equalTo: orderContainer.bottomAnchor, constant: -5),
+        ])
+        
+        return orderContainer
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -39,56 +110,6 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
 //        var group: Group!
 //        group = localGroups[indexPath.row]
 //        self.navigationController?.pushViewController(MessageView(group: group), animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if tableView != strategyTableView { return nil }
-        let copyCode = UIContextualAction(style: .normal, title: "COPY CODE") { (action, view, completionHandler) in
-            print("COPY CODE: \(indexPath.row)")
-            var groupId = ""
-            if let id = self.localStrategies[indexPath.row].id { groupId = id }
-            UIPasteboard.general.string = groupId
-            
-            let alert = UIAlertController(title: "", message: "Copied to clipboard.", preferredStyle: .alert)
-            self.present(alert, animated: true, completion: {
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
-                    self.dismiss(animated: true, completion: nil)
-                }
-            })
-            
-            completionHandler(true)
-        }
-        copyCode.backgroundColor = Settings.Theme.Color.barText
-        let editName = UIContextualAction(style: .normal, title: "EDIT NAME") { (action, view, completionHandler) in
-            print("EDIT TITLE: \(indexPath.row)")
-//            if let id = self.localOrders[indexPath.row].id {
-//                self.editTitle(groupId: id, currentTitle: self.localOrders[indexPath.row].symbol)
-//            }
-            completionHandler(true)
-        }
-        editName.backgroundColor = Settings.Theme.Color.selected
-        return UISwipeActionsConfiguration(actions: [copyCode, editName])
-    }
-    
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if tableView != strategyTableView { return nil }
-        let remove = UIContextualAction(style: .normal, title: "REMOVE ME") { (action, view, completionHandler) in
-            print("REMOVE FROM GROUP: \(indexPath.row)")
-//            var order = self.localOrders[indexPath.row]
-//
-//            // Alert to confirm removal of group
-//            let alert = UIAlertController(title: "Confirm Remove Group", message: "Are you sure you want to remove yourself from \(order.symbol)?", preferredStyle: .alert)
-//            alert.addAction(UIAlertAction(title: "Remove", style: .default, handler: { action in
-//                guard let orderId = order.id else { return }
-//                self.groupRepository.removeCurrentAccount(groupId: orderId)
-//            }))
-//            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-//            self.present(alert, animated: true)
-            
-            completionHandler(true)
-        }
-        remove.backgroundColor = Settings.Theme.Color.negative
-        return UISwipeActionsConfiguration(actions: [remove])
     }
 }
 
