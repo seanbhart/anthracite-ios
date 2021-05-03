@@ -33,8 +33,17 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
         }
         
         cell.ageLabel.text = Strategy.ageString(timestamp: localStrategies[indexPath.row].created)
-        cell.windowLabel.text = Strategy.windowMinsString(windowMins: localStrategies[indexPath.row].windowMins)
+//        cell.windowLabel.text = Strategy.secondsRemainToString(seconds: Int(localStrategies[indexPath.row].windowSecs))
         
+        let timeRemaining = cell.calculateTimeRemaining(countdownTimer: (createdAt: localStrategies[indexPath.row].created / 1000, duration: localStrategies[indexPath.row].windowSecs))
+        if timeRemaining > 0 {
+            cell.configureCell(withCountdownTimer: (createdAt: localStrategies[indexPath.row].created / 1000, duration: localStrategies[indexPath.row].windowSecs))
+        } else {
+            // Set strategy as expired
+            cell.windowLabel.text = "EXPIRED"
+        }
+        
+        cell.captionLabel.text = localStrategies[indexPath.row].caption
         cell.reactionOrderingLabel.text = "\(localStrategies[indexPath.row].reactions.ordering)"
         cell.reactionLikeLabel.text = "\(localStrategies[indexPath.row].reactions.like)"
         cell.reactionDislikeLabel.text = "\(localStrategies[indexPath.row].reactions.dislike)"

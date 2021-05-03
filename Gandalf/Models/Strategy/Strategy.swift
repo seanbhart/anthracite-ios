@@ -11,21 +11,23 @@ import FirebaseFirestoreSwift
 struct Strategy: Identifiable, Codable {
     @DocumentID var id: String?
     var status: Int?
+    var caption: String?
     var created: Double
     var creator: String
     var orders: [StrategyOrder]
     var reactions: StrategyReactions
-    var windowMins: Double
+    var windowSecs: Double
     var version: String
 
     enum CodingKeys: String, CodingKey {
         case id
         case status
+        case caption
         case created
         case creator
         case orders
         case reactions
-        case windowMins = "window_mins"
+        case windowSecs = "window_secs"
         case version
     }
     
@@ -41,17 +43,24 @@ struct Strategy: Identifiable, Codable {
         }
     }
     
-    static func windowMinsString(windowMins: Double) -> String {
-        if (windowMins < 60) {
-            return "\(windowMins) MINS"
-        } else if (windowMins > 60 && windowMins < 60*24) {
-            return "\(((windowMins / 60) * 10).rounded() / 10) HRS"
-        } else if (windowMins > 60*24) {
-            return "\(((windowMins / (60*24)) * 10).rounded() / 10) DAYS"
+    static func secondsRemainToString(seconds: Int) -> String {
+        if (seconds > 3600 * 24) {
+            return String(format: "%02d DAYS, %02d HRS", seconds / (3600 * 24), (seconds / 3600))
         } else {
-            return "\(windowMins / 60) HRS"
+            return String(format: "%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60)
         }
     }
+//    static func windowMinsString(windowMins: Double) -> String {
+//        if (windowMins < 60) {
+//            return "\(windowMins) MINS"
+//        } else if (windowMins > 60 && windowMins < 60*24) {
+//            return "\(((windowMins / 60) * 10).rounded() / 10) HRS"
+//        } else if (windowMins > 60*24) {
+//            return "\(((windowMins / (60*24)) * 10).rounded() / 10) DAYS"
+//        } else {
+//            return "\(windowMins / 60) HRS"
+//        }
+//    }
 }
 
 struct StrategyOrder: Codable {

@@ -17,7 +17,8 @@ struct Settings {
     
     struct Tabs {
         static let strategyVcIndex = 0
-        static let accountVcIndex = 1
+        static let strategyCreateVcIndex = 1
+        static let accountVcIndex = 2
     }
     
     static var inBackground = false

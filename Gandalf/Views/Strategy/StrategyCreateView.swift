@@ -15,19 +15,26 @@ import FirebaseAuth
 class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
     let className = "StrategyCreateView"
     
-    var tabBarViewDelegate: TabBarViewDelegate!
 //    var delegate: StrategyCreateViewDelegate!
     var localStrategies = [Strategy]()
     var strategyRepository: StrategyRepository!
     
     var viewContainer: UIView!
+    var windowLabel: UILabel!
+    var windowButton: UIView!
+    var windowButtonLabel: UILabel!
+    var createButtonContainer: UIView!
+    var createButton: UIView!
+    var createButtonLabel: UILabel!
+    var strategyTableView: UITableView!
+    let strategyTableCellIdentifier: String = "StrategyCreateCell"
     
     private var observer: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(className) - viewDidLoad")
-        self.navigationItem.title = ""
+        self.navigationItem.title = "Create Strategy"
         self.navigationItem.hidesBackButton = true
         let attributes = [NSAttributedString.Key.font: UIFont(name: Assets.Fonts.Default.semiBold, size: 14)]
         self.navigationController?.navigationBar.titleTextAttributes = attributes as [NSAttributedString.Key : Any]
@@ -69,6 +76,48 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
             viewContainer.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             viewContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
+        NSLayoutConstraint.activate([
+            windowLabel.topAnchor.constraint(equalTo: viewContainer.topAnchor, constant: 10),
+            windowLabel.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 10),
+            windowLabel.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -10),
+            windowLabel.heightAnchor.constraint(equalToConstant: 30),
+        ])
+        NSLayoutConstraint.activate([
+            windowButton.topAnchor.constraint(equalTo: windowLabel.bottomAnchor, constant: 0),
+            windowButton.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 10),
+            windowButton.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -10),
+            windowButton.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        NSLayoutConstraint.activate([
+            windowButtonLabel.topAnchor.constraint(equalTo: windowButton.topAnchor, constant: 0),
+            windowButtonLabel.leftAnchor.constraint(equalTo: windowButton.leftAnchor, constant: 0),
+            windowButtonLabel.rightAnchor.constraint(equalTo: windowButton.rightAnchor, constant: 0),
+            windowButtonLabel.bottomAnchor.constraint(equalTo: windowButton.bottomAnchor, constant: 0),
+        ])
+        NSLayoutConstraint.activate([
+            createButtonContainer.bottomAnchor.constraint(equalTo: viewContainer.bottomAnchor, constant: 0),
+            createButtonContainer.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 0),
+            createButtonContainer.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: 0),
+            createButtonContainer.heightAnchor.constraint(equalToConstant: 80),
+        ])
+        NSLayoutConstraint.activate([
+            createButton.topAnchor.constraint(equalTo: createButtonContainer.topAnchor, constant: 10),
+            createButton.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 10),
+            createButton.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -10),
+            createButton.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        NSLayoutConstraint.activate([
+            createButtonLabel.topAnchor.constraint(equalTo: createButton.topAnchor, constant: 0),
+            createButtonLabel.leftAnchor.constraint(equalTo: createButton.leftAnchor, constant: 0),
+            createButtonLabel.rightAnchor.constraint(equalTo: createButton.rightAnchor, constant: 0),
+            createButtonLabel.bottomAnchor.constraint(equalTo: createButton.bottomAnchor, constant: 0),
+        ])
+        NSLayoutConstraint.activate([
+            strategyTableView.topAnchor.constraint(equalTo: windowButton.bottomAnchor, constant: 0),
+            strategyTableView.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 0),
+            strategyTableView.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: 0),
+            strategyTableView.bottomAnchor.constraint(equalTo: createButtonContainer.topAnchor, constant: 0),
+        ])
         
         if strategyRepository == nil {
             strategyRepository = StrategyRepository()
@@ -99,7 +148,84 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(viewContainer)
         
+        windowLabel = UILabel()
+        windowLabel.backgroundColor = .clear
+        windowLabel.font = UIFont(name: Assets.Fonts.Default.regular, size: 18)
+        windowLabel.textColor = Settings.Theme.Color.primary
+        windowLabel.textAlignment = NSTextAlignment.center
+        windowLabel.numberOfLines = 1
+        windowLabel.text = "OPPORTUNITY WINDOW"
+        windowLabel.isUserInteractionEnabled = false
+        windowLabel.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(windowLabel)
         
+        windowButton = UIView()
+        windowButton.backgroundColor = Settings.Theme.Color.background
+        windowButton.layer.cornerRadius = 25
+        windowButton.layer.borderWidth = 1
+        windowButton.layer.borderColor = Settings.Theme.Color.grayMedium.cgColor
+        windowButton.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(windowButton)
+        
+        windowButtonLabel = UILabel()
+        windowButtonLabel.backgroundColor = .clear
+        windowButtonLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 26)
+        windowButtonLabel.textColor = Settings.Theme.Color.primary
+        windowButtonLabel.textAlignment = NSTextAlignment.center
+        windowButtonLabel.numberOfLines = 1
+        windowButtonLabel.text = "1 DAY"
+        windowButtonLabel.isUserInteractionEnabled = false
+        windowButtonLabel.translatesAutoresizingMaskIntoConstraints = false
+        windowButton.addSubview(windowButtonLabel)
+        
+        createButtonContainer = UIView()
+        createButtonContainer.backgroundColor = Settings.Theme.Color.background
+        createButtonContainer.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(createButtonContainer)
+        
+        createButton = UIView()
+        createButton.backgroundColor = Settings.Theme.Color.background
+        createButton.layer.cornerRadius = 25
+        createButton.layer.borderWidth = 1
+        createButton.layer.borderColor = Settings.Theme.Color.grayMedium.cgColor
+        createButton.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(createButton)
+        
+        createButtonLabel = UILabel()
+        createButtonLabel.backgroundColor = .clear
+        createButtonLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 26)
+        createButtonLabel.textColor = Settings.Theme.Color.primary
+        createButtonLabel.textAlignment = NSTextAlignment.center
+        createButtonLabel.numberOfLines = 1
+        createButtonLabel.text = "CREATE STRATEGY"
+        createButtonLabel.isUserInteractionEnabled = false
+        createButtonLabel.translatesAutoresizingMaskIntoConstraints = false
+        createButton.addSubview(createButtonLabel)
+        
+        strategyTableView = UITableView()
+        strategyTableView.dataSource = self
+        strategyTableView.delegate = self
+        strategyTableView.dragInteractionEnabled = false
+        strategyTableView.register(StrategyCreateCell.self, forCellReuseIdentifier: strategyTableCellIdentifier)
+        strategyTableView.separatorStyle = .none
+        strategyTableView.backgroundColor = .clear
+        strategyTableView.isSpringLoaded = true
+        strategyTableView.rowHeight = UITableView.automaticDimension
+        strategyTableView.estimatedRowHeight = UITableView.automaticDimension
+//        strategyTableView.estimatedRowHeight = 0
+        strategyTableView.estimatedSectionHeaderHeight = 0
+        strategyTableView.estimatedSectionFooterHeight = 0
+        strategyTableView.isScrollEnabled = true
+        strategyTableView.bounces = true
+        strategyTableView.alwaysBounceVertical = true
+        strategyTableView.showsVerticalScrollIndicator = false
+        strategyTableView.isUserInteractionEnabled = true
+        strategyTableView.allowsSelection = true
+//        strategyTableView.delaysContentTouches = false
+        strategyTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+//        strategyTableView.insetsContentViewsToSafeArea = true
+        strategyTableView.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(strategyTableView)
     }
     
     override func didReceiveMemoryWarning() {

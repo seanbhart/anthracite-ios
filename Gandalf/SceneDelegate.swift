@@ -25,8 +25,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     var tabBarController: UITabBarController!
     var strategyVC: StrategyView!
     var strategyVcNavController: UINavigationController!
-    var strategyCreateVC: StrategyCreateView!
-    var strategyCreateVcNavController: UINavigationController!
+    var strategyTabVC: StrategyTabView!
+    var strategyTabVcNavController: UINavigationController!
     var accountVC: AccountView!
     var accountVcNavController: UINavigationController!
     
@@ -62,16 +62,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let tabImageStrategyColor = UIImage(systemName: "square.stack.3d.forward.dottedline.fill")?.withTintColor(Settings.Theme.Color.primaryLight, renderingMode: .alwaysOriginal)
         strategyVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageStrategyWhite, selectedImage: tabImageStrategyColor)
         
-        strategyCreateVC = StrategyCreateView()
-        strategyCreateVC.tabBarViewDelegate = self
-        strategyCreateVcNavController = UINavigationController(rootViewController: strategyCreateVC)
-        strategyCreateVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
-        strategyCreateVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
-        strategyCreateVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
-        strategyCreateVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
-        let tabImageStrategyCreateWhite = UIImage(systemName: "plus")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-        let tabImageStrategyCreateColor = UIImage(systemName: "plus")?.withTintColor(Settings.Theme.Color.primaryLight, renderingMode: .alwaysOriginal)
-        strategyCreateVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageStrategyCreateWhite, selectedImage: tabImageStrategyCreateColor)
+        strategyTabVC = StrategyTabView()
+        strategyTabVC.tabBarViewDelegate = self
+        strategyTabVcNavController = UINavigationController(rootViewController: strategyTabVC)
+        strategyTabVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
+        strategyTabVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
+        strategyTabVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
+        strategyTabVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
+        let tabImageStrategyCreateWhite = UIImage(systemName: "plus.square")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+        let tabImageStrategyCreateColor = UIImage(systemName: "plus.square")?.withTintColor(Settings.Theme.Color.primaryLight, renderingMode: .alwaysOriginal)
+        strategyTabVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageStrategyCreateWhite, selectedImage: tabImageStrategyCreateColor)
         
         accountVC = AccountView()
         accountVC.tabBarViewDelegate = self
@@ -91,7 +91,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         tabBarController.tabBar.barTintColor = Settings.Theme.Color.barColor
         tabBarController.tabBar.isTranslucent = false
         tabBarController.tabBar.clipsToBounds = true
-        tabBarController.viewControllers = [strategyVcNavController, strategyCreateVcNavController, accountVcNavController]
+        tabBarController.viewControllers = [strategyVcNavController, strategyTabVcNavController, accountVcNavController]
         tabBarController.selectedIndex = Settings.Tabs.accountVcIndex
         
         // If a user is not logged in, display the Login screen
@@ -163,20 +163,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     
     // MARK: -TABBARCONTROLLER METHODS
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        print("\(className) - tabBarController didSelect: \(viewController)")
-        guard let _ = Settings.Firebase.auth().currentUser else {
-            print("\(className) - tabBarController didSelect: No user logged in; remain in Account view")
-            tabBarController.selectedIndex = Settings.Tabs.accountVcIndex
-            return
-        }
-    }
+//    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+//        print("\(className) - tabBarController didSelect: \(viewController)")
+//        guard let _ = Settings.Firebase.auth().currentUser else {
+//            print("\(className) - tabBarController didSelect: No user logged in; remain in Account view")
+//            tabBarController.selectedIndex = Settings.Tabs.accountVcIndex
+//            return
+//        }
+//    }
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         print("\(className) - tabBarController shouldSelect: \(viewController.children)")
-        if viewController.children[0] is StrategyCreateView {
+        if viewController.children.filter({ $0 is StrategyTabView }).count > 0 {
             print("\(className) - tabBarController presentSheet")
-            let navigationController = UINavigationController(rootViewController: strategyCreateVC)
+            let navigationController = UINavigationController(rootViewController: StrategyCreateView())
             navigationController.modalPresentationStyle = UIModalPresentationStyle.pageSheet
             navigationController.modalTransitionStyle = UIModalTransitionStyle.coverVertical
             tabBarController.present(navigationController, animated: true, completion: nil)
