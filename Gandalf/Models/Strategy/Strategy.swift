@@ -68,7 +68,7 @@ struct StrategyOrder: Codable {
     var expiration: Double?
     var predictPriceDirection: Int
     var price: Double?
-    var symbol: String
+    var symbol: String?
     var type: Int
     
     enum CodingKeys: String, CodingKey {
@@ -78,6 +78,12 @@ struct StrategyOrder: Codable {
         case price
         case symbol
         case type
+    }
+    
+    init(direction: Int, predictPriceDirection: Int, type: Int) {
+        self.direction = direction
+        self.predictPriceDirection = predictPriceDirection
+        self.type = type
     }
 }
 

@@ -8,15 +8,16 @@
 import UIKit
 import FirebaseAuth
 
-//protocol StrategyCreateViewDelegate {
-//    func loadStrategy(strategy: String)
-//}
+protocol StrategyCreateViewDelegate {
+    func saveStrategy(strategy: Strategy)
+}
 
-class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
+class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchViewDelegate {
     let className = "StrategyCreateView"
     
-//    var delegate: StrategyCreateViewDelegate!
-    var localStrategies = [Strategy]()
+    var delegate: StrategyCreateViewDelegate!
+    var strategy: Strategy!
+    var localStrategyOrders = [StrategyOrder]()
     var strategyRepository: StrategyRepository!
     
     var viewContainer: UIView!
@@ -28,6 +29,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
     var createButtonLabel: UILabel!
     var strategyTableView: UITableView!
     let strategyTableCellIdentifier: String = "StrategyCreateCell"
+    let strategyTableAddRowCellIdentifier: String = "StrategyCreateAddRowCell"
     
     private var observer: NSObjectProtocol?
     
@@ -47,6 +49,8 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
         ])
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
         self.navigationItem.rightBarButtonItem = nil
+        // For the children views:
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: nil, action: nil)
         
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - willEnterForegroundNotification")
@@ -113,7 +117,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
             createButtonLabel.bottomAnchor.constraint(equalTo: createButton.bottomAnchor, constant: 0),
         ])
         NSLayoutConstraint.activate([
-            strategyTableView.topAnchor.constraint(equalTo: windowButton.bottomAnchor, constant: 0),
+            strategyTableView.topAnchor.constraint(equalTo: windowButton.bottomAnchor, constant: 10),
             strategyTableView.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 0),
             strategyTableView.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: 0),
             strategyTableView.bottomAnchor.constraint(equalTo: createButtonContainer.topAnchor, constant: 0),
@@ -167,6 +171,10 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
         windowButton.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(windowButton)
         
+        let windowButtonGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(windowTap))
+        windowButtonGestureRecognizer.numberOfTapsRequired = 1
+        windowButton.addGestureRecognizer(windowButtonGestureRecognizer)
+        
         windowButtonLabel = UILabel()
         windowButtonLabel.backgroundColor = .clear
         windowButtonLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 26)
@@ -197,7 +205,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
         createButtonLabel.textColor = Settings.Theme.Color.primary
         createButtonLabel.textAlignment = NSTextAlignment.center
         createButtonLabel.numberOfLines = 1
-        createButtonLabel.text = "CREATE STRATEGY"
+        createButtonLabel.text = "CREATE"
         createButtonLabel.isUserInteractionEnabled = false
         createButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         createButton.addSubview(createButtonLabel)
@@ -207,6 +215,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
         strategyTableView.delegate = self
         strategyTableView.dragInteractionEnabled = false
         strategyTableView.register(StrategyCreateCell.self, forCellReuseIdentifier: strategyTableCellIdentifier)
+        strategyTableView.register(StrategyCreateAddRowCell.self, forCellReuseIdentifier: strategyTableAddRowCellIdentifier)
         strategyTableView.separatorStyle = .none
         strategyTableView.backgroundColor = .clear
         strategyTableView.isSpringLoaded = true
@@ -226,6 +235,10 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
 //        strategyTableView.insetsContentViewsToSafeArea = true
         strategyTableView.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(strategyTableView)
+        
+        // Create a default StrategyOrder to start
+        let defaultStrategyOrder = StrategyOrder(direction: 1, predictPriceDirection: 1, type: 0)
+        localStrategyOrders.append(defaultStrategyOrder)
     }
     
     override func didReceiveMemoryWarning() {
@@ -233,6 +246,25 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate {
         print("\(className) - didReceiveMemoryWarning")
         // Dispose of any resources that can be recreated.
     }
+    
+    
+    // MARK: -GESTURE RECOGNIZERS
+    
+    @objc func windowTap(_ sender: UITapGestureRecognizer) {
+        print("\(className) - selectOrderSymbol")
+//        let options = ["10 MINS", "30 MINS", "1 HR", "2 HRS", "3 HRS", "4 HRS", "5 HRS", "6 HRS"]
+//        let searchView = SearchView(title: "Set Opportunity Window", options: options)
+//        searchView.delegate = self
+        
+        self.navigationController?.pushViewController(WindowPicker(), animated: true)
+    }
+    
+    
+    // MARK: -SEARCH VIEW DELEGATE METHODS
+    
+    func searchViewSelected(selection: String) {
+        print("\(className) - searchViewSelected: \(selection)")
+        windowButtonLabel.text = selection
+        self.navigationController?.popViewController(animated: true)
+    }
 }
-
-

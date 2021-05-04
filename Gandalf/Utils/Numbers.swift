@@ -9,12 +9,13 @@ import Foundation
 
 func dollarString(_ value: Double?) -> String {
     guard value != nil else { return "$0.00" }
+    let oldValueRounded = Double(round(100 * value!) / 100)
     let formatter = NumberFormatter()
     formatter.currencyCode = "USD"
     formatter.currencySymbol = "$"
     formatter.maximumFractionDigits = 2
     formatter.numberStyle = .currencyAccounting
-    return formatter.string(from: NSNumber(value: value!)) ?? "$\(value!)"
+    return formatter.string(from: NSNumber(value: oldValueRounded)) ?? "$\(oldValueRounded)"
 }
 
 func timestampToDateEST(timestamp: Double) -> String {
