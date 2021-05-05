@@ -32,6 +32,7 @@ extension Settings {
             static let textGrayMedium = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.5) //#FFF
             static let textGrayDark = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.3) //#FFF
             static let textGrayUltraDark = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.1) //#FFF
+            static let textGrayTrueDark = UIColor(red: 41/255, green: 41/255, blue: 41/255, alpha: 1.0) //#292929
             
 //            static let primary = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
             static let primary = UIColor(red: 187/255, green: 134/255, blue: 252/255, alpha: 1.0) //#BB86FC

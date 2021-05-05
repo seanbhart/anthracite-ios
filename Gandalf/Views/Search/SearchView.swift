@@ -111,7 +111,7 @@ class SearchView: UIViewController, UIGestureRecognizerDelegate {
         resultsTableView.dataSource = self
         resultsTableView.delegate = self
         resultsTableView.dragInteractionEnabled = false
-        resultsTableView.register(SearchResultsCell.self, forCellReuseIdentifier: resultsTableCellIdentifier)
+        resultsTableView.register(TextCell.self, forCellReuseIdentifier: resultsTableCellIdentifier)
         resultsTableView.separatorStyle = .none
         resultsTableView.backgroundColor = .clear
         resultsTableView.isSpringLoaded = true

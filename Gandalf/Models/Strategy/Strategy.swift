@@ -15,8 +15,8 @@ struct Strategy: Identifiable, Codable {
     var created: Double
     var creator: String
     var orders: [StrategyOrder]
-    var reactions: StrategyReactions
-    var windowSecs: Double
+    var reactions: StrategyReactions?
+    var windowExpiration: Double
     var version: String
 
     enum CodingKeys: String, CodingKey {
@@ -27,25 +27,43 @@ struct Strategy: Identifiable, Codable {
         case creator
         case orders
         case reactions
-        case windowSecs = "window_secs"
+        case windowExpiration = "window_expiration"
         case version
     }
     
+    init(creator: String, windowExpiration: Double) {
+        self.creator = creator
+        self.windowExpiration = windowExpiration
+        self.created = Date().timeIntervalSince1970
+        self.orders = [StrategyOrder]()
+        self.version = "v3.0.0"
+    }
+    
+    // The Created timestamp should be passed in milliseconds
     static func ageString(timestamp: Double) -> String {
         let timestampSec = timestamp / 1000
         let ageMins = (Date().timeIntervalSince1970 - timestampSec) / 60
-        if (ageMins < 60) {
-            return "\(ageMins) mins ago"
-        } else if (ageMins > 60 && ageMins < 60*24) {
-            return "\(((ageMins / 60) * 10).rounded() / 10) hrs ago"
+        if (ageMins < 1) {
+            return "just now"
+        } else if (Int(ageMins) == 1) {
+            return " 1 min ago"
+        } else if (ageMins < 60) {
+            return "\(Int(ageMins)) mins ago"
+        } else if (Int(round(ageMins / 60)) == 1) {
+            return "1 hr ago"
+        } else if (Int(round(ageMins / 60)) > 1 && ageMins < 60*24) {
+            return "\(Int(round(ageMins / 60))) hrs ago"
         } else {
             return timestampToDatetimeLocal(timestamp: timestamp)
         }
     }
     
     static func secondsRemainToString(seconds: Int) -> String {
-        if (seconds > 3600 * 24) {
-            return String(format: "%02d DAYS, %02d HRS", seconds / (3600 * 24), (seconds / 3600))
+        if (seconds == 3600 * 24) {
+            return "1 DAY"
+        } else if (seconds > 3600 * 24) {
+//            return String(format: "%d DAYS, %02d HRS", seconds / (3600 * 24), (seconds / 3600))
+            return "\(round((Double(seconds) / (3600 * 24)) * 10) / 10) DAYS"
         } else {
             return String(format: "%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60)
         }

@@ -29,16 +29,16 @@ class StrategyCell: UITableViewCell {
     var reactionLikeLabel: UILabel!
     var reactionDislikeIcon: UIImageView!
     var reactionDislikeLabel: UILabel!
+    var borderBottom: UIView!
     
     var timer: Timer?
     
     // Set a timer to recalculate the opportunity window remaining every second
     // Both time intervals should be in seconds - milliseconds are not displayed
-    func configureCell(withCountdownTimer countdownTimer: (createdAt: TimeInterval, duration: TimeInterval)) {
-        
+    func configureCellTimer(expiration: TimeInterval) {
         if self.timer == nil {
             self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                let timeRemaining = self.calculateTimeRemaining(countdownTimer: countdownTimer)
+                let timeRemaining = self.calculateTimeRemaining(expiration: expiration)
                 if timeRemaining <= 0 {
                     // Set strategy as expired
                     self.windowLabel.text = "EXPIRED"
@@ -48,9 +48,8 @@ class StrategyCell: UITableViewCell {
             }
         }
     }
-    
-    func calculateTimeRemaining(countdownTimer:(createdAt: TimeInterval, duration: TimeInterval)) -> Double {
-        return Double((countdownTimer.createdAt + countdownTimer.duration) - Date().timeIntervalSince1970)
+    private func calculateTimeRemaining(expiration: TimeInterval) -> Double {
+        return Double(expiration - Date().timeIntervalSince1970)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -342,9 +341,9 @@ class StrategyCell: UITableViewCell {
             ordersContainer.bottomAnchor.constraint(equalTo: captionLabel.topAnchor, constant: 0),
         ])
         
-        let borderBottom = UIView()
+        borderBottom = UIView()
         borderBottom.layer.borderWidth = 1
-        borderBottom.layer.borderColor = Settings.Theme.Color.grayUltraDark.cgColor
+        borderBottom.layer.borderColor = Settings.Theme.Color.background.cgColor
         borderBottom.translatesAutoresizingMaskIntoConstraints = false
         contentContainer.addSubview(borderBottom)
         NSLayoutConstraint.activate([
@@ -380,6 +379,13 @@ class StrategyCell: UITableViewCell {
         } else {
             contentView.backgroundColor = Settings.Theme.Color.background
         }
+    }
+    
+    func showBorder() {
+        borderBottom.layer.borderColor = Settings.Theme.Color.grayUltraDark.cgColor
+    }
+    func hideBorder() {
+        borderBottom.layer.borderColor = Settings.Theme.Color.background.cgColor
     }
 }
 

@@ -32,21 +32,16 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
             subview.removeFromSuperview()
         }
         
+        cell.configureCellTimer(expiration: localStrategies[indexPath.row].windowExpiration / 1000)
+        
         cell.ageLabel.text = Strategy.ageString(timestamp: localStrategies[indexPath.row].created)
 //        cell.windowLabel.text = Strategy.secondsRemainToString(seconds: Int(localStrategies[indexPath.row].windowSecs))
-        
-        let timeRemaining = cell.calculateTimeRemaining(countdownTimer: (createdAt: localStrategies[indexPath.row].created / 1000, duration: localStrategies[indexPath.row].windowSecs))
-        if timeRemaining > 0 {
-            cell.configureCell(withCountdownTimer: (createdAt: localStrategies[indexPath.row].created / 1000, duration: localStrategies[indexPath.row].windowSecs))
-        } else {
-            // Set strategy as expired
-            cell.windowLabel.text = "EXPIRED"
-        }
-        
         cell.captionLabel.text = localStrategies[indexPath.row].caption
-        cell.reactionOrderingLabel.text = "\(localStrategies[indexPath.row].reactions.ordering)"
-        cell.reactionLikeLabel.text = "\(localStrategies[indexPath.row].reactions.like)"
-        cell.reactionDislikeLabel.text = "\(localStrategies[indexPath.row].reactions.dislike)"
+        if let reactions = localStrategies[indexPath.row].reactions {
+            cell.reactionOrderingLabel.text = "\(reactions.ordering)"
+            cell.reactionLikeLabel.text = "\(reactions.like)"
+            cell.reactionDislikeLabel.text = "\(reactions.dislike)"
+        }
         
         var orderIndex = 0
         let orderCount = localStrategies[indexPath.row].orders.count
@@ -60,6 +55,13 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
                 order.bottomAnchor.constraint(equalTo: cell.ordersContainer.bottomAnchor, constant: CGFloat(-5 + (-65 * (orderCount - 1 - orderIndex)))),
             ])
             orderIndex += 1
+        }
+        
+        // Add the bottom border if not the last cell
+        if indexPath.row < localStrategies.count - 1 {
+            cell.showBorder()
+        } else {
+            cell.hideBorder()
         }
         
         return cell

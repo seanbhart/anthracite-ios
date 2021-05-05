@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension StrategyCreateView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, StrategyCreateCellDelegate, StrategyCreateAddRowCellDelegate {
+extension StrategyCreateView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, StrategyCreateCellDelegate, StrategyCreateAddRowCellDelegate, SearchSymbolViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         1
@@ -42,7 +42,7 @@ extension StrategyCreateView: UITableViewDataSource, UITableViewDelegate, UIScro
         
         let strategyOrder = localStrategyOrders[indexPath.row]
         if let symbol = strategyOrder.symbol {
-            cell.symbolButtonLabel.text = symbol
+            cell.updateSymbolInfo(symbol: symbol, priceDirection: strategyOrder.predictPriceDirection)
         }
         cell.directionButtonLabel.text = Order.directionToString(direction: strategyOrder.direction)
         cell.typeButtonLabel.text = Order.typeToString(type: strategyOrder.type)
@@ -122,7 +122,10 @@ extension StrategyCreateView: UITableViewDataSource, UITableViewDelegate, UIScro
     
     func selectOrderSymbol(orderIndex: Int) {
         print("\(className) - selectOrderSymbol")
-        self.navigationController?.pushViewController(SearchSymbolView(), animated: true)
+        let searchSymbolView = SearchSymbolView(symbol: localStrategyOrders[orderIndex].symbol ?? "", direction: localStrategyOrders[orderIndex].predictPriceDirection)
+        searchSymbolView.delegate = self
+        searchSymbolView.orderIndex = orderIndex
+        self.navigationController?.pushViewController(searchSymbolView, animated: true)
     }
     
     func selectOrderDirection(orderIndex: Int) {
@@ -168,5 +171,17 @@ extension StrategyCreateView: UITableViewDataSource, UITableViewDelegate, UIScro
         localStrategyOrders.append(StrategyOrder(direction: 1, predictPriceDirection: 1, type: 0))
         strategyTableView.reloadData()
         strategyTableView.scrollToRow(at: IndexPath(row: localStrategyOrders.count, section: 0), at: .bottom, animated: true)
+    }
+    
+    
+    // MARK: -SEARCH SYMBOL DELEGATE METHODS
+    
+    func selected(orderIndex: Int, symbol: String, predictDirection: Int) {
+        print("\(className) - order \(orderIndex) selected symbol: \(symbol), predictDirection: \(predictDirection)")
+        if localStrategyOrders.count > orderIndex {
+            localStrategyOrders[orderIndex].symbol = symbol
+            localStrategyOrders[orderIndex].predictPriceDirection = predictDirection
+            strategyTableView.reloadData()
+        }
     }
 }

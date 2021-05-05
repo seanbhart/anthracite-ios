@@ -135,7 +135,7 @@ class StrategyCreateCell: UITableViewCell, UITextFieldDelegate {
         symbolButtonLabel.textColor = Settings.Theme.Color.positive
         symbolButtonLabel.textAlignment = NSTextAlignment.center
         symbolButtonLabel.numberOfLines = 1
-        symbolButtonLabel.text = "____"
+        symbolButtonLabel.text = "?"
         symbolButtonLabel.isUserInteractionEnabled = false
         symbolButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         symbolButton.addSubview(symbolButtonLabel)
@@ -301,6 +301,15 @@ class StrategyCreateCell: UITableViewCell, UITextFieldDelegate {
         }
     }
     
+    
+    func updateSymbolInfo(symbol: String, priceDirection: Int) {
+        symbolButtonLabel.text = symbol
+        if priceDirection == 0 {
+            symbolButtonLabel.textColor = Settings.Theme.Color.negative
+        } else {
+            symbolButtonLabel.textColor = Settings.Theme.Color.positive
+        }
+    }
     
     func showLimitPrice() {
         contentContainer.addSubview(priceLabel)

@@ -12,13 +12,14 @@ protocol StrategyCreateViewDelegate {
     func saveStrategy(strategy: Strategy)
 }
 
-class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchViewDelegate {
+class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchViewDelegate, WindowPickerViewDelegate {
     let className = "StrategyCreateView"
     
     var delegate: StrategyCreateViewDelegate!
     var strategy: Strategy!
     var localStrategyOrders = [StrategyOrder]()
     var strategyRepository: StrategyRepository!
+    var windowTimer: Timer?
     
     var viewContainer: UIView!
     var windowLabel: UILabel!
@@ -50,7 +51,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
         self.navigationItem.rightBarButtonItem = nil
         // For the children views:
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - willEnterForegroundNotification")
@@ -192,17 +193,17 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
         viewContainer.addSubview(createButtonContainer)
         
         createButton = UIView()
-        createButton.backgroundColor = Settings.Theme.Color.background
+        createButton.backgroundColor = Settings.Theme.Color.primary
         createButton.layer.cornerRadius = 25
-        createButton.layer.borderWidth = 1
-        createButton.layer.borderColor = Settings.Theme.Color.grayMedium.cgColor
+//        createButton.layer.borderWidth = 1
+//        createButton.layer.borderColor = Settings.Theme.Color.grayMedium.cgColor
         createButton.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(createButton)
         
         createButtonLabel = UILabel()
         createButtonLabel.backgroundColor = .clear
-        createButtonLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 26)
-        createButtonLabel.textColor = Settings.Theme.Color.primary
+        createButtonLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 26)
+        createButtonLabel.textColor = Settings.Theme.Color.textGrayTrueDark
         createButtonLabel.textAlignment = NSTextAlignment.center
         createButtonLabel.numberOfLines = 1
         createButtonLabel.text = "CREATE"
@@ -239,7 +240,20 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
         // Create a default StrategyOrder to start
         let defaultStrategyOrder = StrategyOrder(direction: 1, predictPriceDirection: 1, type: 0)
         localStrategyOrders.append(defaultStrategyOrder)
+        
+        // Instantiate the Strategy object and start the window timer with the default 1 day period
+        guard let firUser = Settings.Firebase.auth().currentUser else { self.navigationController?.popViewController(animated: true); return }
+        let defaultExpiration = Date().timeIntervalSince1970 + Double(86400)
+        strategy = Strategy(creator: firUser.uid, windowExpiration: defaultExpiration)
+        windowTimer?.invalidate()
+        windowTimer = nil
+        configureWindowTimer(expiration: defaultExpiration)
     }
+    
+//    override func viewDidDisappear(_ animated: Bool) {
+//        windowTimer?.invalidate()
+//        windowTimer = nil
+//    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -248,15 +262,32 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
     }
     
     
+    // Set a timer to recalculate the opportunity window remaining every second
+    // Both time intervals should be in seconds - milliseconds are not displayed
+    func configureWindowTimer(expiration: TimeInterval) {
+        if self.windowTimer == nil {
+            self.windowTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                let timeRemaining = self.calculateTimeRemaining(expiration: expiration)
+                if timeRemaining <= 0 {
+                    self.windowButtonLabel.text = "EXPIRED"
+                } else {
+                    self.windowButtonLabel.text = Strategy.secondsRemainToString(seconds: Int(timeRemaining))
+                }
+            }
+        }
+    }
+    private func calculateTimeRemaining(expiration: TimeInterval) -> Double {
+        return Double(expiration - Date().timeIntervalSince1970)
+    }
+    
+    
     // MARK: -GESTURE RECOGNIZERS
     
     @objc func windowTap(_ sender: UITapGestureRecognizer) {
         print("\(className) - selectOrderSymbol")
-//        let options = ["10 MINS", "30 MINS", "1 HR", "2 HRS", "3 HRS", "4 HRS", "5 HRS", "6 HRS"]
-//        let searchView = SearchView(title: "Set Opportunity Window", options: options)
-//        searchView.delegate = self
-        
-        self.navigationController?.pushViewController(WindowPicker(), animated: true)
+        let windowPickerView = WindowPickerView()
+        windowPickerView.delegate = self
+        self.navigationController?.pushViewController(windowPickerView, animated: true)
     }
     
     
@@ -265,6 +296,18 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
     func searchViewSelected(selection: String) {
         print("\(className) - searchViewSelected: \(selection)")
         windowButtonLabel.text = selection
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    
+    // MARK: -WINDOW PICKER VIEW DELEGATE METHODS
+    
+    func window(expiration: TimeInterval) {
+        print("\(className) - windowExpiration: \(expiration)")
+        strategy.windowExpiration = expiration
+        windowTimer?.invalidate()
+        windowTimer = nil
+        configureWindowTimer(expiration: expiration)
         self.navigationController?.popViewController(animated: true)
     }
 }

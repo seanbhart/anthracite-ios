@@ -1,5 +1,5 @@
 //
-//  SearchResultsCell.swift
+//  TextCell.swift
 //  Gandalf
 //
 //  Created by Sean Hart on 5/3/21.
@@ -8,11 +8,11 @@
 import UIKit
 //import FirebaseAnalytics
 
-class SearchResultsCell: UITableViewCell {
+class TextCell: UITableViewCell {
     
     var cellContainer: UIView!
     var contentContainer: UIView!
-    var resultLabel: UILabel!
+    var cellTextLabel: UILabel!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -42,20 +42,20 @@ class SearchResultsCell: UITableViewCell {
             contentContainer.rightAnchor.constraint(equalTo: cellContainer.rightAnchor, constant: -10),
         ])
         
-        resultLabel = UILabel()
-        resultLabel.font = UIFont(name: Assets.Fonts.Default.regular, size: 20)
-        resultLabel.textColor = Settings.Theme.Color.textGrayMedium
-        resultLabel.textAlignment = NSTextAlignment.left
-        resultLabel.numberOfLines = 1
-//        resultLabel.text = ""
-        resultLabel.isUserInteractionEnabled = false
-        resultLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentContainer.addSubview(resultLabel)
+        cellTextLabel = UILabel()
+        cellTextLabel.font = UIFont(name: Assets.Fonts.Default.regular, size: 20)
+        cellTextLabel.textColor = Settings.Theme.Color.textGrayMedium
+        cellTextLabel.textAlignment = NSTextAlignment.left
+        cellTextLabel.numberOfLines = 1
+//        cellTextLabel.text = ""
+        cellTextLabel.isUserInteractionEnabled = false
+        cellTextLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentContainer.addSubview(cellTextLabel)
         NSLayoutConstraint.activate([
-            resultLabel.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 0),
-            resultLabel.leftAnchor.constraint(equalTo: contentContainer.leftAnchor, constant: 10),
-            resultLabel.rightAnchor.constraint(equalTo: contentContainer.rightAnchor, constant: -10),
-            resultLabel.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: 0),
+            cellTextLabel.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 0),
+            cellTextLabel.leftAnchor.constraint(equalTo: contentContainer.leftAnchor, constant: 10),
+            cellTextLabel.rightAnchor.constraint(equalTo: contentContainer.rightAnchor, constant: -10),
+            cellTextLabel.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: 0),
         ])
     }
     

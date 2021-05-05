@@ -1,13 +1,13 @@
 //
-//  SearchViewTableView.swift
+//  WindowPickerViewTableView.swift
 //  Gandalf
 //
-//  Created by Sean Hart on 5/3/21.
+//  Created by Sean Hart on 5/4/21.
 //
 
 import UIKit
 
-extension SearchView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
+extension WindowPickerView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         1
@@ -18,8 +18,7 @@ extension SearchView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDe
 //    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("\(className) - tableView results count \(results.count)")
-        return results.count
+        return options.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -27,15 +26,14 @@ extension SearchView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDe
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: resultsTableCellIdentifier, for: indexPath) as! TextCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: timesTableCellIdentifier, for: indexPath) as! TextCell
         cell.selectionStyle = .none
-        cell.cellTextLabel.text = results[indexPath.row]
+        cell.cellTextLabel.text = options[indexPath.row]["text"] as? String ?? ""
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let parent = self.delegate {
-            parent.searchViewSelected(selection: results[indexPath.row])
-        }
+        let secondsTime = options[indexPath.row]["seconds"] as? TimeInterval ?? 0
+        datePicker.setDate(Date(timeIntervalSinceNow: secondsTime), animated: true)
     }
 }
