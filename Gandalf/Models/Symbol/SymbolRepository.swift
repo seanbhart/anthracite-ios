@@ -50,13 +50,16 @@ class SymbolRepository {
                         data.forEach { key, value in
 //                            print("\(className) - symbol: \(key)")
                             if let symbolData = value as? [String: Any] {
-                                let newSymbol = Symbol(symbol: key, name: symbolData["name"] as? String ?? "")
-//                                print("\(className) - newSymbol: \(newSymbol)")
-                                symbols.append(newSymbol)
+                                if let name = symbolData["name"] as? String {
+                                    let newSymbol = Symbol(symbol: key, name: name)
+    //                                print("\(className) - newSymbol: \(newSymbol)")
+                                    symbols.append(newSymbol)
+                                }
                             }
                         }
                     }
                 }
+                symbols.sort { $0.symbol < $1.symbol }
                 
                 if let parent = self.delegate {
                     parent.symbolDataUpdate()

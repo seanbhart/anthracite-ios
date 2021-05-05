@@ -168,7 +168,12 @@ extension StrategyCreateView: UITableViewDataSource, UITableViewDelegate, UIScro
     
     func addRow() {
         // Add a default StrategyOrder
-        localStrategyOrders.append(StrategyOrder(direction: 1, predictPriceDirection: 1, type: 0))
+        var strategyOrder = StrategyOrder(direction: 1, predictPriceDirection: 1, type: 0)
+        // If orders already exist in this strategy, use the latest order's symbol for the new order,
+        // assuming that the user's preference is to suggest another order with the same asset.
+        let count = localStrategyOrders.count
+        if count > 0 { strategyOrder.symbol = localStrategyOrders[count - 1].symbol }
+        localStrategyOrders.append(strategyOrder)
         strategyTableView.reloadData()
         strategyTableView.scrollToRow(at: IndexPath(row: localStrategyOrders.count, section: 0), at: .bottom, animated: true)
     }

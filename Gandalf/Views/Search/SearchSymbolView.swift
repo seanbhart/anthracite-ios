@@ -32,6 +32,8 @@ class SearchSymbolView: UIViewController, UIGestureRecognizerDelegate, UITextFie
     var symbolTableView: UITableView!
     let symbolTableCellIdentifier: String = "SymbolCell"
     var saveContainer: UIView!
+    var saveContainerHeightConstraintNormal: NSLayoutConstraint!
+    var saveContainerHeightConstraintKeyboard: NSLayoutConstraint!
     var saveButton: UIView!
     var saveButtonLabel: UILabel!
     
@@ -57,6 +59,8 @@ class SearchSymbolView: UIViewController, UIGestureRecognizerDelegate, UITextFie
         
         self.navigationItem.leftBarButtonItem = nil
         self.navigationItem.rightBarButtonItem = nil
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow), name: UIResponder.keyboardDidShowNotification, object: nil)
         
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - willEnterForegroundNotification")
@@ -126,7 +130,6 @@ class SearchSymbolView: UIViewController, UIGestureRecognizerDelegate, UITextFie
             saveContainer.bottomAnchor.constraint(equalTo: viewContainer.bottomAnchor, constant: 0),
             saveContainer.leftAnchor.constraint(equalTo: viewContainer.leftAnchor),
             saveContainer.rightAnchor.constraint(equalTo: viewContainer.rightAnchor),
-            saveContainer.heightAnchor.constraint(equalToConstant: 80),
         ])
         NSLayoutConstraint.activate([
             saveButton.topAnchor.constraint(equalTo: saveContainer.topAnchor, constant: 10),
@@ -147,11 +150,25 @@ class SearchSymbolView: UIViewController, UIGestureRecognizerDelegate, UITextFie
             symbolTableView.bottomAnchor.constraint(equalTo: saveContainer.topAnchor),
         ])
         
+        setConstraintsNormal()
+        
         if symbolRepository == nil {
             symbolRepository = SymbolRepository()
             symbolRepository.delegate = self
         }
         symbolRepository.observeQuery()
+    }
+    
+    func setConstraintsNormal() {
+        saveContainerHeightConstraintKeyboard.isActive = false
+        saveContainerHeightConstraintNormal.isActive = true
+        saveContainer.layoutIfNeeded()
+    }
+    func adjustConstraintsForKeyboard(keyboardHeight: CGFloat) {
+        saveContainerHeightConstraintKeyboard = saveContainer.heightAnchor.constraint(equalToConstant: keyboardHeight - view.safeAreaInsets.bottom)
+        saveContainerHeightConstraintNormal.isActive = false
+        saveContainerHeightConstraintKeyboard.isActive = true
+        saveContainer.layoutIfNeeded()
     }
     
 //    override func viewDidAppear(_ animated: Bool) {
@@ -225,9 +242,10 @@ class SearchSymbolView: UIViewController, UIGestureRecognizerDelegate, UITextFie
         searchField = UITextField()
         searchField.delegate = self
         searchField.placeholder = "SYMBOL"
+        searchField.text = selectedSymbol
         searchField.font = UIFont(name: Assets.Fonts.Default.bold, size: 24)
         searchField.textColor = Settings.Theme.Color.textGrayDark
-        searchField.autocorrectionType = UITextAutocorrectionType.yes
+        searchField.autocorrectionType = UITextAutocorrectionType.no
         searchField.keyboardType = UIKeyboardType.default
         searchField.returnKeyType = UIReturnKeyType.done
         searchField.clearButtonMode = UITextField.ViewMode.whileEditing
@@ -241,6 +259,9 @@ class SearchSymbolView: UIViewController, UIGestureRecognizerDelegate, UITextFie
         saveContainer.backgroundColor = Settings.Theme.Color.background
         saveContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(saveContainer)
+        
+        saveContainerHeightConstraintNormal = saveContainer.heightAnchor.constraint(equalToConstant: 80)
+        saveContainerHeightConstraintKeyboard = saveContainer.heightAnchor.constraint(equalToConstant: 80)
         
         saveButton = UIView()
         saveButton.layer.cornerRadius = 25
@@ -298,6 +319,13 @@ class SearchSymbolView: UIViewController, UIGestureRecognizerDelegate, UITextFie
         // Dispose of any resources that can be recreated.
     }
     
+    @objc func keyboardDidShow(notification: Notification) {
+        guard let info = notification.userInfo else { return }
+        guard let frameInfo = info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardFrame = frameInfo.cgRectValue
+        adjustConstraintsForKeyboard(keyboardHeight: keyboardFrame.height)
+    }
+    
     
     func setDirectionIncrease(symbol: String) {
         selectedDirection = 1
@@ -327,6 +355,7 @@ class SearchSymbolView: UIViewController, UIGestureRecognizerDelegate, UITextFie
         print("\(className) - textFieldShouldReturn")
         if textField == searchField {
             textField.resignFirstResponder()
+            setConstraintsNormal()
             return false
         }
         return true
@@ -351,6 +380,9 @@ class SearchSymbolView: UIViewController, UIGestureRecognizerDelegate, UITextFie
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         print("\(className) - textFieldDidBeginEditing")
+        
+        // Adjust the view to ensure the tableview is above the keyboard
+        
     }
     
     

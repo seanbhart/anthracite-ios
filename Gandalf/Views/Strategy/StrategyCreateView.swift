@@ -9,10 +9,10 @@ import UIKit
 import FirebaseAuth
 
 protocol StrategyCreateViewDelegate {
-    func saveStrategy(strategy: Strategy)
+    func createStrategy(strategy: Strategy)
 }
 
-class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchViewDelegate, WindowPickerViewDelegate {
+class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, UITextViewDelegate, SearchViewDelegate, WindowPickerViewDelegate {
     let className = "StrategyCreateView"
     
     var delegate: StrategyCreateViewDelegate!
@@ -28,6 +28,11 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
     var createButtonContainer: UIView!
     var createButton: UIView!
     var createButtonLabel: UILabel!
+    var createContainerHeightConstraintNormal: NSLayoutConstraint!
+    var createContainerHeightConstraintKeyboard: NSLayoutConstraint!
+    var captionContainer: UIView!
+    var captionTextView: UITextView!
+    var captionLabel: UILabel!
     var strategyTableView: UITableView!
     let strategyTableCellIdentifier: String = "StrategyCreateCell"
     let strategyTableAddRowCellIdentifier: String = "StrategyCreateAddRowCell"
@@ -52,6 +57,8 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
         self.navigationItem.rightBarButtonItem = nil
         // For the children views:
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow), name: UIResponder.keyboardDidShowNotification, object: nil)
         
         observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
             print("\(className) - willEnterForegroundNotification")
@@ -103,7 +110,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
             createButtonContainer.bottomAnchor.constraint(equalTo: viewContainer.bottomAnchor, constant: 0),
             createButtonContainer.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 0),
             createButtonContainer.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: 0),
-            createButtonContainer.heightAnchor.constraint(equalToConstant: 80),
+//            createButtonContainer.heightAnchor.constraint(equalToConstant: 80),
         ])
         NSLayoutConstraint.activate([
             createButton.topAnchor.constraint(equalTo: createButtonContainer.topAnchor, constant: 10),
@@ -118,17 +125,49 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
             createButtonLabel.bottomAnchor.constraint(equalTo: createButton.bottomAnchor, constant: 0),
         ])
         NSLayoutConstraint.activate([
+            captionContainer.bottomAnchor.constraint(equalTo: createButtonContainer.topAnchor, constant: 0),
+            captionContainer.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 0),
+            captionContainer.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: 0),
+            captionContainer.heightAnchor.constraint(equalToConstant: 100),
+        ])
+        NSLayoutConstraint.activate([
+            captionTextView.topAnchor.constraint(equalTo: captionContainer.topAnchor, constant: 10),
+            captionTextView.leftAnchor.constraint(equalTo: captionContainer.leftAnchor, constant: 5),
+            captionTextView.rightAnchor.constraint(equalTo: captionContainer.rightAnchor, constant: -5),
+            captionTextView.bottomAnchor.constraint(equalTo: captionContainer.bottomAnchor, constant: -10),
+        ])
+        NSLayoutConstraint.activate([
+            captionLabel.topAnchor.constraint(equalTo: captionContainer.topAnchor, constant: 19),
+            captionLabel.leftAnchor.constraint(equalTo: captionContainer.leftAnchor, constant: 10),
+            captionLabel.rightAnchor.constraint(equalTo: captionContainer.rightAnchor, constant: -10),
+            captionLabel.heightAnchor.constraint(equalToConstant: 14),
+        ])
+        NSLayoutConstraint.activate([
             strategyTableView.topAnchor.constraint(equalTo: windowButton.bottomAnchor, constant: 10),
             strategyTableView.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 0),
             strategyTableView.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: 0),
-            strategyTableView.bottomAnchor.constraint(equalTo: createButtonContainer.topAnchor, constant: 0),
+            strategyTableView.bottomAnchor.constraint(equalTo: captionContainer.topAnchor, constant: 0),
         ])
+        
+        setConstraintsNormal()
         
         if strategyRepository == nil {
             strategyRepository = StrategyRepository()
 //            strategyRepository.delegate = self
         }
         strategyRepository.observeQuery()
+    }
+    
+    func setConstraintsNormal() {
+        createContainerHeightConstraintKeyboard.isActive = false
+        createContainerHeightConstraintNormal.isActive = true
+        createButtonContainer.layoutIfNeeded()
+    }
+    func adjustConstraintsForKeyboard(keyboardHeight: CGFloat) {
+        createContainerHeightConstraintKeyboard = createButtonContainer.heightAnchor.constraint(equalToConstant: keyboardHeight - view.safeAreaInsets.bottom)
+        createContainerHeightConstraintNormal.isActive = false
+        createContainerHeightConstraintKeyboard.isActive = true
+        createButtonContainer.layoutIfNeeded()
     }
     
 //    override func viewDidAppear(_ animated: Bool) {
@@ -192,6 +231,9 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
         createButtonContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(createButtonContainer)
         
+        createContainerHeightConstraintNormal = createButtonContainer.heightAnchor.constraint(equalToConstant: 80)
+        createContainerHeightConstraintKeyboard = createButtonContainer.heightAnchor.constraint(equalToConstant: 80)
+        
         createButton = UIView()
         createButton.backgroundColor = Settings.Theme.Color.primary
         createButton.layer.cornerRadius = 25
@@ -199,6 +241,10 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
 //        createButton.layer.borderColor = Settings.Theme.Color.grayMedium.cgColor
         createButton.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(createButton)
+        
+        let createButtonGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(createTap))
+        createButtonGestureRecognizer.numberOfTapsRequired = 1
+        createButton.addGestureRecognizer(createButtonGestureRecognizer)
         
         createButtonLabel = UILabel()
         createButtonLabel.backgroundColor = .clear
@@ -210,6 +256,39 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
         createButtonLabel.isUserInteractionEnabled = false
         createButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         createButton.addSubview(createButtonLabel)
+        
+        captionContainer = UIView()
+        captionContainer.backgroundColor = Settings.Theme.Color.background
+        captionContainer.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(captionContainer)
+        
+        captionTextView = UITextView()
+        captionTextView.delegate = self
+        captionTextView.layer.cornerRadius = 5
+        captionTextView.backgroundColor = Settings.Theme.Color.grayUltraDark
+        captionTextView.isEditable = true
+        captionTextView.isScrollEnabled = true
+        captionTextView.font = UIFont(name: Assets.Fonts.Default.regular, size: 12)
+        captionTextView.textAlignment = .left
+        captionTextView.textColor = Settings.Theme.Color.textGrayMedium
+        captionTextView.autocorrectionType = UITextAutocorrectionType.yes
+        captionTextView.keyboardType = UIKeyboardType.default
+        captionTextView.returnKeyType = UIReturnKeyType.done
+//        captionTextView.clearButtonMode = UITextField.ViewMode.whileEditing
+        captionTextView.isUserInteractionEnabled = true
+        captionTextView.translatesAutoresizingMaskIntoConstraints = false
+        captionContainer.addSubview(captionTextView)
+        
+        captionLabel = UILabel()
+        captionLabel.backgroundColor = .clear
+        captionLabel.font = UIFont(name: Assets.Fonts.Default.regular, size: 12)
+        captionLabel.textColor = Settings.Theme.Color.textGrayDark
+        captionLabel.textAlignment = NSTextAlignment.left
+        captionLabel.numberOfLines = 1
+        captionLabel.text = "CAPTION"
+        captionLabel.isUserInteractionEnabled = false
+        captionLabel.translatesAutoresizingMaskIntoConstraints = false
+        captionContainer.addSubview(captionLabel)
         
         strategyTableView = UITableView()
         strategyTableView.dataSource = self
@@ -259,6 +338,48 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, SearchV
         super.didReceiveMemoryWarning()
         print("\(className) - didReceiveMemoryWarning")
         // Dispose of any resources that can be recreated.
+    }
+    
+    @objc func keyboardDidShow(notification: Notification) {
+        guard let info = notification.userInfo else { return }
+        guard let frameInfo = info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardFrame = frameInfo.cgRectValue
+        adjustConstraintsForKeyboard(keyboardHeight: keyboardFrame.height)
+    }
+    
+    
+    // MARK: -GESTURE RECOGNIZERS
+    
+    @objc func createTap(_ sender: UITapGestureRecognizer) {
+        if let parent = self.delegate {
+            parent.createStrategy(strategy: strategy)
+        }
+    }
+    
+    
+    // MARK: -TEXT FIELD DELEGATE METHODS
+//    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+//        print("\(className) - textViewShouldEndEditing")
+//        return true
+//    }
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if textView == captionTextView && text == "\n" {
+            textView.resignFirstResponder()
+            setConstraintsNormal()
+            return false
+        }
+        return true
+    }
+    func textViewDidChange(_ textView: UITextView) {
+        if textView == captionTextView {
+            strategy.caption = textView.text
+            
+            if textView.text == "" {
+                captionLabel.isHidden = false
+            } else {
+                captionLabel.isHidden = true
+            }
+        }
     }
     
     

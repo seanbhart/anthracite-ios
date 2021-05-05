@@ -14,7 +14,7 @@ protocol TabBarViewDelegate {
     func moveToTab(index: Int)
 }
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate, AccountRepositoryDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate, StrategyCreateViewDelegate, AccountRepositoryDelegate {
     let className = "SceneDelegate"
     
     // Create a local AccountRepository to access the account
@@ -69,8 +69,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         strategyTabVcNavController.navigationBar.barTintColor = Settings.Theme.Color.barColor
         strategyTabVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
         strategyTabVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
-        let tabImageStrategyCreateWhite = UIImage(systemName: "plus.square")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-        let tabImageStrategyCreateColor = UIImage(systemName: "plus.square")?.withTintColor(Settings.Theme.Color.primaryLight, renderingMode: .alwaysOriginal)
+        let tabImageStrategyCreateWhite = UIImage(systemName: "plus")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
+        let tabImageStrategyCreateColor = UIImage(systemName: "plus")?.withTintColor(Settings.Theme.Color.primaryLight, renderingMode: .alwaysOriginal)
         strategyTabVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageStrategyCreateWhite, selectedImage: tabImageStrategyCreateColor)
         
         accountVC = AccountView()
@@ -157,8 +157,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
-        
-        
     }
     
     
@@ -176,7 +174,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         print("\(className) - tabBarController shouldSelect: \(viewController.children)")
         if viewController.children.filter({ $0 is StrategyTabView }).count > 0 {
             print("\(className) - tabBarController presentSheet")
-            let navigationController = UINavigationController(rootViewController: StrategyCreateView())
+            let strategyCreateView = StrategyCreateView()
+            strategyCreateView.delegate = self
+            let navigationController = UINavigationController(rootViewController: strategyCreateView)
             navigationController.modalPresentationStyle = UIModalPresentationStyle.pageSheet
             navigationController.modalTransitionStyle = UIModalTransitionStyle.coverVertical
             tabBarController.present(navigationController, animated: true, completion: nil)
@@ -190,6 +190,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     // MARK: -TAB BAR VIEW METHODS
     func moveToTab(index: Int) {
         tabBarController.selectedIndex = index
+    }
+    
+    
+    // MARK: -STRATEGY CREATE METHODS
+    func createStrategy(strategy: Strategy) {
+        print("\(className) - strategy: \(strategy)")
+        tabBarController.dismiss(animated: true, completion: {
+            print("\(self.className) - create strategy")
+        })
     }
     
     

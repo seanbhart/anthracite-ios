@@ -131,11 +131,11 @@ class StrategyCreateCell: UITableViewCell, UITextFieldDelegate {
         symbolButton.addGestureRecognizer(symbolButtonGestureRecognizer)
 
         symbolButtonLabel = UILabel()
-        symbolButtonLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 26)
-        symbolButtonLabel.textColor = Settings.Theme.Color.positive
+        symbolButtonLabel.font = UIFont(name: Assets.Fonts.Default.bold, size: 26)
+        symbolButtonLabel.textColor = Settings.Theme.Color.textGrayUltraDark
         symbolButtonLabel.textAlignment = NSTextAlignment.center
         symbolButtonLabel.numberOfLines = 1
-        symbolButtonLabel.text = "?"
+        symbolButtonLabel.text = "SYMBOL"
         symbolButtonLabel.isUserInteractionEnabled = false
         symbolButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         symbolButton.addSubview(symbolButtonLabel)

@@ -59,5 +59,8 @@ class StrategyRepository {
         print("\(className): stopObserving")
         listener?.remove()
     }
+    
+    func createStrategy(strategy: Strategy) {
+        print("\(className): createStrategy")
+    }
 }
-
