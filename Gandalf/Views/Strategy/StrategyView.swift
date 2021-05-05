@@ -18,7 +18,7 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
     var tabBarViewDelegate: TabBarViewDelegate!
     var delegate: StrategyViewDelegate!
     var localStrategies = [Strategy]()
-    var strategyRepository: StrategyRepository!
+//    var strategyRepository: StrategyRepository!
     
     var viewContainer: UIView!
     var strategyTableView: UITableView!
@@ -44,16 +44,16 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
         self.navigationItem.rightBarButtonItem = nil
         
-        observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
-            print("\(className) - willEnterForegroundNotification")
-            guard let strategyRepo = strategyRepository else { return }
-            strategyRepo.observeQuery()
-        }
-        observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
-            print("\(className) - didEnterBackgroundNotification")
-            guard let strategyRepo = strategyRepository else { return }
-            strategyRepo.stopObserving()
-        }
+//        observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
+//            print("\(className) - willEnterForegroundNotification")
+//            guard let strategyRepo = strategyRepository else { return }
+//            strategyRepo.observeQuery()
+//        }
+//        observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
+//            print("\(className) - didEnterBackgroundNotification")
+//            guard let strategyRepo = strategyRepository else { return }
+//            strategyRepo.stopObserving()
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -83,11 +83,11 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
             strategyTableViewSpinner.centerYAnchor.constraint(equalTo: strategyTableView.centerYAnchor, constant: 0),
         ])
         
-        if strategyRepository == nil {
-            strategyRepository = StrategyRepository()
-            strategyRepository.delegate = self
-        }
-        strategyRepository.observeQuery()
+//        if strategyRepository == nil {
+//            strategyRepository = StrategyRepository()
+//            strategyRepository.delegate = self
+//        }
+//        strategyRepository.observeQuery()
     }
     
 //    override func viewDidAppear(_ animated: Bool) {
@@ -96,8 +96,8 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         print("\(className) - viewWillDisappear")
-        guard let strategyRepo = strategyRepository else { return }
-        strategyRepo.stopObserving()
+//        guard let strategyRepo = strategyRepository else { return }
+//        strategyRepo.stopObserving()
     }
 
     override func loadView() {
@@ -147,6 +147,17 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
         super.didReceiveMemoryWarning()
         print("\(className) - didReceiveMemoryWarning")
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    // MARK: -DATA METHODS
+    
+    func updateStrategies(strategies: [Strategy]) {
+        localStrategies.removeAll()
+        localStrategies = strategies
+        print("\(className) - localStrategies: \(localStrategies)")
+        strategyTableView.reloadData()
+        strategyTableViewSpinner.stopAnimating()
     }
 }
 

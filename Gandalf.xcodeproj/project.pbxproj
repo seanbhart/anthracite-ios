@@ -69,7 +69,6 @@
 		B8BA1C7525DAD632008ACBA0 /* StrategyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BA1C7425DAD632008ACBA0 /* StrategyView.swift */; };
 		B8D3AF5826332B6000821E22 /* StrategyViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D3AF5726332B6000821E22 /* StrategyViewTableView.swift */; };
 		B8D3AF5F263466C600821E22 /* StrategyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D3AF5E263466C600821E22 /* StrategyCell.swift */; };
-		B8D3AF622634695C00821E22 /* StrategyViewDataHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D3AF612634695C00821E22 /* StrategyViewDataHandler.swift */; };
 		B8D3AF6E26370F6800821E22 /* Exo-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8D3AF6726370F6700821E22 /* Exo-Light.ttf */; };
 		B8D3AF6F26370F6800821E22 /* Exo-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8D3AF6826370F6700821E22 /* Exo-Thin.ttf */; };
 		B8D3AF7026370F6800821E22 /* Exo-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8D3AF6926370F6800821E22 /* Exo-Regular.ttf */; };
@@ -152,7 +151,6 @@
 		B8BA1C7425DAD632008ACBA0 /* StrategyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyView.swift; sourceTree = "<group>"; };
 		B8D3AF5726332B6000821E22 /* StrategyViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyViewTableView.swift; sourceTree = "<group>"; };
 		B8D3AF5E263466C600821E22 /* StrategyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyCell.swift; sourceTree = "<group>"; };
-		B8D3AF612634695C00821E22 /* StrategyViewDataHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyViewDataHandler.swift; sourceTree = "<group>"; };
 		B8D3AF6726370F6700821E22 /* Exo-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo-Light.ttf"; sourceTree = "<group>"; };
 		B8D3AF6826370F6700821E22 /* Exo-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo-Thin.ttf"; sourceTree = "<group>"; };
 		B8D3AF6926370F6800821E22 /* Exo-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Exo-Regular.ttf"; sourceTree = "<group>"; };
@@ -414,7 +412,6 @@
 				B8A9A12F263FB23500B87495 /* StrategyCreateViewTableView.swift */,
 				B8A9A12D263E1ED000B87495 /* StrategyTabView.swift */,
 				B8BA1C7425DAD632008ACBA0 /* StrategyView.swift */,
-				B8D3AF612634695C00821E22 /* StrategyViewDataHandler.swift */,
 				B8D3AF5726332B6000821E22 /* StrategyViewTableView.swift */,
 			);
 			path = Strategy;
@@ -582,7 +579,6 @@
 				B8D3AF5826332B6000821E22 /* StrategyViewTableView.swift in Sources */,
 				B88BE59325DB4A2D00AA1B75 /* Strategy.swift in Sources */,
 				B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */,
-				B8D3AF622634695C00821E22 /* StrategyViewDataHandler.swift in Sources */,
 				B87350A525C2812C0007A8FE /* Assets.swift in Sources */,
 				B87350B825C2A2D00007A8FE /* Symbol.swift in Sources */,
 				B8A9A132263FBB4100B87495 /* StrategyCreateCell.swift in Sources */,

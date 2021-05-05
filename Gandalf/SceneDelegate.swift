@@ -14,12 +14,13 @@ protocol TabBarViewDelegate {
     func moveToTab(index: Int)
 }
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate, StrategyCreateViewDelegate, AccountRepositoryDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate, StrategyCreateViewDelegate, StrategyRepositoryDelegate, AccountRepositoryDelegate {
     let className = "SceneDelegate"
     
     // Create a local AccountRepository to access the account
     // receive callback results if needed
     var accountRepository: AccountRepository?
+    var strategyRepository: StrategyRepository?
 
     var window: UIWindow?
     var tabBarController: UITabBarController!
@@ -134,6 +135,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
         
+        if strategyRepository == nil {
+            strategyRepository = StrategyRepository()
+            strategyRepository!.delegate = self
+            strategyRepository!.observeQuery()
+        } else {
+            strategyRepository!.observeQuery()
+        }
+        
         // Get the Account via the AccountRepo
         if let accountRepo = accountRepository {
             accountRepo.getAccount()
@@ -157,6 +166,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+        
+        if let strategyRepo = strategyRepository {
+            strategyRepo.stopObserving()
+        }
     }
     
     
@@ -198,7 +211,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         print("\(className) - strategy: \(strategy)")
         tabBarController.dismiss(animated: true, completion: {
             print("\(self.className) - create strategy")
+            if let strategyRepo = self.strategyRepository {
+                strategyRepo.createStrategy(strategy: strategy)
+            } else {
+                self.strategyRepository = StrategyRepository()
+                self.strategyRepository!.delegate = self
+                self.strategyRepository!.createStrategy(strategy: strategy)
+                self.strategyRepository!.observeQuery()
+            }
         })
+    }
+    
+    
+    // MARK: -STRATEGY REPO METHODS
+    
+    func strategyDataUpdate() {
+        guard let strategyRepo = strategyRepository else { return }
+        strategyVC.updateStrategies(strategies: strategyRepo.strategies)
+    }
+    
+    func showLogin() {
+        moveToTab(index: Settings.Tabs.accountVcIndex)
     }
     
     

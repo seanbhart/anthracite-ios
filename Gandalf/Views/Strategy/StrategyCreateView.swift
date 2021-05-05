@@ -18,7 +18,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, UITextV
     var delegate: StrategyCreateViewDelegate!
     var strategy: Strategy!
     var localStrategyOrders = [StrategyOrder]()
-    var strategyRepository: StrategyRepository!
+//    var strategyRepository: StrategyRepository!
     var windowTimer: Timer?
     
     var viewContainer: UIView!
@@ -60,16 +60,16 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, UITextV
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow), name: UIResponder.keyboardDidShowNotification, object: nil)
         
-        observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
-            print("\(className) - willEnterForegroundNotification")
-            guard let strategyRepo = strategyRepository else { return }
-            strategyRepo.observeQuery()
-        }
-        observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
-            print("\(className) - didEnterBackgroundNotification")
-            guard let strategyRepo = strategyRepository else { return }
-            strategyRepo.stopObserving()
-        }
+//        observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
+//            print("\(className) - willEnterForegroundNotification")
+//            guard let strategyRepo = strategyRepository else { return }
+//            strategyRepo.observeQuery()
+//        }
+//        observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
+//            print("\(className) - didEnterBackgroundNotification")
+//            guard let strategyRepo = strategyRepository else { return }
+//            strategyRepo.stopObserving()
+//        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -151,11 +151,11 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, UITextV
         
         setConstraintsNormal()
         
-        if strategyRepository == nil {
-            strategyRepository = StrategyRepository()
-//            strategyRepository.delegate = self
-        }
-        strategyRepository.observeQuery()
+//        if strategyRepository == nil {
+//            strategyRepository = StrategyRepository()
+////            strategyRepository.delegate = self
+//        }
+//        strategyRepository.observeQuery()
     }
     
     func setConstraintsNormal() {
@@ -176,8 +176,8 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, UITextV
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         print("\(className) - viewWillDisappear")
-        guard let strategyRepo = strategyRepository else { return }
-        strategyRepo.stopObserving()
+//        guard let strategyRepo = strategyRepository else { return }
+//        strategyRepo.stopObserving()
     }
 
     override func loadView() {
@@ -323,7 +323,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, UITextV
         // Instantiate the Strategy object and start the window timer with the default 1 day period
         guard let firUser = Settings.Firebase.auth().currentUser else { self.navigationController?.popViewController(animated: true); return }
         let defaultExpiration = Date().timeIntervalSince1970 + Double(86400)
-        strategy = Strategy(creator: firUser.uid, windowExpiration: defaultExpiration)
+        strategy = Strategy(creator: firUser.uid, windowExpiration: defaultExpiration * 1000)
         windowTimer?.invalidate()
         windowTimer = nil
         configureWindowTimer(expiration: defaultExpiration)
@@ -352,6 +352,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, UITextV
     
     @objc func createTap(_ sender: UITapGestureRecognizer) {
         if let parent = self.delegate {
+            strategy.orders = localStrategyOrders
             parent.createStrategy(strategy: strategy)
         }
     }
@@ -425,7 +426,7 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, UITextV
     
     func window(expiration: TimeInterval) {
         print("\(className) - windowExpiration: \(expiration)")
-        strategy.windowExpiration = expiration
+        strategy.windowExpiration = expiration * 1000
         windowTimer?.invalidate()
         windowTimer = nil
         configureWindowTimer(expiration: expiration)

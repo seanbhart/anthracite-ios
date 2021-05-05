@@ -43,6 +43,11 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
             cell.reactionDislikeLabel.text = "\(reactions.dislike)"
         }
         
+        // Remove all existing orderContainer subviews
+        cell.ordersContainer.subviews.forEach { subview in
+            subview.removeFromSuperview()
+        }
+        
         var orderIndex = 0
         let orderCount = localStrategies[indexPath.row].orders.count
         localStrategies[indexPath.row].orders.forEach { order in
@@ -53,7 +58,9 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
                 order.leftAnchor.constraint(equalTo: cell.ordersContainer.leftAnchor, constant: 0),
                 order.rightAnchor.constraint(equalTo: cell.ordersContainer.rightAnchor, constant: 0),
                 order.bottomAnchor.constraint(equalTo: cell.ordersContainer.bottomAnchor, constant: CGFloat(-5 + (-65 * (orderCount - 1 - orderIndex)))),
+//                order.heightAnchor.constraint(equalToConstant: 60),
             ])
+            
             orderIndex += 1
         }
         
@@ -64,6 +71,7 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
             cell.hideBorder()
         }
         
+        print("cell: \(indexPath.row), height: \(cell.frame.height)")
         return cell
     }
     
@@ -75,7 +83,7 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
         
         let symbolLabel = UILabel()
         symbolLabel.backgroundColor = .clear
-        symbolLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 40)
+        symbolLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 30)
         symbolLabel.textColor = order.predictPriceDirection > 0 ? Settings.Theme.Color.positive : Settings.Theme.Color.negative
         symbolLabel.textAlignment = NSTextAlignment.left
         symbolLabel.numberOfLines = 1
@@ -87,8 +95,8 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
             symbolLabel.topAnchor.constraint(equalTo: orderContainer.topAnchor, constant: 5),
             symbolLabel.leftAnchor.constraint(equalTo: orderContainer.leftAnchor, constant: 10),
             symbolLabel.widthAnchor.constraint(equalToConstant: 100),
-//            symbolLabel.heightAnchor.constraint(equalToConstant: 40),
-            symbolLabel.bottomAnchor.constraint(equalTo: orderContainer.bottomAnchor, constant: -5),
+            symbolLabel.heightAnchor.constraint(equalToConstant: 50),
+//            symbolLabel.bottomAnchor.constraint(equalTo: orderContainer.bottomAnchor, constant: -5),
         ])
         
         let priceText = dollarString(order.price)
@@ -110,7 +118,18 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
             summaryLabel.topAnchor.constraint(equalTo: orderContainer.topAnchor, constant: 5),
             summaryLabel.leftAnchor.constraint(equalTo: symbolLabel.rightAnchor, constant: 2),
             summaryLabel.rightAnchor.constraint(equalTo: orderContainer.rightAnchor, constant: -2),
-            summaryLabel.bottomAnchor.constraint(equalTo: orderContainer.bottomAnchor, constant: -5),
+            summaryLabel.heightAnchor.constraint(equalToConstant: 50),
+//            summaryLabel.bottomAnchor.constraint(equalTo: orderContainer.bottomAnchor, constant: -5),
+        ])
+        
+        let orderSpacer = UIView()
+        orderSpacer.translatesAutoresizingMaskIntoConstraints = false
+        orderContainer.addSubview(orderSpacer)
+        NSLayoutConstraint.activate([
+            orderSpacer.topAnchor.constraint(equalTo: summaryLabel.bottomAnchor, constant: 0),
+            orderSpacer.leftAnchor.constraint(equalTo: orderContainer.leftAnchor, constant: 0),
+            orderSpacer.rightAnchor.constraint(equalTo: orderContainer.rightAnchor, constant: 0),
+            orderSpacer.bottomAnchor.constraint(equalTo: orderContainer.bottomAnchor, constant: -5),
         ])
         
         return orderContainer
@@ -123,4 +142,3 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
 //        self.navigationController?.pushViewController(MessageView(group: group), animated: true)
     }
 }
-
