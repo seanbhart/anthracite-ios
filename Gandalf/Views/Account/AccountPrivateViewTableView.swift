@@ -1,13 +1,13 @@
 //
-//  StrategyViewTableView.swift
+//  AccountViewTableView.swift
 //  Gandalf
 //
-//  Created by Sean Hart on 4/30/21.
+//  Created by Sean Hart on 5/7/21.
 //
 
 import UIKit
 
-extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, StrategyCellDelegate, StrategyDetailViewDelegate {
+extension AccountPrivateView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, StrategyCellDelegate, StrategyDetailViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
@@ -29,25 +29,6 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
         cell.selectionStyle = .none
         cell.ordersContainer.subviews.forEach { subview in
             subview.removeFromSuperview()
-        }
-        
-        // Find the account that matches this strategy creator
-        let foundAccounts = localAccounts.filter { $0.id == localStrategies[indexPath.row].creator }
-        print("\(className) - foundAccounts count: \(foundAccounts.count)")
-        if foundAccounts.count > 0 {
-            cell.nameLabel.text = foundAccounts[0].name
-            cell.nameLabel.backgroundColor = .clear
-            cell.usernameLabel.text = "@\(foundAccounts[0].username ?? "")"
-            cell.usernameLabel.backgroundColor = .clear
-            if foundAccounts[0].image != nil {
-                cell.avatar.image = foundAccounts[0].image
-                cell.avatarContainer.backgroundColor = Settings.Theme.Color.outline
-            }
-        } else {
-            cell.nameLabel.backgroundColor = Settings.Theme.Color.grayUltraDark
-            cell.usernameLabel.backgroundColor = Settings.Theme.Color.grayUltraDark
-            cell.avatarContainer.backgroundColor = Settings.Theme.Color.grayUltraDark
-            cell.avatar.image = nil
         }
         
         cell.delegate = self

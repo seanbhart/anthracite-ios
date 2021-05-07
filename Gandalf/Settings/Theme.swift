@@ -50,6 +50,7 @@ extension Settings {
 //            static let primary = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
             static let primary = UIColor(red: 187/255, green: 134/255, blue: 252/255, alpha: 1.0) //#BB86FC
             static let primaryLight = UIColor(red: 187/255, green: 134/255, blue: 252/255, alpha: 1.0) //#BB86FC
+            static let secondary = UIColor(red: 51/255, green: 161/255, blue: 253/255, alpha: 1.0) //#33A1FD
             static let progressbar = UIColor(red: 33/255, green: 37/255, blue: 41/255, alpha: 1.0) //#212529
 //            static let progressbar = UIColor(red: 116/255, green: 125/255, blue: 134/255, alpha: 1.0) //#747D86
 //            static let positive = UIColor(red: 106/255, green: 191/255, blue: 2/255, alpha: 1.0) //#6ABF02

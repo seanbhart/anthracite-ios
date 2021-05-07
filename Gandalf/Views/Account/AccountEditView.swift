@@ -14,14 +14,14 @@ import FirebaseAuth
 import FirebaseStorage
 
 protocol AccountEditViewDelegate {
-    func showSignIn()
+    func showLogin()
 }
 
 class AccountEditView: UIViewController, ImagePickerDelegate {
     let className = "AccountEditView"
     
     var delegate: AccountEditViewDelegate?
-    var accountRepository: AccountRepository!
+    var accountRepository: AccountPrivateRepository!
     var imagePicker: ImagePicker!
     
     var viewContainer: UIView!
@@ -30,7 +30,7 @@ class AccountEditView: UIViewController, ImagePickerDelegate {
     var nameLabel: UILabel!
     var nameTextField: UITextField!
     
-    init(accountRepo: AccountRepository) {
+    init(accountRepo: AccountPrivateRepository) {
         super.init(nibName: nil, bundle: nil)
         self.accountRepository = accountRepo
     }
@@ -183,12 +183,14 @@ class AccountEditView: UIViewController, ImagePickerDelegate {
     func didSelect(image: UIImage?) {
         guard let img = image else { self.showUploadImageErrorAlert(); return }
         guard let accountRepo = accountRepository else { self.showUploadImageErrorAlert(); return }
+        guard let account = accountRepo.account else { self.showUploadImageErrorAlert(); return }
+        guard let accountId = account.id else { self.showUploadImageErrorAlert(); return }
         // Add to the local imageview
         accountImage.image = img
         
         // Upload to storage for the large sized image
         guard let imgLarge = img.resizeWithWidth(width: 500) else { self.showUploadImageErrorAlert(); return }
-        let storageRef = Storage.storage().reference().child(accountRepo.accountId + ".png")
+        let storageRef = Storage.storage().reference().child(accountId + ".png")
         if let uploadData = imgLarge.pngData() {
             storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                 if error != nil { self.showUploadImageErrorAlert(); return }
@@ -197,7 +199,7 @@ class AccountEditView: UIViewController, ImagePickerDelegate {
         
         // Reduce the image size (for messages) and upload to storage
         guard let imgSmall = img.resizeWithWidth(width: 30) else { self.showUploadImageErrorAlert(); return }
-        let storageRefSmall = Storage.storage().reference().child(accountRepo.accountId + "-small.png")
+        let storageRefSmall = Storage.storage().reference().child(accountId + "-small.png")
         if let uploadData = imgSmall.pngData() {
             storageRefSmall.putData(uploadData, metadata: nil) { (metadata, error) in
                 if error != nil { self.showUploadImageErrorAlert(); return }
@@ -235,7 +237,7 @@ class AccountEditView: UIViewController, ImagePickerDelegate {
             print("\(self.className) - LOGGED OUT - NOW SHOW LOGIN VIEW")
             self.dismiss(animated: true, completion: {
                 if let parent = self.delegate {
-                    parent.showSignIn()
+                    parent.showLogin()
                 }
             })
             

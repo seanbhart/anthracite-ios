@@ -19,6 +19,7 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
     var tabBarViewDelegate: TabBarViewDelegate!
     var delegate: StrategyViewDelegate!
     var localStrategies = [Strategy]()
+    var localAccounts = [Account]()
 //    var strategyRepository: StrategyRepository!
     var detailView: StrategyDetailView?
     
@@ -157,19 +158,36 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
     func updateStrategies(strategies: [Strategy]) {
         localStrategies.removeAll()
         localStrategies = strategies
-        strategyTableView.reloadData()
-        strategyTableViewSpinner.stopAnimating()
-        
-        updateDetailViewStrategy()
+        if strategyTableView != nil {
+            strategyTableView.reloadData()
+            strategyTableViewSpinner.stopAnimating()
+            
+            updateDetailViewStrategy()
+        }
     }
     
     func updateStrategyReactions(reactions: [StrategyReaction]) {
         for (i, s) in localStrategies.enumerated() {
             localStrategies[i].reactions = reactions.filter { return $0.strategy == s.id }
         }
-        strategyTableView.reloadData()
-        
-        updateDetailViewStrategy()
+        if strategyTableView != nil {
+            strategyTableView.reloadData()
+            strategyTableViewSpinner.stopAnimating()
+            
+            updateDetailViewStrategy()
+        }
+    }
+    
+    func updateAccounts(accounts: [Account]) {
+        print("\(className) - updateAccounts count: \(accounts.count)")
+        localAccounts.removeAll()
+        localAccounts = accounts
+        if strategyTableView != nil {
+            strategyTableView.reloadData()
+            strategyTableViewSpinner.stopAnimating()
+            
+            updateDetailViewStrategy()
+        }
     }
     
     func updateDetailViewStrategy() {

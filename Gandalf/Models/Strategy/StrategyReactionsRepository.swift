@@ -1,5 +1,5 @@
 //
-//  StrategyReactionsRepository.swift
+//  StrategyReactionRepository.swift
 //  Gandalf
 //
 //  Created by Sean Hart on 5/5/21.

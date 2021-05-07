@@ -11,13 +11,21 @@ import CryptoKit
 import UIKit
 //import FirebaseAnalytics
 import FirebaseAuth
-import FirebaseStorage
 
-class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewDelegate {
-    let className = "AccountView"
+protocol AccountPrivateViewDelegate {
+    func strategyReaction(strategyId: String, type: Int)
+}
+
+class AccountPrivateView: UIViewController, AccountPrivateRepositoryDelegate, AccountEditViewDelegate {
+    let className = "AccountPrivateView"
     
     var tabBarViewDelegate: TabBarViewDelegate!
-    var accountRepository: AccountRepository?
+    var delegate: AccountPrivateViewDelegate!
+    var accountPrivateRepository: AccountPrivateRepository?
+//    var accountStrategyRepository: AccountStrategyRepository?
+    var localStrategies = [Strategy]()
+    var detailView: StrategyDetailView?
+    
     // Unhashed nonce - handle locally (not in Account) for security
     fileprivate var currentNonce: String?
     var controller: ASAuthorizationController!
@@ -26,9 +34,9 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
     var signInButton: ASAuthorizationAppleIDButton!
     
     var viewContainer: UIView!
-    var settingsButtonContainer: UIView!
-    var settingsButtonContainerGestureRecognizer: UITapGestureRecognizer!
-    var settingsButtonLabel: UILabel!
+    var buttonContainer: UIView!
+    var buttonContainerGestureRecognizer: UITapGestureRecognizer!
+    var buttonLabel: UILabel!
     var accountImageContainer: UIView!
     var accountImageBackground: UIView!
     var accountImage: UIImageView!
@@ -38,10 +46,26 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
     var bioField: UITextView!
     var locationIcon: UIImageView!
     var locationLabel: UILabel!
-    var linkIcon: UIImageView!
-    var linkLabel: UILabel!
     var joinedIcon: UIImageView!
     var joinedLabel: UILabel!
+    var strategyTableView: UITableView!
+    let strategyTableCellIdentifier: String = "StrategyCell"
+    
+    private var observer: NSObjectProtocol?
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+//    func setupRepo() {
+//        guard let accountRepo = accountRepository else { return }
+//        accountRepo.delegate = self
+//        accountRepo.observeDoc()
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +82,21 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
             barItemLogo.heightAnchor.constraint(equalToConstant: 30),
         ])
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: barItemLogo)
+        
+        observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [unowned self] notification in
+            print("\(className) - willEnterForegroundNotification")
+            guard let accountRepo = accountPrivateRepository else { return }
+            accountRepo.observeDoc()
+//            guard let accountStrategyRepo = accountStrategyRepository else { return }
+//            accountStrategyRepo.observeQuery()
+        }
+        observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [unowned self] notification in
+            print("\(className) - didEnterBackgroundNotification")
+            guard let accountRepo = accountPrivateRepository else { return }
+            accountRepo.stopObserving()
+//            guard let accountStrategyRepo = accountStrategyRepository else { return }
+//            accountStrategyRepo.stopObserving()
+        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -67,28 +106,27 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
 //        layoutSignInComponents()
 //        layoutAccountComponents()
         
-        // Get the Account via the AccountRepo
-        if let accountRepo = accountRepository {
-            accountRepo.getAccount()
-        } else {
-            // If the AccountRepo is null, create a new one
-            // be sure to assign the delegate to receive callbacks
-            if let accountRepo = AccountRepository() {
-                accountRepository = accountRepo
-                accountRepository!.delegate = self
-                accountRepository!.getAccount()
-            } else {
-                // If getting the account failed, the user
-                // is not logged in - show the login view
-                showSignIn()
-            }
+        if accountPrivateRepository == nil {
+            accountPrivateRepository = AccountPrivateRepository()
+            accountPrivateRepository!.delegate = self
         }
+        accountPrivateRepository!.observeDoc()
+        
+//        if accountStrategyRepository == nil {
+//            accountStrategyRepository = AccountStrategyRepository(accountId: accountId)
+//            accountStrategyRepository!.delegate = self
+//        }
+//        accountStrategyRepository!.observeQuery()
     }
     
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        navigationController?.setNavigationBarHidden(false, animated: animated)
-//    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print("\(className) - viewWillDisappear")
+        guard let accountRepo = accountPrivateRepository else { return }
+        accountRepo.stopObserving()
+//        guard let accountStrategyRepo = accountStrategyRepository else { return }
+//        accountStrategyRepo.stopObserving()
+    }
 
     override func loadView() {
         super.loadView()
@@ -105,7 +143,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
         signInButton = ASAuthorizationAppleIDButton(type: .default, style: .white)
         signInButton.cornerRadius = 2
         signInButton.translatesAutoresizingMaskIntoConstraints = false
-        signInButton.addTarget(self, action: #selector(AccountView.signInTap(_:)), for: .touchUpInside)
+        signInButton.addTarget(self, action: #selector(AccountPrivateView.signInTap(_:)), for: .touchUpInside)
         signInContainer.addSubview(signInButton)
         
         
@@ -154,12 +192,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
         connectionsIcon.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(connectionsIcon)
         
-//        let reactionOrderingGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(reactionOrderingTap))
-//        reactionOrderingGestureRecognizer.numberOfTapsRequired = 1
-//        reactionOrderingIcon.addGestureRecognizer(reactionOrderingGestureRecognizer)
-        
         connectionsLabel = UILabel()
-//        connectionsLabel.backgroundColor = .blue
         connectionsLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 16)
         connectionsLabel.textColor = Settings.Theme.Color.textGrayMedium
         connectionsLabel.textAlignment = NSTextAlignment.left
@@ -170,35 +203,99 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
         viewContainer.addSubview(connectionsLabel)
         
         bioField = UITextView()
+        bioField.backgroundColor = .clear
         bioField.isEditable = false
         bioField.isScrollEnabled = false
         bioField.font = UIFont(name: Assets.Fonts.Default.regular, size: 12)
-        bioField.textAlignment = .center
-        bioField.textColor = UIColor.white
-        bioField.text = "bio"
+        bioField.textAlignment = .left
+        bioField.textColor = Settings.Theme.Color.textGrayMedium
+        bioField.text = "A imperdiet metus, malesuada sem quis ut. Cum scelerisque ac tortor, cras odio porttitor nisl commodo pharetra."
+        bioField.sizeToFit()
         bioField.isUserInteractionEnabled = false
+        bioField.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(bioField)
         
-        settingsButtonContainer = UIView()
-        settingsButtonContainer.layer.borderWidth = 1
-        settingsButtonContainer.layer.cornerRadius = 5
-        settingsButtonContainer.layer.borderColor = Settings.Theme.Color.grayUltraDark.cgColor
-        settingsButtonContainer.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(settingsButtonContainer)
+        locationIcon = UIImageView()
+        locationIcon.image = UIImage(systemName: "map")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        locationIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        locationIcon.clipsToBounds = true
+        locationIcon.isUserInteractionEnabled = true
+        locationIcon.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(locationIcon)
         
-        let settingsIconContainerGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(settingsIconContainerTap))
+        locationLabel = UILabel()
+        locationLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 10)
+        locationLabel.textColor = Settings.Theme.Color.textGrayMedium
+        locationLabel.textAlignment = NSTextAlignment.left
+        locationLabel.numberOfLines = 1
+        locationLabel.text = "San Fransisco, CA"
+        locationLabel.isUserInteractionEnabled = false
+        locationLabel.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(locationLabel)
+        
+        joinedIcon = UIImageView()
+        joinedIcon.image = UIImage(systemName: "calendar")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        joinedIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        joinedIcon.clipsToBounds = true
+        joinedIcon.isUserInteractionEnabled = true
+        joinedIcon.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(joinedIcon)
+        
+        joinedLabel = UILabel()
+        joinedLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 10)
+        joinedLabel.textColor = Settings.Theme.Color.textGrayMedium
+        joinedLabel.textAlignment = NSTextAlignment.left
+        joinedLabel.numberOfLines = 1
+        joinedLabel.text = "Jan 2021"
+        joinedLabel.isUserInteractionEnabled = false
+        joinedLabel.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(joinedLabel)
+        
+        buttonContainer = UIView()
+        buttonContainer.layer.borderWidth = 1
+        buttonContainer.layer.cornerRadius = 5
+        buttonContainer.layer.borderColor = Settings.Theme.Color.grayUltraDark.cgColor
+        buttonContainer.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(buttonContainer)
+        
+        let settingsIconContainerGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(buttonTap))
         settingsIconContainerGestureRecognizer.numberOfTapsRequired = 1
-        settingsButtonContainer.addGestureRecognizer(settingsIconContainerGestureRecognizer)
+        buttonContainer.addGestureRecognizer(settingsIconContainerGestureRecognizer)
         
-        settingsButtonLabel = UILabel()
-        settingsButtonLabel.font = UIFont(name: Assets.Fonts.Default.regular, size: 12)
-        settingsButtonLabel.textColor = Settings.Theme.Color.primaryLight
-        settingsButtonLabel.textAlignment = NSTextAlignment.center
-        settingsButtonLabel.numberOfLines = 1
-        settingsButtonLabel.text = "EDIT PROFILE"
-        settingsButtonLabel.isUserInteractionEnabled = false
-        settingsButtonLabel.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.addSubview(settingsButtonLabel)
+        buttonLabel = UILabel()
+        buttonLabel.font = UIFont(name: Assets.Fonts.Default.regular, size: 12)
+        buttonLabel.textColor = Settings.Theme.Color.secondary
+        buttonLabel.textAlignment = NSTextAlignment.center
+        buttonLabel.numberOfLines = 1
+        buttonLabel.text = "EDIT PROFILE"
+        buttonLabel.isUserInteractionEnabled = false
+        buttonLabel.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(buttonLabel)
+        
+        strategyTableView = UITableView()
+        strategyTableView.dataSource = self
+        strategyTableView.delegate = self
+        strategyTableView.dragInteractionEnabled = false
+        strategyTableView.register(StrategyCell.self, forCellReuseIdentifier: strategyTableCellIdentifier)
+        strategyTableView.separatorStyle = .none
+        strategyTableView.backgroundColor = .clear
+        strategyTableView.isSpringLoaded = true
+        strategyTableView.rowHeight = UITableView.automaticDimension
+        strategyTableView.estimatedRowHeight = UITableView.automaticDimension
+//        strategyTableView.estimatedRowHeight = 0
+        strategyTableView.estimatedSectionHeaderHeight = 0
+        strategyTableView.estimatedSectionFooterHeight = 0
+        strategyTableView.isScrollEnabled = true
+        strategyTableView.bounces = true
+        strategyTableView.alwaysBounceVertical = true
+        strategyTableView.showsVerticalScrollIndicator = false
+        strategyTableView.isUserInteractionEnabled = true
+        strategyTableView.allowsSelection = true
+//        strategyTableView.delaysContentTouches = false
+        strategyTableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+//        strategyTableView.insetsContentViewsToSafeArea = true
+        strategyTableView.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(strategyTableView)
     }
     
     override func didReceiveMemoryWarning() {
@@ -255,37 +352,66 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
             nameLabel.heightAnchor.constraint(equalToConstant: 24),
         ])
         NSLayoutConstraint.activate([
-            connectionsIcon.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 5),
+            connectionsIcon.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             connectionsIcon.leftAnchor.constraint(equalTo: accountImageContainer.rightAnchor, constant: 20),
             connectionsIcon.widthAnchor.constraint(equalToConstant: 24),
             connectionsIcon.heightAnchor.constraint(equalToConstant: 24),
         ])
         NSLayoutConstraint.activate([
-            connectionsLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 5),
+            connectionsLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             connectionsLabel.leftAnchor.constraint(equalTo: connectionsIcon.rightAnchor, constant: 5),
             connectionsLabel.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -10),
             connectionsLabel.heightAnchor.constraint(equalToConstant: 24),
         ])
         NSLayoutConstraint.activate([
             bioField.topAnchor.constraint(equalTo: connectionsIcon.bottomAnchor, constant: 5),
-            bioField.leftAnchor.constraint(equalTo: accountImageContainer.rightAnchor, constant: 20),
+            bioField.leftAnchor.constraint(equalTo: accountImageContainer.rightAnchor, constant: 15),
             bioField.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -10),
-            bioField.heightAnchor.constraint(equalToConstant: 60),
+//            bioField.heightAnchor.constraint(equalToConstant: 60),
         ])
         NSLayoutConstraint.activate([
-            settingsButtonContainer.topAnchor.constraint(equalTo: accountImageContainer.bottomAnchor, constant: 20),
-            settingsButtonContainer.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 20),
-            settingsButtonContainer.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -20),
-            settingsButtonContainer.heightAnchor.constraint(equalToConstant: 20),
+            locationIcon.topAnchor.constraint(equalTo: bioField.bottomAnchor, constant: 5),
+            locationIcon.leftAnchor.constraint(equalTo: bioField.leftAnchor, constant: 0),
+            locationIcon.widthAnchor.constraint(equalToConstant: 24),
+            locationIcon.heightAnchor.constraint(equalToConstant: 24),
         ])
         NSLayoutConstraint.activate([
-            settingsButtonLabel.topAnchor.constraint(equalTo: settingsButtonContainer.topAnchor),
-            settingsButtonLabel.leftAnchor.constraint(equalTo: settingsButtonContainer.leftAnchor),
-            settingsButtonLabel.rightAnchor.constraint(equalTo: settingsButtonContainer.rightAnchor),
-            settingsButtonLabel.bottomAnchor.constraint(equalTo: settingsButtonContainer.bottomAnchor),
+            locationLabel.topAnchor.constraint(equalTo: bioField.bottomAnchor, constant: 5),
+            locationLabel.leftAnchor.constraint(equalTo: locationIcon.rightAnchor, constant: 5),
+            locationLabel.widthAnchor.constraint(equalToConstant: 100),
+            locationLabel.heightAnchor.constraint(equalToConstant: 24),
+        ])
+        NSLayoutConstraint.activate([
+            joinedIcon.topAnchor.constraint(equalTo: bioField.bottomAnchor, constant: 5),
+            joinedIcon.leftAnchor.constraint(equalTo: locationLabel.rightAnchor, constant: 10),
+            joinedIcon.widthAnchor.constraint(equalToConstant: 24),
+            joinedIcon.heightAnchor.constraint(equalToConstant: 24),
+        ])
+        NSLayoutConstraint.activate([
+            joinedLabel.topAnchor.constraint(equalTo: bioField.bottomAnchor, constant: 5),
+            joinedLabel.leftAnchor.constraint(equalTo: joinedIcon.rightAnchor, constant: 5),
+            joinedLabel.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -20),
+            joinedLabel.heightAnchor.constraint(equalToConstant: 24),
         ])
         
-        getAccountImage()
+        NSLayoutConstraint.activate([
+            buttonContainer.topAnchor.constraint(equalTo: locationIcon.bottomAnchor, constant: 20),
+            buttonContainer.leftAnchor.constraint(equalTo: viewContainer.leftAnchor, constant: 20),
+            buttonContainer.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -20),
+            buttonContainer.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        NSLayoutConstraint.activate([
+            buttonLabel.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
+            buttonLabel.leftAnchor.constraint(equalTo: buttonContainer.leftAnchor),
+            buttonLabel.rightAnchor.constraint(equalTo: buttonContainer.rightAnchor),
+            buttonLabel.bottomAnchor.constraint(equalTo: buttonContainer.bottomAnchor),
+        ])
+        NSLayoutConstraint.activate([
+            strategyTableView.topAnchor.constraint(equalTo: buttonContainer.bottomAnchor, constant: 10),
+            strategyTableView.leftAnchor.constraint(equalTo: viewContainer.leftAnchor),
+            strategyTableView.rightAnchor.constraint(equalTo: viewContainer.rightAnchor),
+            strategyTableView.bottomAnchor.constraint(equalTo: viewContainer.bottomAnchor),
+        ])
     }
     
     
@@ -304,10 +430,9 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
         controller.presentationContextProvider = self
         controller.performRequests()
     }
-    @objc func settingsIconContainerTap(_ sender: UITapGestureRecognizer) {
-        print("\(className) - settingsIconContainerTap")
-        guard let accountRepo = accountRepository else { return }
-        
+    @objc func buttonTap(_ sender: UITapGestureRecognizer) {
+        print("\(className) - buttonTap")
+        guard let accountRepo = accountPrivateRepository else { return }
         // Present the account edit sheet via a modal view
         let accountEditView: AccountEditView = AccountEditView(accountRepo: accountRepo)
         accountEditView.delegate = self
@@ -315,46 +440,11 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
     }
     
     
-    // MARK: -IMAGE PICKER METHODS
-    
-    func didSelect(image: UIImage?) {
-        guard let img = image else { self.showUploadImageErrorAlert(); return }
-        guard let accountRepo = accountRepository else { self.showUploadImageErrorAlert(); return }
-        // Add to the local imageview
-        accountImage.image = img
-        
-        // Upload to storage for the large sized image
-        guard let imgLarge = img.resizeWithWidth(width: 500) else { self.showUploadImageErrorAlert(); return }
-        let storageRef = Storage.storage().reference().child(accountRepo.accountId + ".png")
-        if let uploadData = imgLarge.pngData() {
-            storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
-                if error != nil { self.showUploadImageErrorAlert(); return }
-            }
-        }
-        
-        // Reduce the image size (for messages) and upload to storage
-        guard let imgSmall = img.resizeWithWidth(width: 30) else { self.showUploadImageErrorAlert(); return }
-        let storageRefSmall = Storage.storage().reference().child(accountRepo.accountId + "-small.png")
-        if let uploadData = imgSmall.pngData() {
-            storageRefSmall.putData(uploadData, metadata: nil) { (metadata, error) in
-                if error != nil { self.showUploadImageErrorAlert(); return }
-            }
-        }
-        
-    }
-    
-    func showUploadImageErrorAlert() {
-        let alert = UIAlertController(title: "We messed up!", message: "Oh no there was a problem uploading your photo! Please try again.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-        self.present(alert, animated: true)
-    }
-    
-    
     // MARK: -REPO METHODS
     
-    func accountDataUpdate() {
+    func accountPrivateDataUpdate() {
         print("\(className) - accountDataUpdate")
-        guard let accountRepo = accountRepository else { return }
+        guard let accountRepo = accountPrivateRepository else { return }
         if let account = accountRepo.account {
             // If the username is empty, use the known account name
             if let username = account.username {
@@ -370,6 +460,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
             }
 //            nameLabel.sizeToFit()
             nameLabel.layoutIfNeeded()
+            accountImage.image = account.image
             
             layoutAccountComponents()
 
@@ -384,52 +475,55 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
         self.present(alert, animated: true)
     }
     
-    func notSignedIn() {
-        showSignIn()
-    }
+    // MARK: -DATA METHODS
     
-    
-    // MARK: -CUSTOM FUNCTIONS
-    
-    func getAccountImage() {
-        guard let accountRepo = accountRepository else { return }
-        let imageRef = Storage.storage().reference().child(accountRepo.accountId + ".png")
-        imageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) -> Void in
-            if error != nil { return }
-            guard let imgData = data else { return }
-            self.accountImage.image = UIImage(data: imgData)
-            
-            if accountRepo.account == nil { return }
-            accountRepo.account!.image = UIImage(data: imgData)
+    func updateStrategies(strategies: [Strategy]) {
+        // The passed strategies have all users from the main feed. Filter for the passed account.
+        guard let firUser = Settings.Firebase.auth().currentUser else { return }
+        let filteredStrategies = strategies.filter { $0.creator == firUser.uid }
+        localStrategies.removeAll()
+        localStrategies = filteredStrategies
+        if strategyTableView != nil {
+            strategyTableView.reloadData()
+            updateDetailViewStrategy()
         }
-        
-//        imageRef.downloadURL { url, error in
-//            if error != nil { return }
-//
-//            guard let imageUrl = url else {
-//                self.showUploadImageErrorAlert()
-//                return
-//            }
-//            guard let imageURL = URL(string: imageUrl.absoluteString) else { return
-//            DispatchQueue.global().async {
-//                guard let imageData = try? Data(contentsOf: imageUrl) else { return }
-//
-//                let image = UIImage(data: imageData)
-//                DispatchQueue.main.async {
-//                    self.accountImage.image = image
-//                }
-//            }
-//        }
     }
     
-    func showSignIn() {
+    func updateStrategyReactions(reactions: [StrategyReaction]) {
+        // The passed strategies have all users from the main feed. Filter for the passed account
+        // to reduce the time needed for matching reactions to stratgies.
+        guard let firUser = Settings.Firebase.auth().currentUser else { return }
+        let filteredReactions = reactions.filter { $0.creator == firUser.uid }
+        
+        for (i, s) in localStrategies.enumerated() {
+            localStrategies[i].reactions = filteredReactions.filter { return $0.strategy == s.id }
+        }
+        if strategyTableView != nil {
+            strategyTableView.reloadData()
+            updateDetailViewStrategy()
+        }
+    }
+    
+    func updateDetailViewStrategy() {
+        // If a detail view has been created, update the data
+        guard let dView = detailView else { return }
+        if dView.strategy == nil { return }
+        for s in localStrategies {
+            if s.id == dView.strategy.id {
+                detailView!.updateStrategyData(strategy: s)
+                break
+            }
+        }
+    }
+    
+    func showLogin() {
         // Hide the data components and show the sign in components
         viewContainer.removeFromSuperview()
         view.addSubview(signInContainer)
         layoutSignInComponents()
         
         // Reset any components storing data
-        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.background, renderingMode: .alwaysOriginal)
+//        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.background, renderingMode: .alwaysOriginal)
         nameLabel.text = "Anonymous"
     }
     func hideSignIn() {
@@ -441,7 +535,7 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
 }
 
 
-extension AccountView: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+extension AccountPrivateView: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
     
     // MARK: -APPLE AUTH METHODS

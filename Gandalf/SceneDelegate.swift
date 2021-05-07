@@ -14,12 +14,13 @@ protocol TabBarViewDelegate {
     func moveToTab(index: Int)
 }
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate, StrategyViewDelegate, StrategyCreateViewDelegate, StrategyRepositoryDelegate, StrategyReactionRepositoryDelegate, AccountRepositoryDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate, AccountPrivateViewDelegate, StrategyViewDelegate, StrategyCreateViewDelegate, StrategyRepositoryDelegate, StrategyReactionRepositoryDelegate, AccountRepositoryDelegate, AccountPrivateRepositoryDelegate {
     let className = "SceneDelegate"
     
     // Create a local AccountRepository to access the account
     // receive callback results if needed
     var accountRepository: AccountRepository?
+    var accountPrivateRepository: AccountPrivateRepository?
     var strategyRepository: StrategyRepository?
     var strategyReactionRepository: StrategyReactionRepository?
 
@@ -29,7 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     var strategyVcNavController: UINavigationController!
     var strategyTabVC: StrategyTabView!
     var strategyTabVcNavController: UINavigationController!
-    var accountVC: AccountView!
+    var accountVC: AccountPrivateView!
     var accountVcNavController: UINavigationController!
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -76,7 +77,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         let tabImageStrategyCreateColor = UIImage(systemName: "plus")?.withTintColor(Settings.Theme.Color.primaryLight, renderingMode: .alwaysOriginal)
         strategyTabVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageStrategyCreateWhite, selectedImage: tabImageStrategyCreateColor)
         
-        accountVC = AccountView()
+        accountVC = AccountPrivateView()
+        accountVC.delegate = self
         accountVC.tabBarViewDelegate = self
         accountVcNavController = UINavigationController(rootViewController: accountVC)
         accountVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
@@ -84,7 +86,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         accountVcNavController.navigationBar.tintColor = Settings.Theme.Color.barText
         accountVcNavController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: Settings.Theme.Color.barText]
         let tabImageAccountWhite = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.barText, renderingMode: .alwaysOriginal)
-        let tabImageAccountColor = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.primaryLight, renderingMode: .alwaysOriginal)
+        let tabImageAccountColor = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.secondary, renderingMode: .alwaysOriginal)
         accountVcNavController.tabBarItem = UITabBarItem(title: "", image: tabImageAccountWhite, selectedImage: tabImageAccountColor)
         
         tabBarController = UITabBarController()
@@ -95,13 +97,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         tabBarController.tabBar.isTranslucent = false
         tabBarController.tabBar.clipsToBounds = true
         tabBarController.viewControllers = [strategyVcNavController, strategyTabVcNavController, accountVcNavController]
-        tabBarController.selectedIndex = Settings.Tabs.accountVcIndex
+        tabBarController.selectedIndex = Settings.Tabs.strategyVcIndex
         
-        // If a user is not logged in, display the Login screen
-        if let firUser = Settings.Firebase.auth().currentUser {
-            print("\(className) - currentUser: \(firUser.uid)")
-            tabBarController.selectedIndex = Settings.Tabs.strategyVcIndex
-        }
+//        // If a user is not logged in, display the Login screen
+//        if let firUser = Settings.Firebase.auth().currentUser {
+//            print("\(className) - currentUser: \(firUser.uid)")
+//            tabBarController.selectedIndex = Settings.Tabs.strategyVcIndex
+//        }
         
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
@@ -153,21 +155,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             strategyReactionRepository!.observeQuery()
         }
         
-        // Get the Account via the AccountRepo
-        if let accountRepo = accountRepository {
-            accountRepo.getAccount()
+        if accountRepository == nil {
+            accountRepository = AccountRepository()
+            accountRepository!.delegate = self
+            accountRepository!.observeQuery()
         } else {
-            // If the AccountRepo is null, create a new one
-            // be sure to assign the delegate to receive callbacks
-            if let accountRepo = AccountRepository() {
-                accountRepository = accountRepo
-                accountRepository!.delegate = self
-                accountRepository!.getAccount()
-            } else {
-                // If getting the account failed, the user
-                // is not logged in - show the login view
-                moveToTab(index: Settings.Tabs.accountVcIndex)
-            }
+            accountRepository!.observeQuery()
+        }
+        
+        if accountPrivateRepository == nil {
+            accountPrivateRepository = AccountPrivateRepository()
+            accountPrivateRepository!.delegate = self
+            accountPrivateRepository!.observeDoc()
+        } else {
+            accountPrivateRepository!.observeDoc()
         }
     }
 
@@ -183,6 +184,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         if let strategyReactionRepo = strategyReactionRepository {
             strategyReactionRepo.stopObserving()
+        }
+        
+        if let accountRepo = accountRepository {
+            accountRepo.stopObserving()
+        }
+        
+        if let accountPrivateRepo = accountPrivateRepository {
+            accountPrivateRepo.stopObserving()
         }
     }
     
@@ -216,6 +225,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     // MARK: -TAB BAR VIEW METHODS
     func moveToTab(index: Int) {
+        print("\(self.className) - moveToTab: \(index)")
         tabBarController.selectedIndex = index
     }
     
@@ -256,9 +266,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     func strategyDataUpdate() {
         guard let strategyRepo = strategyRepository else { return }
         strategyVC.updateStrategies(strategies: strategyRepo.strategies)
+        accountVC.updateStrategies(strategies: strategyRepo.strategies)
     }
     
     func showLogin() {
+        print("\(className) - showLogin")
         moveToTab(index: Settings.Tabs.accountVcIndex)
     }
     
@@ -269,20 +281,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         print("\(className) - strategyReactionDataUpdate")
         guard let strategyReactionRepo = strategyReactionRepository else { return }
         strategyVC.updateStrategyReactions(reactions: strategyReactionRepo.reactions)
+        accountVC.updateStrategyReactions(reactions: strategyReactionRepo.reactions)
     }
     
     
-    // MARK: -ACCOUNT REPO METHODS
+    // MARK: -ACCOUNT REPOS METHODS
     
     func accountDataUpdate() {
         print("\(className) - Account Data update")
+        guard let accountRepo = accountRepository else { return }
+        strategyVC.updateAccounts(accounts: accountRepo.accounts)
+    }
+    
+    func accountPrivateDataUpdate() {
+        print("\(className) - Account Private Data update")
     }
     
     func requestError(title: String, message: String) {
         print("\(className) - Account Repo error: \(title): \(message)")
-    }
-    
-    func notSignedIn() {
-        moveToTab(index: Settings.Tabs.accountVcIndex)
     }
 }

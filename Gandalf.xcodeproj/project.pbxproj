@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		017E03993A6DF74AD31C6F3C /* Pods_Gandalf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C39806E1CC7EDBFB9963D2D3 /* Pods_Gandalf.framework */; };
-		B80E04C325C32A96009DBE34 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E04C225C32A96009DBE34 /* AccountView.swift */; };
+		B80E04C325C32A96009DBE34 /* AccountPrivateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E04C225C32A96009DBE34 /* AccountPrivateView.swift */; };
 		B80E04D125C33341009DBE34 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B80E04D025C33341009DBE34 /* GoogleService-Info.plist */; };
 		B80E04F225C616BE009DBE34 /* HAT-RED-LG.png in Resources */ = {isa = PBXBuildFile; fileRef = B80E04F025C616BE009DBE34 /* HAT-RED-LG.png */; };
 		B80E04F325C616BE009DBE34 /* HAT-RED-SM.png in Resources */ = {isa = PBXBuildFile; fileRef = B80E04F125C616BE009DBE34 /* HAT-RED-SM.png */; };
@@ -33,6 +33,9 @@
 		B868EBED264362EF00C369D8 /* StrategyReactionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBEC264362EF00C369D8 /* StrategyReactionsRepository.swift */; };
 		B868EBEF26441FAB00C369D8 /* StrategyReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBEE26441FAB00C369D8 /* StrategyReaction.swift */; };
 		B868EBF126441FD200C369D8 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBF026441FD200C369D8 /* Order.swift */; };
+		B868EBF32645B38700C369D8 /* AccountPrivateViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBF22645B38700C369D8 /* AccountPrivateViewTableView.swift */; };
+		B868EBF52645B60F00C369D8 /* AccountStrategyRespository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBF42645B60F00C369D8 /* AccountStrategyRespository.swift */; };
+		B868EBF72645C85600C369D8 /* AccountPrivateRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBF62645C85600C369D8 /* AccountPrivateRepository.swift */; };
 		B873503B25C256320007A8FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503A25C256320007A8FE /* AppDelegate.swift */; };
 		B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503C25C256320007A8FE /* SceneDelegate.swift */; };
 		B873504125C256330007A8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504025C256330007A8FE /* Assets.xcassets */; };
@@ -93,7 +96,7 @@
 /* Begin PBXFileReference section */
 		0F9AFD54160E9D644FB2E94A /* Pods-Gandalf.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gandalf.release.xcconfig"; path = "Target Support Files/Pods-Gandalf/Pods-Gandalf.release.xcconfig"; sourceTree = "<group>"; };
 		307645F881FE0E958AF461D8 /* Pods-Gandalf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Gandalf.debug.xcconfig"; path = "Target Support Files/Pods-Gandalf/Pods-Gandalf.debug.xcconfig"; sourceTree = "<group>"; };
-		B80E04C225C32A96009DBE34 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		B80E04C225C32A96009DBE34 /* AccountPrivateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountPrivateView.swift; sourceTree = "<group>"; };
 		B80E04D025C33341009DBE34 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B80E04F025C616BE009DBE34 /* HAT-RED-LG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "HAT-RED-LG.png"; sourceTree = "<group>"; };
 		B80E04F125C616BE009DBE34 /* HAT-RED-SM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "HAT-RED-SM.png"; sourceTree = "<group>"; };
@@ -118,6 +121,9 @@
 		B868EBEC264362EF00C369D8 /* StrategyReactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyReactionsRepository.swift; sourceTree = "<group>"; };
 		B868EBEE26441FAB00C369D8 /* StrategyReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyReaction.swift; sourceTree = "<group>"; };
 		B868EBF026441FD200C369D8 /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
+		B868EBF22645B38700C369D8 /* AccountPrivateViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountPrivateViewTableView.swift; sourceTree = "<group>"; };
+		B868EBF42645B60F00C369D8 /* AccountStrategyRespository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountStrategyRespository.swift; sourceTree = "<group>"; };
+		B868EBF62645C85600C369D8 /* AccountPrivateRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountPrivateRepository.swift; sourceTree = "<group>"; };
 		B873503725C256320007A8FE /* Gandalf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gandalf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B873503A25C256320007A8FE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B873503C25C256320007A8FE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -384,8 +390,9 @@
 		B8BA1B4F25D0618D008ACBA0 /* Account */ = {
 			isa = PBXGroup;
 			children = (
-				B80E04C225C32A96009DBE34 /* AccountView.swift */,
 				B8D3AF812637309300821E22 /* AccountEditView.swift */,
+				B80E04C225C32A96009DBE34 /* AccountPrivateView.swift */,
+				B868EBF22645B38700C369D8 /* AccountPrivateViewTableView.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -395,6 +402,8 @@
 			children = (
 				B8BA188A25CDB694008ACBA0 /* Account.swift */,
 				B8BA188D25CDB6B5008ACBA0 /* AccountRepository.swift */,
+				B868EBF42645B60F00C369D8 /* AccountStrategyRespository.swift */,
+				B868EBF62645C85600C369D8 /* AccountPrivateRepository.swift */,
 			);
 			path = Account;
 			sourceTree = "<group>";
@@ -584,6 +593,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B868EBF52645B60F00C369D8 /* AccountStrategyRespository.swift in Sources */,
 				B8A9A13926403B5B00B87495 /* SearchSymbolViewTableView.swift in Sources */,
 				B8BA188B25CDB694008ACBA0 /* Account.swift in Sources */,
 				B8A9A1432640F00F00B87495 /* WindowPickerView.swift in Sources */,
@@ -598,13 +608,14 @@
 				B8A9A12A263DBC2C00B87495 /* Numbers.swift in Sources */,
 				B8D3AF5826332B6000821E22 /* StrategyViewTableView.swift in Sources */,
 				B88BE59325DB4A2D00AA1B75 /* Strategy.swift in Sources */,
+				B868EBF32645B38700C369D8 /* AccountPrivateViewTableView.swift in Sources */,
 				B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */,
 				B868EBED264362EF00C369D8 /* StrategyReactionsRepository.swift in Sources */,
 				B87350A525C2812C0007A8FE /* Assets.swift in Sources */,
 				B87350B825C2A2D00007A8FE /* Symbol.swift in Sources */,
 				B868EBE926432C8B00C369D8 /* StrategyDetailCell.swift in Sources */,
 				B8A9A132263FBB4100B87495 /* StrategyCreateCell.swift in Sources */,
-				B80E04C325C32A96009DBE34 /* AccountView.swift in Sources */,
+				B80E04C325C32A96009DBE34 /* AccountPrivateView.swift in Sources */,
 				B868EBE52641FF7600C369D8 /* SymbolRepository.swift in Sources */,
 				B8A9A13B2640657100B87495 /* StrategyCreateAddRowCell.swift in Sources */,
 				B868EBEB2643386400C369D8 /* StrategyDetailViewTableView.swift in Sources */,
@@ -613,6 +624,7 @@
 				B8A9A12E263E1ED000B87495 /* StrategyTabView.swift in Sources */,
 				B8BA188E25CDB6B5008ACBA0 /* AccountRepository.swift in Sources */,
 				B868EBE726430F6500C369D8 /* StrategyDetailView.swift in Sources */,
+				B868EBF72645C85600C369D8 /* AccountPrivateRepository.swift in Sources */,
 				B8A9A1412640DA1300B87495 /* TextCell.swift in Sources */,
 				B8A9A1352640399900B87495 /* SearchSymbolView.swift in Sources */,
 				B8BA1C7525DAD632008ACBA0 /* StrategyView.swift in Sources */,
