@@ -8,7 +8,14 @@
 import UIKit
 //import FirebaseAnalytics
 
+protocol StrategyCellDelegate {
+    func reaction(strategyId: String, type: Int)
+}
+
 class StrategyCell: UITableViewCell {
+    
+    var delegate: StrategyCellDelegate!
+    var strategy: Strategy!
     
     var cellContainer: UIView!
     var contentContainer: UIView!
@@ -25,10 +32,10 @@ class StrategyCell: UITableViewCell {
     var reactionsContainer: UIView!
     var reactionOrderingIcon: UIImageView!
     var reactionOrderingLabel: UILabel!
-    var reactionLikeIcon: UIImageView!
-    var reactionLikeLabel: UILabel!
-    var reactionDislikeIcon: UIImageView!
-    var reactionDislikeLabel: UILabel!
+    var reactionUpIcon: UIImageView!
+    var reactionUpLabel: UILabel!
+    var reactionDownIcon: UIImageView!
+    var reactionDownLabel: UILabel!
     var borderBottom: UIView!
     
     var timer: Timer?
@@ -218,54 +225,63 @@ class StrategyCell: UITableViewCell {
         ])
         
         reactionOrderingIcon = UIImageView()
-        reactionOrderingIcon.layer.cornerRadius = 12
-        reactionOrderingIcon.image = UIImage(systemName: "dollarsign.circle")?.withTintColor(Settings.Theme.Color.textGrayLight, renderingMode: .alwaysOriginal)
+        reactionOrderingIcon.image = UIImage(systemName: "dollarsign.circle")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
         reactionOrderingIcon.contentMode = UIView.ContentMode.scaleAspectFit
         reactionOrderingIcon.clipsToBounds = true
         reactionOrderingIcon.isUserInteractionEnabled = true
         reactionOrderingIcon.translatesAutoresizingMaskIntoConstraints = false
         reactionsContainer.addSubview(reactionOrderingIcon)
         NSLayoutConstraint.activate([
-            reactionOrderingIcon.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 18),
+            reactionOrderingIcon.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 20),
             reactionOrderingIcon.leftAnchor.constraint(equalTo: reactionsContainer.leftAnchor, constant: 0),
-            reactionOrderingIcon.widthAnchor.constraint(equalToConstant: 24),
-            reactionOrderingIcon.heightAnchor.constraint(equalToConstant: 24),
+            reactionOrderingIcon.widthAnchor.constraint(equalToConstant: 20),
+            reactionOrderingIcon.heightAnchor.constraint(equalToConstant: 20),
         ])
         
-        reactionLikeIcon = UIImageView()
-        reactionLikeIcon.layer.cornerRadius = 12
-        reactionLikeIcon.image = UIImage(systemName: "hand.thumbsup")?.withTintColor(Settings.Theme.Color.textGrayLight, renderingMode: .alwaysOriginal)
-        reactionLikeIcon.contentMode = UIView.ContentMode.scaleAspectFit
-        reactionLikeIcon.clipsToBounds = true
-        reactionLikeIcon.isUserInteractionEnabled = true
-        reactionLikeIcon.translatesAutoresizingMaskIntoConstraints = false
-        reactionsContainer.addSubview(reactionLikeIcon)
+        let reactionOrderingGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(reactionOrderingTap))
+        reactionOrderingGestureRecognizer.numberOfTapsRequired = 1
+        reactionOrderingIcon.addGestureRecognizer(reactionOrderingGestureRecognizer)
+        
+        reactionUpIcon = UIImageView()
+        reactionUpIcon.image = UIImage(systemName: "arrowtriangle.up")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        reactionUpIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        reactionUpIcon.clipsToBounds = true
+        reactionUpIcon.isUserInteractionEnabled = true
+        reactionUpIcon.translatesAutoresizingMaskIntoConstraints = false
+        reactionsContainer.addSubview(reactionUpIcon)
         NSLayoutConstraint.activate([
-            reactionLikeIcon.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 18),
-            reactionLikeIcon.centerXAnchor.constraint(equalTo: reactionsContainer.centerXAnchor, constant: -25),
-            reactionLikeIcon.widthAnchor.constraint(equalToConstant: 24),
-            reactionLikeIcon.heightAnchor.constraint(equalToConstant: 24),
+            reactionUpIcon.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 20),
+            reactionUpIcon.centerXAnchor.constraint(equalTo: reactionsContainer.centerXAnchor, constant: -25),
+            reactionUpIcon.widthAnchor.constraint(equalToConstant: 20),
+            reactionUpIcon.heightAnchor.constraint(equalToConstant: 20),
         ])
         
-        reactionDislikeIcon = UIImageView()
-        reactionDislikeIcon.layer.cornerRadius = 12
-        reactionDislikeIcon.image = UIImage(systemName: "hand.thumbsdown")?.withTintColor(Settings.Theme.Color.textGrayLight, renderingMode: .alwaysOriginal)
-        reactionDislikeIcon.contentMode = UIView.ContentMode.scaleAspectFit
-        reactionDislikeIcon.clipsToBounds = true
-        reactionDislikeIcon.isUserInteractionEnabled = true
-        reactionDislikeIcon.translatesAutoresizingMaskIntoConstraints = false
-        reactionsContainer.addSubview(reactionDislikeIcon)
+        let reactionUpGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(reactionUpTap))
+        reactionUpGestureRecognizer.numberOfTapsRequired = 1
+        reactionUpIcon.addGestureRecognizer(reactionUpGestureRecognizer)
+        
+        reactionDownIcon = UIImageView()
+        reactionDownIcon.image = UIImage(systemName: "arrowtriangle.down")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        reactionDownIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        reactionDownIcon.clipsToBounds = true
+        reactionDownIcon.isUserInteractionEnabled = true
+        reactionDownIcon.translatesAutoresizingMaskIntoConstraints = false
+        reactionsContainer.addSubview(reactionDownIcon)
         NSLayoutConstraint.activate([
-            reactionDislikeIcon.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 18),
-            reactionDislikeIcon.rightAnchor.constraint(equalTo: reactionsContainer.rightAnchor, constant: -53),
-            reactionDislikeIcon.widthAnchor.constraint(equalToConstant: 24),
-            reactionDislikeIcon.heightAnchor.constraint(equalToConstant: 24),
+            reactionDownIcon.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 20),
+            reactionDownIcon.rightAnchor.constraint(equalTo: reactionsContainer.rightAnchor, constant: -53),
+            reactionDownIcon.widthAnchor.constraint(equalToConstant: 20),
+            reactionDownIcon.heightAnchor.constraint(equalToConstant: 20),
         ])
+        
+        let reactionDownGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(reactionDownTap))
+        reactionDownGestureRecognizer.numberOfTapsRequired = 1
+        reactionDownIcon.addGestureRecognizer(reactionDownGestureRecognizer)
         
         reactionOrderingLabel = UILabel()
         reactionOrderingLabel.backgroundColor = .clear
         reactionOrderingLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
-        reactionOrderingLabel.textColor = Settings.Theme.Color.textGrayLight
+        reactionOrderingLabel.textColor = Settings.Theme.Color.textGrayMedium
         reactionOrderingLabel.textAlignment = NSTextAlignment.left
         reactionOrderingLabel.numberOfLines = 1
         reactionOrderingLabel.text = "0"
@@ -275,48 +291,48 @@ class StrategyCell: UITableViewCell {
         NSLayoutConstraint.activate([
             reactionOrderingLabel.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 15),
             reactionOrderingLabel.leftAnchor.constraint(equalTo: reactionOrderingIcon.rightAnchor, constant: 3),
-            reactionOrderingLabel.rightAnchor.constraint(equalTo: reactionLikeIcon.leftAnchor, constant: 0),
+            reactionOrderingLabel.rightAnchor.constraint(equalTo: reactionUpIcon.leftAnchor, constant: 0),
             reactionOrderingLabel.heightAnchor.constraint(equalToConstant: 30),
         ])
         
-        reactionLikeLabel = UILabel()
-        reactionLikeLabel.backgroundColor = .clear
-        reactionLikeLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
-        reactionLikeLabel.textColor = Settings.Theme.Color.textGrayLight
-        reactionLikeLabel.textAlignment = NSTextAlignment.left
-        reactionLikeLabel.numberOfLines = 1
-        reactionLikeLabel.text = "0"
-        reactionLikeLabel.isUserInteractionEnabled = false
-        reactionLikeLabel.translatesAutoresizingMaskIntoConstraints = false
-        reactionsContainer.addSubview(reactionLikeLabel)
+        reactionUpLabel = UILabel()
+        reactionUpLabel.backgroundColor = .clear
+        reactionUpLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
+        reactionUpLabel.textColor = Settings.Theme.Color.textGrayMedium
+        reactionUpLabel.textAlignment = NSTextAlignment.left
+        reactionUpLabel.numberOfLines = 1
+        reactionUpLabel.text = "0"
+        reactionUpLabel.isUserInteractionEnabled = false
+        reactionUpLabel.translatesAutoresizingMaskIntoConstraints = false
+        reactionsContainer.addSubview(reactionUpLabel)
         NSLayoutConstraint.activate([
-            reactionLikeLabel.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 15),
-            reactionLikeLabel.leftAnchor.constraint(equalTo: reactionLikeIcon.rightAnchor, constant: 3),
-            reactionLikeLabel.rightAnchor.constraint(equalTo: reactionDislikeIcon.leftAnchor, constant: 0),
-            reactionLikeLabel.heightAnchor.constraint(equalToConstant: 30),
+            reactionUpLabel.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 15),
+            reactionUpLabel.leftAnchor.constraint(equalTo: reactionUpIcon.rightAnchor, constant: 3),
+            reactionUpLabel.rightAnchor.constraint(equalTo: reactionDownIcon.leftAnchor, constant: 0),
+            reactionUpLabel.heightAnchor.constraint(equalToConstant: 30),
         ])
         
-        reactionDislikeLabel = UILabel()
-        reactionDislikeLabel.backgroundColor = .clear
-        reactionDislikeLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
-        reactionDislikeLabel.textColor = Settings.Theme.Color.textGrayLight
-        reactionDislikeLabel.textAlignment = NSTextAlignment.left
-        reactionDislikeLabel.numberOfLines = 1
-        reactionDislikeLabel.text = "0"
-        reactionDislikeLabel.isUserInteractionEnabled = false
-        reactionDislikeLabel.translatesAutoresizingMaskIntoConstraints = false
-        reactionsContainer.addSubview(reactionDislikeLabel)
+        reactionDownLabel = UILabel()
+        reactionDownLabel.backgroundColor = .clear
+        reactionDownLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 24)
+        reactionDownLabel.textColor = Settings.Theme.Color.textGrayMedium
+        reactionDownLabel.textAlignment = NSTextAlignment.left
+        reactionDownLabel.numberOfLines = 1
+        reactionDownLabel.text = "0"
+        reactionDownLabel.isUserInteractionEnabled = false
+        reactionDownLabel.translatesAutoresizingMaskIntoConstraints = false
+        reactionsContainer.addSubview(reactionDownLabel)
         NSLayoutConstraint.activate([
-            reactionDislikeLabel.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 15),
-            reactionDislikeLabel.rightAnchor.constraint(equalTo: reactionsContainer.rightAnchor, constant: 0),
-            reactionDislikeLabel.widthAnchor.constraint(equalToConstant: 50),
-            reactionDislikeLabel.heightAnchor.constraint(equalToConstant: 30),
+            reactionDownLabel.topAnchor.constraint(equalTo: reactionsContainer.topAnchor, constant: 15),
+            reactionDownLabel.rightAnchor.constraint(equalTo: reactionsContainer.rightAnchor, constant: 0),
+            reactionDownLabel.widthAnchor.constraint(equalToConstant: 50),
+            reactionDownLabel.heightAnchor.constraint(equalToConstant: 30),
         ])
         
         captionLabel = UILabel()
         captionLabel.backgroundColor = .clear
         captionLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 12)
-        captionLabel.textColor = Settings.Theme.Color.textGrayMedium
+        captionLabel.textColor = Settings.Theme.Color.textGrayLight
         captionLabel.textAlignment = NSTextAlignment.left
         captionLabel.numberOfLines = 2
         captionLabel.lineBreakMode = .byTruncatingTail
@@ -387,5 +403,23 @@ class StrategyCell: UITableViewCell {
     func hideBorder() {
         borderBottom.layer.borderColor = Settings.Theme.Color.background.cgColor
     }
+    
+    
+    // MARK: -GESTURE RECOGNIZERS
+    
+    @objc func reactionOrderingTap(_ sender: UITapGestureRecognizer) {
+        guard let parent = self.delegate else { return }
+        guard let sId = strategy.id else { return }
+        parent.reaction(strategyId: sId, type: 0)
+    }
+    @objc func reactionUpTap(_ sender: UITapGestureRecognizer) {
+        guard let parent = self.delegate else { return }
+        guard let sId = strategy.id else { return }
+        parent.reaction(strategyId: sId, type: 1)
+    }
+    @objc func reactionDownTap(_ sender: UITapGestureRecognizer) {
+        guard let parent = self.delegate else { return }
+        guard let sId = strategy.id else { return }
+        parent.reaction(strategyId: sId, type: 2)
+    }
 }
-

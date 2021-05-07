@@ -15,7 +15,7 @@ struct Strategy: Identifiable, Codable {
     var created: Double
     var creator: String
     var orders: [StrategyOrder]
-    var reactions: StrategyReactions?
+    var reactions: [StrategyReaction]?
     var windowExpiration: Double
     var version: String
 
@@ -26,7 +26,6 @@ struct Strategy: Identifiable, Codable {
         case created
         case creator
         case orders
-        case reactions
         case windowExpiration = "window_expiration"
         case version
     }
@@ -34,7 +33,7 @@ struct Strategy: Identifiable, Codable {
     init(creator: String, windowExpiration: Double) {
         self.creator = creator
         self.windowExpiration = windowExpiration
-        self.created = Date().timeIntervalSince1970
+        self.created = Date().timeIntervalSince1970 * 1000
         self.orders = [StrategyOrder]()
         self.version = "v3.0.0"
     }
@@ -102,82 +101,5 @@ struct StrategyOrder: Codable {
         self.direction = direction
         self.predictPriceDirection = predictPriceDirection
         self.type = type
-    }
-}
-
-struct StrategyReactions: Codable {
-    var dislike: Int
-    var like: Int
-    var ordering: Int
-
-    enum CodingKeys: String, CodingKey {
-        case dislike
-        case like
-        case ordering
-    }
-}
-
-struct Order {
-    
-    enum Direction: Int {
-        case SELL = 0
-        case BUY = 1
-    }
-    static func directionFrom(int: Int) -> Direction {
-        switch int
-        {
-        case 0:
-            return Direction.SELL
-        case 1:
-            return Direction.BUY
-        default:
-            return Direction.BUY
-        }
-    }
-    static func directionToString(direction: Int) -> String {
-        switch direction {
-        case 0:
-            return "SELL"
-        case 1:
-            return "BUY"
-        default:
-            return "BUY"
-        }
-    }
-    
-    enum OrderType: Int {
-        case MARKET = 0
-        case LIMIT = 1
-        case CALL = 2
-        case PUT = 3
-    }
-    static func typeFrom(int: Int) -> OrderType {
-        switch int
-        {
-        case 0:
-            return OrderType.MARKET
-        case 1:
-            return OrderType.LIMIT
-        case 2:
-            return OrderType.CALL
-        case 3:
-            return OrderType.PUT
-        default:
-            return OrderType.MARKET
-        }
-    }
-    static func typeToString(type: Int) -> String {
-        switch type {
-        case 0:
-            return "MARKET"
-        case 1:
-            return "LIMIT"
-        case 2:
-            return "CALL"
-        case 3:
-            return "PUT"
-        default:
-            return "ORDER"
-        }
     }
 }

@@ -27,6 +27,12 @@
 		B80E053425C76D08009DBE34 /* HoleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E053325C76D08009DBE34 /* HoleView.swift */; };
 		B868EBE32641871400C369D8 /* WindowPickerViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBE22641871400C369D8 /* WindowPickerViewTableView.swift */; };
 		B868EBE52641FF7600C369D8 /* SymbolRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBE42641FF7600C369D8 /* SymbolRepository.swift */; };
+		B868EBE726430F6500C369D8 /* StrategyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBE626430F6500C369D8 /* StrategyDetailView.swift */; };
+		B868EBE926432C8B00C369D8 /* StrategyDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBE826432C8B00C369D8 /* StrategyDetailCell.swift */; };
+		B868EBEB2643386400C369D8 /* StrategyDetailViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBEA2643386400C369D8 /* StrategyDetailViewTableView.swift */; };
+		B868EBED264362EF00C369D8 /* StrategyReactionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBEC264362EF00C369D8 /* StrategyReactionsRepository.swift */; };
+		B868EBEF26441FAB00C369D8 /* StrategyReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBEE26441FAB00C369D8 /* StrategyReaction.swift */; };
+		B868EBF126441FD200C369D8 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = B868EBF026441FD200C369D8 /* Order.swift */; };
 		B873503B25C256320007A8FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503A25C256320007A8FE /* AppDelegate.swift */; };
 		B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B873503C25C256320007A8FE /* SceneDelegate.swift */; };
 		B873504125C256330007A8FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B873504025C256330007A8FE /* Assets.xcassets */; };
@@ -106,6 +112,12 @@
 		B80E053325C76D08009DBE34 /* HoleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoleView.swift; sourceTree = "<group>"; };
 		B868EBE22641871400C369D8 /* WindowPickerViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowPickerViewTableView.swift; sourceTree = "<group>"; };
 		B868EBE42641FF7600C369D8 /* SymbolRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolRepository.swift; sourceTree = "<group>"; };
+		B868EBE626430F6500C369D8 /* StrategyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyDetailView.swift; sourceTree = "<group>"; };
+		B868EBE826432C8B00C369D8 /* StrategyDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyDetailCell.swift; sourceTree = "<group>"; };
+		B868EBEA2643386400C369D8 /* StrategyDetailViewTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyDetailViewTableView.swift; sourceTree = "<group>"; };
+		B868EBEC264362EF00C369D8 /* StrategyReactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyReactionsRepository.swift; sourceTree = "<group>"; };
+		B868EBEE26441FAB00C369D8 /* StrategyReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategyReaction.swift; sourceTree = "<group>"; };
+		B868EBF026441FD200C369D8 /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		B873503725C256320007A8FE /* Gandalf.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gandalf.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B873503A25C256320007A8FE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B873503C25C256320007A8FE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -347,6 +359,9 @@
 			children = (
 				B88BE59225DB4A2D00AA1B75 /* Strategy.swift */,
 				B88BE59525DB4B1E00AA1B75 /* StrategyRepository.swift */,
+				B868EBEC264362EF00C369D8 /* StrategyReactionsRepository.swift */,
+				B868EBEE26441FAB00C369D8 /* StrategyReaction.swift */,
+				B868EBF026441FD200C369D8 /* Order.swift */,
 			);
 			path = Strategy;
 			sourceTree = "<group>";
@@ -413,6 +428,9 @@
 				B8A9A12D263E1ED000B87495 /* StrategyTabView.swift */,
 				B8BA1C7425DAD632008ACBA0 /* StrategyView.swift */,
 				B8D3AF5726332B6000821E22 /* StrategyViewTableView.swift */,
+				B868EBE626430F6500C369D8 /* StrategyDetailView.swift */,
+				B868EBE826432C8B00C369D8 /* StrategyDetailCell.swift */,
+				B868EBEA2643386400C369D8 /* StrategyDetailViewTableView.swift */,
 			);
 			path = Strategy;
 			sourceTree = "<group>";
@@ -572,6 +590,8 @@
 				B8A9A130263FB23500B87495 /* StrategyCreateViewTableView.swift in Sources */,
 				B873509425C258D60007A8FE /* Settings.swift in Sources */,
 				B80E053425C76D08009DBE34 /* HoleView.swift in Sources */,
+				B868EBF126441FD200C369D8 /* Order.swift in Sources */,
+				B868EBEF26441FAB00C369D8 /* StrategyReaction.swift in Sources */,
 				B873503B25C256320007A8FE /* AppDelegate.swift in Sources */,
 				B873503D25C256320007A8FE /* SceneDelegate.swift in Sources */,
 				B8D3AF822637309300821E22 /* AccountEditView.swift in Sources */,
@@ -579,16 +599,20 @@
 				B8D3AF5826332B6000821E22 /* StrategyViewTableView.swift in Sources */,
 				B88BE59325DB4A2D00AA1B75 /* Strategy.swift in Sources */,
 				B873508325C258BE0007A8FE /* ViewExtensions.swift in Sources */,
+				B868EBED264362EF00C369D8 /* StrategyReactionsRepository.swift in Sources */,
 				B87350A525C2812C0007A8FE /* Assets.swift in Sources */,
 				B87350B825C2A2D00007A8FE /* Symbol.swift in Sources */,
+				B868EBE926432C8B00C369D8 /* StrategyDetailCell.swift in Sources */,
 				B8A9A132263FBB4100B87495 /* StrategyCreateCell.swift in Sources */,
 				B80E04C325C32A96009DBE34 /* AccountView.swift in Sources */,
 				B868EBE52641FF7600C369D8 /* SymbolRepository.swift in Sources */,
 				B8A9A13B2640657100B87495 /* StrategyCreateAddRowCell.swift in Sources */,
+				B868EBEB2643386400C369D8 /* StrategyDetailViewTableView.swift in Sources */,
 				B8BA1C5125D48CBC008ACBA0 /* ImagePicker.swift in Sources */,
 				B8D3AF5F263466C600821E22 /* StrategyCell.swift in Sources */,
 				B8A9A12E263E1ED000B87495 /* StrategyTabView.swift in Sources */,
 				B8BA188E25CDB6B5008ACBA0 /* AccountRepository.swift in Sources */,
+				B868EBE726430F6500C369D8 /* StrategyDetailView.swift in Sources */,
 				B8A9A1412640DA1300B87495 /* TextCell.swift in Sources */,
 				B8A9A1352640399900B87495 /* SearchSymbolView.swift in Sources */,
 				B8BA1C7525DAD632008ACBA0 /* StrategyView.swift in Sources */,

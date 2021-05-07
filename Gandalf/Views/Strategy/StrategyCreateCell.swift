@@ -351,9 +351,8 @@ class StrategyCreateCell: UITableViewCell, UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == priceButtonField {
-            if let parent = self.delegate {
-                parent.updateOrderPrice(orderIndex: orderIndex, price: Double(textField.text ?? "0") ?? 0)
-            }
+            guard let parent = self.delegate else { return }
+            parent.updateOrderPrice(orderIndex: orderIndex, price: Double(textField.text ?? "0") ?? 0)
         }
     }
     
@@ -361,25 +360,19 @@ class StrategyCreateCell: UITableViewCell, UITextFieldDelegate {
     // MARK: -GESTURE RECOGNIZERS
     
     @objc func cancelTap(_ sender: UITapGestureRecognizer) {
-        if let parent = self.delegate {
-            parent.cancelOrder(orderIndex: orderIndex)
-        }
+        guard let parent = self.delegate else { return }
+        parent.cancelOrder(orderIndex: orderIndex)
     }
     @objc func symbolButtonTap(_ sender: UITapGestureRecognizer) {
-        if let parent = self.delegate {
-            parent.selectOrderSymbol(orderIndex: orderIndex)
-        }
+        guard let parent = self.delegate else { return }
+        parent.selectOrderSymbol(orderIndex: orderIndex)
     }
     @objc func directionButtonTap(_ sender: UITapGestureRecognizer) {
-        if let parent = self.delegate {
-            parent.selectOrderDirection(orderIndex: orderIndex)
-        }
+        guard let parent = self.delegate else { return }
+        parent.selectOrderDirection(orderIndex: orderIndex)
     }
     @objc func typeButtonTap(_ sender: UITapGestureRecognizer) {
-        if let parent = self.delegate {
-            parent.selectOrderType(orderIndex: orderIndex)
-        }
+        guard let parent = self.delegate else { return }
+        parent.selectOrderType(orderIndex: orderIndex)
     }
 }
-
-

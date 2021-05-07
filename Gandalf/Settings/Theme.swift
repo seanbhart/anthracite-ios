@@ -33,6 +33,19 @@ extension Settings {
             static let textGrayDark = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.3) //#FFF
             static let textGrayUltraDark = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.1) //#FFF
             static let textGrayTrueDark = UIColor(red: 41/255, green: 41/255, blue: 41/255, alpha: 1.0) //#292929
+//            static let barColor = UIColor(red: 233/255, green: 233/255, blue: 233/255, alpha: 1.0) //#E9E9E9
+//            static let barText = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.5) //#000
+//            static let header = UIColor(red: 233/255, green: 233/255, blue: 233/255, alpha: 1.0) //#E9E9E9
+//            static let background = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0) //#000
+//            static let contentBackground = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.05) //#000
+//            static let outline = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.6) //#000
+//            static let selected = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.5) //#000
+//            static let text = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.5) //#000
+//            static let textGrayLight = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.6) //#000
+//            static let textGrayMedium = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.5) //#000
+//            static let textGrayDark = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.4) //#000
+//            static let textGrayUltraDark = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.1) //#000
+//            static let textGrayTrueDark = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1.0) //#000
             
 //            static let primary = UIColor(red: 148/255, green: 94/255, blue: 252/255, alpha: 1.0) //#945EFC
             static let primary = UIColor(red: 187/255, green: 134/255, blue: 252/255, alpha: 1.0) //#BB86FC
@@ -52,6 +65,12 @@ extension Settings {
             static let grayMedium = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.5) //#FFF
             static let grayDark = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.3) //#FFF
             static let grayUltraDark = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.1) //#FFF
+            static let grayTrueDark = UIColor(red: 41/255, green: 41/255, blue: 41/255, alpha: 0.9) //#292929
+//            static let grayUltraLight = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.7) //#000
+//            static let grayLight = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.6) //#000
+//            static let grayMedium = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.5) //#000
+//            static let grayDark = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.4) //#000
+//            static let grayUltraDark = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.1) //#000
         }
     }
     

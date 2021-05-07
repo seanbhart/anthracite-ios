@@ -30,8 +30,18 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
     var settingsButtonContainerGestureRecognizer: UITapGestureRecognizer!
     var settingsButtonLabel: UILabel!
     var accountImageContainer: UIView!
+    var accountImageBackground: UIView!
     var accountImage: UIImageView!
     var nameLabel: UILabel!
+    var connectionsIcon: UIImageView!
+    var connectionsLabel: UILabel!
+    var bioField: UITextView!
+    var locationIcon: UIImageView!
+    var locationLabel: UILabel!
+    var linkIcon: UIImageView!
+    var linkLabel: UILabel!
+    var joinedIcon: UIImageView!
+    var joinedLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,9 +120,15 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
         accountImageContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(accountImageContainer)
         
+        accountImageBackground = UIView()
+        accountImageBackground.layer.cornerRadius = 58
+        accountImageBackground.backgroundColor = Settings.Theme.Color.grayTrueDark
+        accountImageBackground.translatesAutoresizingMaskIntoConstraints = false
+        accountImageContainer.addSubview(accountImageBackground)
+        
         accountImage = UIImageView()
         accountImage.layer.cornerRadius = 58
-        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.background, renderingMode: .alwaysOriginal)
+//        accountImage.image = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(Settings.Theme.Color.background, renderingMode: .alwaysOriginal)
         accountImage.contentMode = UIView.ContentMode.scaleAspectFit
         accountImage.clipsToBounds = true
         accountImage.isUserInteractionEnabled = true
@@ -129,6 +145,39 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
         nameLabel.isUserInteractionEnabled = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(nameLabel)
+        
+        connectionsIcon = UIImageView()
+        connectionsIcon.image = UIImage(systemName: "figure.stand.line.dotted.figure.stand")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        connectionsIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        connectionsIcon.clipsToBounds = true
+        connectionsIcon.isUserInteractionEnabled = true
+        connectionsIcon.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(connectionsIcon)
+        
+//        let reactionOrderingGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(reactionOrderingTap))
+//        reactionOrderingGestureRecognizer.numberOfTapsRequired = 1
+//        reactionOrderingIcon.addGestureRecognizer(reactionOrderingGestureRecognizer)
+        
+        connectionsLabel = UILabel()
+//        connectionsLabel.backgroundColor = .blue
+        connectionsLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 16)
+        connectionsLabel.textColor = Settings.Theme.Color.textGrayMedium
+        connectionsLabel.textAlignment = NSTextAlignment.left
+        connectionsLabel.numberOfLines = 1
+        connectionsLabel.text = "5,294"
+        connectionsLabel.isUserInteractionEnabled = false
+        connectionsLabel.translatesAutoresizingMaskIntoConstraints = false
+        viewContainer.addSubview(connectionsLabel)
+        
+        bioField = UITextView()
+        bioField.isEditable = false
+        bioField.isScrollEnabled = false
+        bioField.font = UIFont(name: Assets.Fonts.Default.regular, size: 12)
+        bioField.textAlignment = .center
+        bioField.textColor = UIColor.white
+        bioField.text = "bio"
+        bioField.isUserInteractionEnabled = false
+        viewContainer.addSubview(bioField)
         
         settingsButtonContainer = UIView()
         settingsButtonContainer.layer.borderWidth = 1
@@ -188,16 +237,40 @@ class AccountView: UIViewController, AccountRepositoryDelegate, AccountEditViewD
             accountImageContainer.widthAnchor.constraint(equalToConstant: 120),
         ])
         NSLayoutConstraint.activate([
+            accountImageBackground.centerYAnchor.constraint(equalTo: accountImageContainer.centerYAnchor),
+            accountImageBackground.centerXAnchor.constraint(equalTo: accountImageContainer.centerXAnchor),
+            accountImageBackground.heightAnchor.constraint(equalToConstant: 116),
+            accountImageBackground.widthAnchor.constraint(equalToConstant: 116),
+        ])
+        NSLayoutConstraint.activate([
             accountImage.centerYAnchor.constraint(equalTo: accountImageContainer.centerYAnchor),
             accountImage.centerXAnchor.constraint(equalTo: accountImageContainer.centerXAnchor),
             accountImage.heightAnchor.constraint(equalToConstant: 116),
             accountImage.widthAnchor.constraint(equalToConstant: 116),
         ])
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: viewContainer.topAnchor, constant: 10),
+            nameLabel.topAnchor.constraint(equalTo: viewContainer.topAnchor, constant: 20),
             nameLabel.leftAnchor.constraint(equalTo: accountImageContainer.rightAnchor, constant: 20),
             nameLabel.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -10),
-            nameLabel.heightAnchor.constraint(equalToConstant: 30),
+            nameLabel.heightAnchor.constraint(equalToConstant: 24),
+        ])
+        NSLayoutConstraint.activate([
+            connectionsIcon.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 5),
+            connectionsIcon.leftAnchor.constraint(equalTo: accountImageContainer.rightAnchor, constant: 20),
+            connectionsIcon.widthAnchor.constraint(equalToConstant: 24),
+            connectionsIcon.heightAnchor.constraint(equalToConstant: 24),
+        ])
+        NSLayoutConstraint.activate([
+            connectionsLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 5),
+            connectionsLabel.leftAnchor.constraint(equalTo: connectionsIcon.rightAnchor, constant: 5),
+            connectionsLabel.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -10),
+            connectionsLabel.heightAnchor.constraint(equalToConstant: 24),
+        ])
+        NSLayoutConstraint.activate([
+            bioField.topAnchor.constraint(equalTo: connectionsIcon.bottomAnchor, constant: 5),
+            bioField.leftAnchor.constraint(equalTo: accountImageContainer.rightAnchor, constant: 20),
+            bioField.rightAnchor.constraint(equalTo: viewContainer.rightAnchor, constant: -10),
+            bioField.heightAnchor.constraint(equalToConstant: 60),
         ])
         NSLayoutConstraint.activate([
             settingsButtonContainer.topAnchor.constraint(equalTo: accountImageContainer.bottomAnchor, constant: 20),

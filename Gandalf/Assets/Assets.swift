@@ -5,9 +5,18 @@
 //  Created by Sean Hart on 1/27/21.
 //
 
-import Foundation
+import UIKit
 
 struct Assets {
+    
+    struct Icons {
+        static let iconOrdering = UIImage(systemName: "dollarsign.circle")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        static let iconOrderingFill = UIImage(systemName: "dollarsign.circle.fill")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        static let iconUp = UIImage(systemName: "arrowtriangle.up")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        static let iconUpFill = UIImage(systemName: "arrowtriangle.up.fill")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        static let iconDown = UIImage(systemName: "arrowtriangle.down")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        static let iconDownFill = UIImage(systemName: "arrowtriangle.down.fill")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+    }
     
     struct Images {
         static let notionIconWhiteSm: String = "STAR-WHITE-SM.png"

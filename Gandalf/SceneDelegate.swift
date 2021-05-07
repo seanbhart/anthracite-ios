@@ -14,13 +14,14 @@ protocol TabBarViewDelegate {
     func moveToTab(index: Int)
 }
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate, StrategyCreateViewDelegate, StrategyRepositoryDelegate, AccountRepositoryDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDelegate, TabBarViewDelegate, StrategyViewDelegate, StrategyCreateViewDelegate, StrategyRepositoryDelegate, StrategyReactionRepositoryDelegate, AccountRepositoryDelegate {
     let className = "SceneDelegate"
     
     // Create a local AccountRepository to access the account
     // receive callback results if needed
     var accountRepository: AccountRepository?
     var strategyRepository: StrategyRepository?
+    var strategyReactionRepository: StrategyReactionRepository?
 
     var window: UIWindow?
     var tabBarController: UITabBarController!
@@ -53,6 +54,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         }
         
         strategyVC = StrategyView()
+        strategyVC.delegate = self
         strategyVC.tabBarViewDelegate = self
         strategyVcNavController = UINavigationController(rootViewController: strategyVC)
         strategyVcNavController.navigationBar.barStyle = Settings.Theme.barStyle
@@ -143,6 +145,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
             strategyRepository!.observeQuery()
         }
         
+        if strategyReactionRepository == nil {
+            strategyReactionRepository = StrategyReactionRepository()
+            strategyReactionRepository!.delegate = self
+            strategyReactionRepository!.observeQuery()
+        } else {
+            strategyReactionRepository!.observeQuery()
+        }
+        
         // Get the Account via the AccountRepo
         if let accountRepo = accountRepository {
             accountRepo.getAccount()
@@ -169,6 +179,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
         
         if let strategyRepo = strategyRepository {
             strategyRepo.stopObserving()
+        }
+        
+        if let strategyReactionRepo = strategyReactionRepository {
+            strategyReactionRepo.stopObserving()
         }
     }
     
@@ -206,6 +220,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     }
     
     
+    // MARK: -STRATEGY VIEW METHODS
+    func strategyReaction(strategyId: String, type: Int) {
+        print("\(self.className) - strategyReaction")
+        if let strategyReactionRepo = self.strategyReactionRepository {
+            strategyReactionRepo.createReaction(strategyId: strategyId, type: type)
+        } else {
+            self.strategyReactionRepository = StrategyReactionRepository()
+            self.strategyReactionRepository!.delegate = self
+            self.strategyReactionRepository!.createReaction(strategyId: strategyId, type: type)
+            self.strategyReactionRepository!.observeQuery()
+        }
+    }
+    
+    
     // MARK: -STRATEGY CREATE METHODS
     func createStrategy(strategy: Strategy) {
         print("\(className) - strategy: \(strategy)")
@@ -232,6 +260,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UITabBarControllerDeleg
     
     func showLogin() {
         moveToTab(index: Settings.Tabs.accountVcIndex)
+    }
+    
+    
+    // MARK: -STRATEGY REACTION REPO METHODS
+    
+    func strategyReactionDataUpdate() {
+        print("\(className) - strategyReactionDataUpdate")
+        guard let strategyReactionRepo = strategyReactionRepository else { return }
+        strategyVC.updateStrategyReactions(reactions: strategyReactionRepo.reactions)
     }
     
     

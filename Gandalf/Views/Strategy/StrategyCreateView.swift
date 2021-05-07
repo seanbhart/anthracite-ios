@@ -351,10 +351,9 @@ class StrategyCreateView: UIViewController, UIGestureRecognizerDelegate, UITextV
     // MARK: -GESTURE RECOGNIZERS
     
     @objc func createTap(_ sender: UITapGestureRecognizer) {
-        if let parent = self.delegate {
-            strategy.orders = localStrategyOrders
-            parent.createStrategy(strategy: strategy)
-        }
+        guard let parent = self.delegate else { return }
+        strategy.orders = localStrategyOrders
+        parent.createStrategy(strategy: strategy)
     }
     
     

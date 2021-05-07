@@ -66,24 +66,19 @@ class StrategyRepository {
         
         // Convert the nested Orders to dict to upload
         let orders = strategy.orders.map { order -> [String:Any] in
-            print("\(className): order: \(order)")
             guard let symbol = order.symbol else { return [:] }
-            print("\(className): symbol: \(symbol)")
             var orderDict = [
                 "direction": NSNumber(value: order.direction),
                 "predict_price_direction": NSNumber(value: order.predictPriceDirection),
                 "symbol": symbol,
                 "type": NSNumber(value: order.type),
             ] as [String : Any]
-            print("\(className): orderDict: \(orderDict)")
             if let price = order.price {
                 orderDict["price"] = NSNumber(value: price)
             }
-            print("\(className): orderDict 2: \(orderDict)")
             if let expiration = order.expiration {
                 orderDict["expiration"] = NSNumber(value: expiration)
             }
-            print("\(className): orderDict 3: \(orderDict)")
             return orderDict
         }
         
@@ -93,11 +88,6 @@ class StrategyRepository {
             "created": Date().timeIntervalSince1970 * 1000,
             "creator": firUser.uid,
             "orders": orders,
-            "reactions": [
-                "dislike": NSNumber(value: 0),
-                "like": NSNumber(value: 0),
-                "ordering": NSNumber(value: 0),
-            ],
             "window_expiration": strategy.windowExpiration,
             "version": "v3.0.0",
         ], merge: true) { err in

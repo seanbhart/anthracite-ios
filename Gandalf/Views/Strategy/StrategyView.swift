@@ -9,7 +9,8 @@ import UIKit
 import FirebaseAuth
 
 protocol StrategyViewDelegate {
-    func loadStrategy(strategy: String)
+//    func loadStrategy(strategy: String)
+    func strategyReaction(strategyId: String, type: Int)
 }
 
 class StrategyView: UIViewController, UIGestureRecognizerDelegate {
@@ -19,13 +20,14 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
     var delegate: StrategyViewDelegate!
     var localStrategies = [Strategy]()
 //    var strategyRepository: StrategyRepository!
+    var detailView: StrategyDetailView?
     
     var viewContainer: UIView!
     var strategyTableView: UITableView!
     let strategyTableCellIdentifier: String = "StrategyCell"
     var strategyTableViewSpinner = UIActivityIndicatorView(style: .medium)
     
-    private var observer: NSObjectProtocol?
+//    private var observer: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -155,9 +157,30 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
     func updateStrategies(strategies: [Strategy]) {
         localStrategies.removeAll()
         localStrategies = strategies
-        print("\(className) - localStrategies: \(localStrategies)")
         strategyTableView.reloadData()
         strategyTableViewSpinner.stopAnimating()
+        
+        updateDetailViewStrategy()
+    }
+    
+    func updateStrategyReactions(reactions: [StrategyReaction]) {
+        for (i, s) in localStrategies.enumerated() {
+            localStrategies[i].reactions = reactions.filter { return $0.strategy == s.id }
+        }
+        strategyTableView.reloadData()
+        
+        updateDetailViewStrategy()
+    }
+    
+    func updateDetailViewStrategy() {
+        // If a detail view has been created, update the data
+        guard let dView = detailView else { return }
+        if dView.strategy == nil { return }
+        for s in localStrategies {
+            if s.id == dView.strategy.id {
+                detailView!.updateStrategyData(strategy: s)
+                break
+            }
+        }
     }
 }
-

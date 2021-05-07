@@ -7,8 +7,7 @@
 
 import UIKit
 
-extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
-    
+extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, StrategyCellDelegate, StrategyDetailViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
@@ -32,15 +31,21 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
             subview.removeFromSuperview()
         }
         
+        cell.delegate = self
+        cell.strategy = localStrategies[indexPath.row]
         cell.configureCellTimer(expiration: localStrategies[indexPath.row].windowExpiration / 1000)
         
         cell.ageLabel.text = Strategy.ageString(timestamp: localStrategies[indexPath.row].created)
 //        cell.windowLabel.text = Strategy.secondsRemainToString(seconds: Int(localStrategies[indexPath.row].windowSecs))
         cell.captionLabel.text = localStrategies[indexPath.row].caption
         if let reactions = localStrategies[indexPath.row].reactions {
-            cell.reactionOrderingLabel.text = "\(reactions.ordering)"
-            cell.reactionLikeLabel.text = "\(reactions.like)"
-            cell.reactionDislikeLabel.text = "\(reactions.dislike)"
+            let reactionCounts = StrategyReactionCount(reactions: reactions)
+            cell.reactionOrderingLabel.text = "\(reactionCounts.ordering.total)"
+            cell.reactionOrderingIcon.image = reactionCounts.ordering.account ? Assets.Icons.iconOrderingFill : Assets.Icons.iconOrdering
+            cell.reactionUpLabel.text = "\(reactionCounts.up.total)"
+            cell.reactionUpIcon.image = reactionCounts.up.account ? Assets.Icons.iconUpFill : Assets.Icons.iconUp
+            cell.reactionDownLabel.text = "\(reactionCounts.down.total)"
+            cell.reactionDownIcon.image = reactionCounts.down.account ? Assets.Icons.iconDownFill : Assets.Icons.iconDown
         }
         
         // Remove all existing orderContainer subviews
@@ -70,8 +75,6 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
         } else {
             cell.hideBorder()
         }
-        
-        print("cell: \(indexPath.row), height: \(cell.frame.height)")
         return cell
     }
     
@@ -137,8 +140,18 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("\(className) - TAPPED ROW \(indexPath.row)")
-//        var group: Group!
-//        group = localGroups[indexPath.row]
-//        self.navigationController?.pushViewController(MessageView(group: group), animated: true)
+        detailView = StrategyDetailView(strategy: localStrategies[indexPath.row])
+        detailView!.delegate = self
+        self.navigationController?.presentSheet(with: detailView!)
+    }
+    
+    
+    // MARK: -STRATEGY CELL DELEGATE METHODS
+    // MARK: -STRATEGY DETAIL VIEW DELEGATE METHODS
+    
+    func reaction(strategyId: String, type: Int) {
+        print("\(className) - \(strategyId) reaction \(type)")
+        guard let parent = self.delegate else { return }
+        parent.strategyReaction(strategyId: strategyId, type: type)
     }
 }
