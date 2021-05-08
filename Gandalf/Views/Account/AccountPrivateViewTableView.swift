@@ -31,6 +31,10 @@ extension AccountPrivateView: UITableViewDataSource, UITableViewDelegate, UIScro
             subview.removeFromSuperview()
         }
         
+        cell.menuContainer.isHidden = false
+//        cell.headerContainer.addSubview(cell.menuContainer)
+//        cell.menuIcon.image = UIImage(systemName: "ellipsis")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        
         cell.delegate = self
         cell.strategy = localStrategies[indexPath.row]
         cell.configureCellTimer(expiration: localStrategies[indexPath.row].windowExpiration / 1000)
@@ -138,12 +142,12 @@ extension AccountPrivateView: UITableViewDataSource, UITableViewDelegate, UIScro
         return orderContainer
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("\(className) - TAPPED ROW \(indexPath.row)")
-        detailView = StrategyDetailView(strategy: localStrategies[indexPath.row])
-        detailView!.delegate = self
-        self.navigationController?.presentSheet(with: detailView!)
-    }
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        print("\(className) - TAPPED ROW \(indexPath.row)")
+//        detailView = StrategyDetailView(strategy: localStrategies[indexPath.row])
+//        detailView!.delegate = self
+//        self.navigationController?.presentSheet(with: detailView!)
+//    }
     
     
     // MARK: -STRATEGY CELL DELEGATE METHODS

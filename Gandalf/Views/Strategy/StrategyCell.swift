@@ -12,7 +12,7 @@ protocol StrategyCellDelegate {
     func reaction(strategyId: String, type: Int)
 }
 
-class StrategyCell: UITableViewCell {
+class StrategyCell: UITableViewCell, UIContextMenuInteractionDelegate {
     
     var delegate: StrategyCellDelegate!
     var strategy: Strategy!
@@ -20,6 +20,9 @@ class StrategyCell: UITableViewCell {
     var cellContainer: UIView!
     var contentContainer: UIView!
     var headerContainer: UIView!
+    var menuContainer: UIView!
+    var menuIcon: UIImageView!
+    var userContainer: UIView!
     var avatarContainer: UIView!
     var avatar: UIImageView!
     var nameLabel: UILabel!
@@ -98,11 +101,56 @@ class StrategyCell: UITableViewCell {
             headerContainer.heightAnchor.constraint(equalToConstant: 84),
         ])
         
+        menuContainer = UIView()
+        menuContainer.isHidden = true
+        menuContainer.isUserInteractionEnabled = true
+        menuContainer.translatesAutoresizingMaskIntoConstraints = false
+        headerContainer.addSubview(menuContainer)
+        NSLayoutConstraint.activate([
+            menuContainer.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 0),
+            menuContainer.leftAnchor.constraint(equalTo: headerContainer.leftAnchor, constant: 0),
+            menuContainer.widthAnchor.constraint(equalToConstant: 70),
+            menuContainer.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
+        let interaction = UIContextMenuInteraction(delegate: self)
+        menuContainer.addInteraction(interaction)
+        
+//        let menuGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(menuTap))
+//        menuGestureRecognizer.numberOfTapsRequired = 1
+//        menuContainer.addGestureRecognizer(menuGestureRecognizer)
+        
+        menuIcon = UIImageView()
+        menuIcon.image = UIImage(systemName: "ellipsis")?.withTintColor(Settings.Theme.Color.textGrayMedium, renderingMode: .alwaysOriginal)
+        menuIcon.contentMode = UIView.ContentMode.scaleAspectFit
+        menuIcon.clipsToBounds = true
+        menuIcon.isUserInteractionEnabled = true
+        menuIcon.translatesAutoresizingMaskIntoConstraints = false
+        menuContainer.addSubview(menuIcon)
+        NSLayoutConstraint.activate([
+            menuIcon.topAnchor.constraint(equalTo: menuContainer.topAnchor, constant: 10),
+            menuIcon.leftAnchor.constraint(equalTo: menuContainer.leftAnchor, constant: 20),
+            menuIcon.widthAnchor.constraint(equalToConstant: 30),
+            menuIcon.heightAnchor.constraint(equalToConstant: 30),
+        ])
+        
+        userContainer = UIView()
+        userContainer.isHidden = true
+        userContainer.isUserInteractionEnabled = true
+        userContainer.translatesAutoresizingMaskIntoConstraints = false
+        headerContainer.addSubview(userContainer)
+        NSLayoutConstraint.activate([
+            userContainer.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 0),
+            userContainer.leftAnchor.constraint(equalTo: headerContainer.leftAnchor, constant: 0),
+            userContainer.widthAnchor.constraint(equalToConstant: 220),
+            userContainer.heightAnchor.constraint(equalToConstant: 70),
+        ])
+        
         avatarContainer = UIView()
-        avatarContainer.backgroundColor = Settings.Theme.Color.grayUltraDark
+//        avatarContainer.backgroundColor = Settings.Theme.Color.grayUltraDark
         avatarContainer.layer.cornerRadius = 30
         avatarContainer.translatesAutoresizingMaskIntoConstraints = false
-        headerContainer.addSubview(avatarContainer)
+        userContainer.addSubview(avatarContainer)
         NSLayoutConstraint.activate([
             avatarContainer.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 10),
             avatarContainer.leftAnchor.constraint(equalTo: headerContainer.leftAnchor, constant: 10),
@@ -125,7 +173,7 @@ class StrategyCell: UITableViewCell {
         ])
         
         nameLabel = UILabel()
-        nameLabel.backgroundColor = Settings.Theme.Color.grayUltraDark
+//        nameLabel.backgroundColor = Settings.Theme.Color.grayUltraDark
         nameLabel.layer.cornerRadius = 5
         nameLabel.layer.masksToBounds = true
         nameLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 18)
@@ -135,7 +183,7 @@ class StrategyCell: UITableViewCell {
         nameLabel.text = ""
         nameLabel.isUserInteractionEnabled = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        headerContainer.addSubview(nameLabel)
+        userContainer.addSubview(nameLabel)
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: headerContainer.topAnchor, constant: 10),
             nameLabel.leftAnchor.constraint(equalTo: avatarContainer.rightAnchor, constant: 10),
@@ -144,7 +192,7 @@ class StrategyCell: UITableViewCell {
         ])
         
         usernameLabel = UILabel()
-        usernameLabel.backgroundColor = Settings.Theme.Color.grayUltraDark
+//        usernameLabel.backgroundColor = Settings.Theme.Color.grayUltraDark
         usernameLabel.layer.cornerRadius = 5
         usernameLabel.layer.masksToBounds = true
         usernameLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 16)
@@ -154,7 +202,7 @@ class StrategyCell: UITableViewCell {
         usernameLabel.text = ""
         usernameLabel.isUserInteractionEnabled = false
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
-        headerContainer.addSubview(usernameLabel)
+        userContainer.addSubview(usernameLabel)
         NSLayoutConstraint.activate([
             usernameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             usernameLabel.leftAnchor.constraint(equalTo: avatarContainer.rightAnchor, constant: 10),
@@ -421,5 +469,30 @@ class StrategyCell: UITableViewCell {
         guard let parent = self.delegate else { return }
         guard let sId = strategy.id else { return }
         parent.reaction(strategyId: sId, type: 2)
+    }
+    
+    @objc func menuTap(_ sender: UITapGestureRecognizer) {
+        print("strategy tap")
+    }
+    
+    
+    // MARK: -INTERACTION METHODS
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        print("interaction configurationForMenuAtLocation: \(interaction)")
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ -> UIMenu? in
+            let deleteAction = UIAction(title: "Delete Strategy", image: UIImage(systemName: "trash")) { _ in
+                print("Delete")
+            }
+            let shareAction = UIAction(title: "Delete Strategy", image: UIImage(systemName: "square.and.arrow.up")) { _ in
+                print("Share")
+            }
+            
+            return UIMenu(title: "", children: [deleteAction])
+        }
+    }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willDisplayMenuFor configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {
+        print("interaction willDisplayMenuFor: \(interaction)")
     }
 }

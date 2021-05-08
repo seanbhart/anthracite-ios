@@ -17,6 +17,7 @@ class StrategyDetailView: UIViewController, UIGestureRecognizerDelegate {
     
     var delegate: StrategyDetailViewDelegate!
     var strategy: Strategy!
+    var account: Account!
     
     var viewContainer: UIView!
     var headerContainer: UIView!
@@ -51,8 +52,9 @@ class StrategyDetailView: UIViewController, UIGestureRecognizerDelegate {
     
     var timer: Timer?
     
-    init(strategy: Strategy) {
+    init(strategy: Strategy, account: Account) {
         self.strategy = strategy
+        self.account = account
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -256,6 +258,7 @@ class StrategyDetailView: UIViewController, UIGestureRecognizerDelegate {
         ])
         
         updateStrategyData(strategy: strategy)
+        updateAccountData(account: account)
         configureTimer(expiration: strategy.windowExpiration / 1000)
     }
     
@@ -303,6 +306,7 @@ class StrategyDetailView: UIViewController, UIGestureRecognizerDelegate {
         nameLabel.backgroundColor = Settings.Theme.Color.grayUltraDark
         nameLabel.layer.cornerRadius = 5
         nameLabel.layer.masksToBounds = true
+        nameLabel.textColor = Settings.Theme.Color.textGrayLight
         nameLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 18)
         nameLabel.textAlignment = NSTextAlignment.left
         nameLabel.numberOfLines = 1
@@ -315,6 +319,7 @@ class StrategyDetailView: UIViewController, UIGestureRecognizerDelegate {
         usernameLabel.backgroundColor = Settings.Theme.Color.grayUltraDark
         usernameLabel.layer.cornerRadius = 5
         usernameLabel.layer.masksToBounds = true
+        usernameLabel.textColor = Settings.Theme.Color.textGrayMedium
         usernameLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 16)
         usernameLabel.textAlignment = NSTextAlignment.left
         usernameLabel.numberOfLines = 1
@@ -564,8 +569,6 @@ class StrategyDetailView: UIViewController, UIGestureRecognizerDelegate {
     func updateStrategyData(strategy: Strategy) {
         self.strategy = strategy
         
-        nameLabel.textColor = Settings.Theme.Color.textGrayLight
-        usernameLabel.textColor = Settings.Theme.Color.textGrayMedium
         ageLabel.text = Strategy.ageString(timestamp: strategy.created)
         captionLabel.text = strategy.caption
         
@@ -579,6 +582,19 @@ class StrategyDetailView: UIViewController, UIGestureRecognizerDelegate {
             reactionDownIcon.image = reactionCounts.down.account ? Assets.Icons.iconDownFill : Assets.Icons.iconDown
         }
         orderTableView.reloadData()
+    }
+    
+    func updateAccountData(account: Account) {
+        print("\(className) - updateAccountData")
+        nameLabel.text = account.name
+        nameLabel.backgroundColor = .clear
+        usernameLabel.text = "@\(account.username ?? "")"
+        usernameLabel.backgroundColor = .clear
+        
+        if account.image != nil {
+            avatar.image = account.image
+            avatarContainer.backgroundColor = Settings.Theme.Color.outline
+        }
     }
     
     

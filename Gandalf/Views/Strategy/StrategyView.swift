@@ -178,18 +178,6 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    func updateAccounts(accounts: [Account]) {
-        print("\(className) - updateAccounts count: \(accounts.count)")
-        localAccounts.removeAll()
-        localAccounts = accounts
-        if strategyTableView != nil {
-            strategyTableView.reloadData()
-            strategyTableViewSpinner.stopAnimating()
-            
-            updateDetailViewStrategy()
-        }
-    }
-    
     func updateDetailViewStrategy() {
         // If a detail view has been created, update the data
         guard let dView = detailView else { return }
@@ -198,6 +186,25 @@ class StrategyView: UIViewController, UIGestureRecognizerDelegate {
             if s.id == dView.strategy.id {
                 detailView!.updateStrategyData(strategy: s)
                 break
+            }
+        }
+    }
+    
+    func updateAccounts(accounts: [Account]) {
+        localAccounts.removeAll()
+        localAccounts = accounts
+        if strategyTableView != nil {
+            strategyTableView.reloadData()
+            strategyTableViewSpinner.stopAnimating()
+            
+            // If a detail view has been created, update the data
+            guard let dView = detailView else { return }
+            if dView.strategy == nil { return }
+            for a in localAccounts {
+                if a.id == dView.strategy.creator {
+                    detailView!.updateAccountData(account: a)
+                    break
+                }
             }
         }
     }

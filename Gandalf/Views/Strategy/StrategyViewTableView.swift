@@ -31,9 +31,12 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
             subview.removeFromSuperview()
         }
         
+        cell.userContainer.isHidden = false
+//        cell.headerContainer.addSubview(cell.userContainer)
+//        cell.menuIcon.image = nil
+        
         // Find the account that matches this strategy creator
         let foundAccounts = localAccounts.filter { $0.id == localStrategies[indexPath.row].creator }
-        print("\(className) - foundAccounts count: \(foundAccounts.count)")
         if foundAccounts.count > 0 {
             cell.nameLabel.text = foundAccounts[0].name
             cell.nameLabel.backgroundColor = .clear
@@ -159,9 +162,13 @@ extension StrategyView: UITableViewDataSource, UITableViewDelegate, UIScrollView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("\(className) - TAPPED ROW \(indexPath.row)")
-        detailView = StrategyDetailView(strategy: localStrategies[indexPath.row])
-        detailView!.delegate = self
-        self.navigationController?.presentSheet(with: detailView!)
+        // Find the account that matches this strategy creator
+        let foundAccounts = localAccounts.filter { $0.id == localStrategies[indexPath.row].creator }
+        if foundAccounts.count > 0 {
+            detailView = StrategyDetailView(strategy: localStrategies[indexPath.row], account: foundAccounts[0])
+            detailView!.delegate = self
+            self.navigationController?.presentSheet(with: detailView!)
+        }
     }
     
     

@@ -49,7 +49,7 @@ class AccountPrivateView: UIViewController, AccountPrivateRepositoryDelegate, Ac
     var joinedIcon: UIImageView!
     var joinedLabel: UILabel!
     var strategyTableView: UITableView!
-    let strategyTableCellIdentifier: String = "StrategyCell"
+    let strategyTableCellIdentifier: String = "AccountStrategyCell"
     
     private var observer: NSObjectProtocol?
     
@@ -206,7 +206,7 @@ class AccountPrivateView: UIViewController, AccountPrivateRepositoryDelegate, Ac
         bioField.backgroundColor = .clear
         bioField.isEditable = false
         bioField.isScrollEnabled = false
-        bioField.font = UIFont(name: Assets.Fonts.Default.regular, size: 12)
+        bioField.font = UIFont(name: Assets.Fonts.Default.regular, size: 14)
         bioField.textAlignment = .left
         bioField.textColor = Settings.Theme.Color.textGrayMedium
         bioField.text = "A imperdiet metus, malesuada sem quis ut. Cum scelerisque ac tortor, cras odio porttitor nisl commodo pharetra."
@@ -224,11 +224,11 @@ class AccountPrivateView: UIViewController, AccountPrivateRepositoryDelegate, Ac
         viewContainer.addSubview(locationIcon)
         
         locationLabel = UILabel()
-        locationLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 10)
+        locationLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 12)
         locationLabel.textColor = Settings.Theme.Color.textGrayMedium
         locationLabel.textAlignment = NSTextAlignment.left
         locationLabel.numberOfLines = 1
-        locationLabel.text = "San Fransisco, CA"
+        locationLabel.text = "Austin, TX"
         locationLabel.isUserInteractionEnabled = false
         locationLabel.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(locationLabel)
@@ -242,7 +242,7 @@ class AccountPrivateView: UIViewController, AccountPrivateRepositoryDelegate, Ac
         viewContainer.addSubview(joinedIcon)
         
         joinedLabel = UILabel()
-        joinedLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 10)
+        joinedLabel.font = UIFont(name: Assets.Fonts.Default.semiBold, size: 12)
         joinedLabel.textColor = Settings.Theme.Color.textGrayMedium
         joinedLabel.textAlignment = NSTextAlignment.left
         joinedLabel.numberOfLines = 1
@@ -466,6 +466,10 @@ class AccountPrivateView: UIViewController, AccountPrivateRepositoryDelegate, Ac
 
             // Show the account info if the user is signed in
             self.hideSignIn()
+            
+            // If a detail view has been created, update the data
+            guard let dView = detailView else { return }
+            dView.updateAccountData(account: account)
         }
     }
     
